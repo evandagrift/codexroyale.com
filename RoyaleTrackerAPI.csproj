@@ -31,7 +31,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Codex Royale Update\CodexRoyaleUpdater\CodexRoyaleUpdater\RoyaleTrackerClasses\RoyaleTrackerClasses.csproj" />
   </ItemGroup>
 
 
