@@ -6,8 +6,26 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="RoyaleTrackerClasses\**" />
+    <Compile Remove="Tests\**" />
+    <Content Remove="RoyaleTrackerClasses\**" />
+    <Content Remove="Tests\**" />
+    <EmbeddedResource Remove="RoyaleTrackerClasses\**" />
+    <EmbeddedResource Remove="Tests\**" />
+    <None Remove="RoyaleTrackerClasses\**" />
+    <None Remove="Tests\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Remove="BattlesTests.cs" />
+    <Compile Remove="CardsTests.cs" />
+    <Compile Remove="ClansTests.cs" />
+    <Compile Remove="DecksTests.cs" />
     <Compile Remove="IJWTAuthenticationManager.cs" />
     <Compile Remove="JWTAuthenticationManager.cs" />
+    <Compile Remove="PlayersTests.cs" />
+    <Compile Remove="TeamsTests.cs" />
+    <Compile Remove="UsersTests.cs" />
   </ItemGroup>
 
   <ItemGroup>
@@ -31,6 +49,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="RoyaleTrackerClasses\RoyaleTrackerClasses.csproj" />
   </ItemGroup>
 
 
