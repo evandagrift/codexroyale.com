@@ -15,8 +15,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\RoyaleTrackerAPI.csproj" />
-    <ProjectReference Include="..\RoyaleTrackerClasses\RoyaleTrackerClasses.csproj" />
+    <ProjectReference Include="..\RoyaleTrackerAPI\RoyaleTrackerAPI.csproj" />
   </ItemGroup>
 
 </Project>
