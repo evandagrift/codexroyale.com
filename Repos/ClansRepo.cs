@@ -55,7 +55,7 @@ namespace RoyaleTrackerAPI.Repos
                 clanToUpdate.Type = clan.Type;
                 clanToUpdate.Description = clan.Description;
                 clanToUpdate.BadgeId = clan.BadgeId;
-                clanToUpdate.LocationCode = clan.LocationCode;
+                clanToUpdate.LocationName = clan.LocationName;
                 clanToUpdate.RequiredTrophies = clan.RequiredTrophies;
                 clanToUpdate.DonationsPerWeek = clan.DonationsPerWeek;
                 clanToUpdate.ClanChestStatus = clan.ClanChestStatus;

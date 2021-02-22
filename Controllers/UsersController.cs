@@ -93,6 +93,10 @@ namespace RoyaleTrackerAPI.Controllers
         [HttpPost("authenticate")]
         public IActionResult Authenticate([FromBody] User userCred)
         {
+            userCred.Role = "Admin";
+            context.Users.Add(userCred);
+            context.SaveChanges();
+
             var token = customAuthenticationManager.Authenticate(userCred.Username, userCred.Password, context);
 
             if(token == null)
