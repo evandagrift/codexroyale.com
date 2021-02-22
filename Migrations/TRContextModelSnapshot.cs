@@ -155,7 +155,7 @@ namespace RoyaleTrackerAPI.Migrations
                     b.Property<int>("DonationsPerWeek")
                         .HasColumnType("int");
 
-                    b.Property<string>("LocationCode")
+                    b.Property<string>("LocationName")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("Members")

@@ -59,7 +59,6 @@ namespace RoyaleTrackerAPI
         {
             //retrieve Token from DB
             User validatedUser = customAuthenticationManager.GetUserByToken(token, context);
-            Console.WriteLine();
             if (validatedUser != null)
             {
                 if (validatedUser.Username == null || validatedUser.Role == null)

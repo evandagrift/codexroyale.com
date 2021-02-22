@@ -17,7 +17,7 @@ namespace RoyaleTrackerClasses
         public string Type { get; set; }
         public string Description { get; set; }
         public int BadgeId { get; set; }
-        public string LocationCode { get; set; }
+        public string LocationName { get; set; }
         [NotMapped]
         public IDictionary<string, string> Location { get; set; }
         public int RequiredTrophies { get; set; }

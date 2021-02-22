@@ -9,7 +9,7 @@ using RoyaleTrackerAPI.Models;
 namespace RoyaleTrackerAPI.Migrations
 {
     [DbContext(typeof(TRContext))]
-    [Migration("20210208044338_Initial_MSSQL")]
+    [Migration("20210219222109_Initial_MSSQL")]
     partial class Initial_MSSQL
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -157,7 +157,7 @@ namespace RoyaleTrackerAPI.Migrations
                     b.Property<int>("DonationsPerWeek")
                         .HasColumnType("int");
 
-                    b.Property<string>("LocationCode")
+                    b.Property<string>("LocationName")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("Members")

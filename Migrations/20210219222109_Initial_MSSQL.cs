@@ -70,7 +70,7 @@ namespace RoyaleTrackerAPI.Migrations
                     Type = table.Column<string>(nullable: true),
                     Description = table.Column<string>(nullable: true),
                     BadgeId = table.Column<int>(nullable: false),
-                    LocationCode = table.Column<string>(nullable: true),
+                    LocationName = table.Column<string>(nullable: true),
                     RequiredTrophies = table.Column<int>(nullable: false),
                     DonationsPerWeek = table.Column<int>(nullable: false),
                     ClanChestStatus = table.Column<string>(nullable: true),
