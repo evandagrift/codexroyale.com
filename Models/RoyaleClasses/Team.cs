@@ -7,16 +7,15 @@ using System.Threading.Tasks;
 
 namespace RoyaleTrackerClasses
 {
-    public class User
+    public class Team
     {
         [Key]
-        public string Username { get; set; }
-        public string Password { get; set; }
-        public string Email { get; set; }
+        public int TeamId { get; set; }
+        public string TeamName { get; set; }
+        public bool TwoVTwo {get; set; }
+        public string Name { get; set; }
         public string Tag { get; set; }
-        public string ClanTag { get; set; }
-        public string Role { get; set; }
-        public string Token { get; set; }
-
+        public string Name2 { get; set; }
+        public string Tag2 { get; set; }
     }
 }

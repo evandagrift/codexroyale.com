@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
@@ -7,25 +7,15 @@
 
   <ItemGroup>
     <Compile Remove="RoyaleTrackerClasses\**" />
-    <Compile Remove="Tests\**" />
     <Content Remove="RoyaleTrackerClasses\**" />
-    <Content Remove="Tests\**" />
     <EmbeddedResource Remove="RoyaleTrackerClasses\**" />
-    <EmbeddedResource Remove="Tests\**" />
     <None Remove="RoyaleTrackerClasses\**" />
-    <None Remove="Tests\**" />
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Remove="BattlesTests.cs" />
-    <Compile Remove="CardsTests.cs" />
-    <Compile Remove="ClansTests.cs" />
-    <Compile Remove="DecksTests.cs" />
     <Compile Remove="IJWTAuthenticationManager.cs" />
     <Compile Remove="JWTAuthenticationManager.cs" />
-    <Compile Remove="PlayersTests.cs" />
-    <Compile Remove="TeamsTests.cs" />
-    <Compile Remove="UsersTests.cs" />
+    <Compile Remove="Models\Authentication\ICustomAuthenticationManager.cs" />
   </ItemGroup>
 
   <ItemGroup>
@@ -33,6 +23,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="BCrypt.Net-Next" Version="4.0.2" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication" Version="2.2.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="3.1.9" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="3.1.9">
@@ -46,10 +37,6 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="RoyaleTrackerClasses\RoyaleTrackerClasses.csproj" />
   </ItemGroup>
 
 

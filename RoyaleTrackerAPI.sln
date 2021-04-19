@@ -1,19 +1,9 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
-VisualStudioVersion = 16.0.30611.23
+VisualStudioVersion = 16.0.30406.217
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RoyaleTrackerAPI", "RoyaleTrackerAPI.csproj", "{D5739CD9-23F3-4FB9-95E5-00A07B905D08}"
-	ProjectSection(ProjectDependencies) = postProject
-		{31CBDE1A-E491-4BAC-AECE-384DFD609FBC} = {31CBDE1A-E491-4BAC-AECE-384DFD609FBC}
-	EndProjectSection
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RoyaleTrackerClasses", "RoyaleTrackerClasses\RoyaleTrackerClasses.csproj", "{31CBDE1A-E491-4BAC-AECE-384DFD609FBC}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tests", "Tests\Tests.csproj", "{D6826FA3-BDEC-473B-8B1E-C6178BA1A6FC}"
-	ProjectSection(ProjectDependencies) = postProject
-		{D5739CD9-23F3-4FB9-95E5-00A07B905D08} = {D5739CD9-23F3-4FB9-95E5-00A07B905D08}
-	EndProjectSection
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RoyaleTrackerAPI", "RoyaleTrackerAPI.csproj", "{4AB97194-0119-47B0-B032-AE758F31455D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,23 +11,15 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{D5739CD9-23F3-4FB9-95E5-00A07B905D08}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{D5739CD9-23F3-4FB9-95E5-00A07B905D08}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{D5739CD9-23F3-4FB9-95E5-00A07B905D08}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{D5739CD9-23F3-4FB9-95E5-00A07B905D08}.Release|Any CPU.Build.0 = Release|Any CPU
-		{31CBDE1A-E491-4BAC-AECE-384DFD609FBC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{31CBDE1A-E491-4BAC-AECE-384DFD609FBC}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{31CBDE1A-E491-4BAC-AECE-384DFD609FBC}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{31CBDE1A-E491-4BAC-AECE-384DFD609FBC}.Release|Any CPU.Build.0 = Release|Any CPU
-		{D6826FA3-BDEC-473B-8B1E-C6178BA1A6FC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{D6826FA3-BDEC-473B-8B1E-C6178BA1A6FC}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{D6826FA3-BDEC-473B-8B1E-C6178BA1A6FC}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{D6826FA3-BDEC-473B-8B1E-C6178BA1A6FC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4AB97194-0119-47B0-B032-AE758F31455D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4AB97194-0119-47B0-B032-AE758F31455D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4AB97194-0119-47B0-B032-AE758F31455D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4AB97194-0119-47B0-B032-AE758F31455D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {82AEC9D7-23DD-4150-84C0-2917D6F5AC86}
+		SolutionGuid = {1B3DDDBC-C08C-48FA-9112-2D011B56384C}
 	EndGlobalSection
 EndGlobal
