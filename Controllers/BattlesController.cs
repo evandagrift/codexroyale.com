@@ -52,14 +52,14 @@ namespace RoyaleTrackerAPI.Controllers
             repo.AddBattle(battle);
         }
 
-        [Authorize(Policy = "AdminOnly")]
+        [Authorize(Policy = "All")]
 
-        [HttpPost("getbattlewithid")]
-        // POST: api/Battles/GetBattleWithId
-        public Battle GetDeckWithId([FromBody] Battle battle)
+        [HttpPost("getbattlesbyuser")]
+        // POST: api/Battles/getbattlebyuser
+        public List<Battle> GetBattle([FromBody] User user)
         {
             //returns battle with Id based off given battle, if said battle doesn't exist it is created and returned after assigned Id
-            return repo.GetBattleWithId(battle);
+            return repo.GetAllBattles(user);
         }
 
         [Authorize(Policy = "AdminOnly")]
