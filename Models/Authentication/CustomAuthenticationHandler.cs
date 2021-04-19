@@ -16,11 +16,11 @@ namespace RoyaleTrackerAPI
     public class CustomAuthenticationHandler : AuthenticationHandler<AuthenticationSchemeOptions>
     {
         //I Don't fully understand this, but Authentication is essential
-        private readonly ICustomAuthenticationManager customAuthenticationManager;
+        private readonly CustomAuthenticationManager customAuthenticationManager;
         private readonly TRContext context;
 
         public CustomAuthenticationHandler(
-            IOptionsMonitor<AuthenticationSchemeOptions> options, ILoggerFactory logger, UrlEncoder encoder, ISystemClock clock, TRContext context, ICustomAuthenticationManager customAuthenticationManager) :
+            IOptionsMonitor<AuthenticationSchemeOptions> options, ILoggerFactory logger, UrlEncoder encoder, ISystemClock clock, TRContext context, CustomAuthenticationManager customAuthenticationManager) :
             base(options, logger, encoder, clock)
         {
             this.context = context;

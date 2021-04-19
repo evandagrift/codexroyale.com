@@ -2,7 +2,7 @@
 
 namespace RoyaleTrackerAPI.Migrations
 {
-    public partial class Initial_MSSQL : Migration
+    public partial class Init : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -70,7 +70,7 @@ namespace RoyaleTrackerAPI.Migrations
                     Type = table.Column<string>(nullable: true),
                     Description = table.Column<string>(nullable: true),
                     BadgeId = table.Column<int>(nullable: false),
-                    LocationName = table.Column<string>(nullable: true),
+                    LocationCode = table.Column<string>(nullable: true),
                     RequiredTrophies = table.Column<int>(nullable: false),
                     DonationsPerWeek = table.Column<int>(nullable: false),
                     ClanChestStatus = table.Column<string>(nullable: true),
@@ -172,6 +172,9 @@ namespace RoyaleTrackerAPI.Migrations
                 {
                     Username = table.Column<string>(nullable: false),
                     Password = table.Column<string>(nullable: true),
+                    Email = table.Column<string>(nullable: true),
+                    Tag = table.Column<string>(nullable: true),
+                    ClanTag = table.Column<string>(nullable: true),
                     Role = table.Column<string>(nullable: true),
                     Token = table.Column<string>(nullable: true)
                 },

@@ -19,14 +19,14 @@ namespace RoyaleTrackerAPI.Controllers
     public class TeamsController : ControllerBase
     {
         //Authentication Manager for handling Bearer Token
-        private readonly ICustomAuthenticationManager customAuthenticationManager;
+        private readonly CustomAuthenticationManager customAuthenticationManager;
 
         //context to DB and Repo for handling
         private TRContext context;
         private TeamsRepo repo;
 
         //loading in injected dependancies
-        public TeamsController(ICustomAuthenticationManager m, TRContext c)
+        public TeamsController(CustomAuthenticationManager m, TRContext c)
         {
             customAuthenticationManager = m;
             // commented out while testing 

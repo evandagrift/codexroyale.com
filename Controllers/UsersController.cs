@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
@@ -15,28 +16,67 @@ using RoyaleTrackerClasses;
 namespace RoyaleTrackerAPI.Controllers
 {
     [Authorize]
+    [EnableCors]
     [Route("api/[controller]")]
     [ApiController]
     public class UsersController : ControllerBase
     {
         //Authentication Manager for handling Bearer Token
-        private readonly ICustomAuthenticationManager customAuthenticationManager;
+        private CustomAuthenticationManager customAuthenticationManager;
 
         //context to DB and Repo for handling
         private TRContext context;
+        private Client client;
         private UsersRepo repo;
 
         //loading in injected dependancies
-        public UsersController(ICustomAuthenticationManager m, TRContext c)
+        public UsersController(CustomAuthenticationManager m, TRContext ct, string token)
         {
             customAuthenticationManager = m;
             // commented out while testing 
-            context = c;
+            context = ct;
+            client = new Client(token);
 
             //init the repo with DB context
             repo = new UsersRepo(context);
 
         }
+
+        [AllowAnonymous]
+        [HttpPost("signup")]
+        public IActionResult CreateAccount([FromBody] User user)
+        {
+            user = customAuthenticationManager.CreateAccount(user, context, client);
+            //return result based off of what is null
+            if (user != null)
+            {
+                return Ok(user);
+            }
+            else return Unauthorized();
+        }
+
+        [AllowAnonymous]
+        [HttpPost("login")]
+        public IActionResult Login([FromBody] User user)
+        {
+            User fetchedUser = customAuthenticationManager.Login(user, context, client);
+            if (fetchedUser != null)
+            {
+                return Ok(fetchedUser);
+            }
+            else return Unauthorized();
+        }
+
+
+        [AllowAnonymous]
+        [HttpPost("authenticate")]
+        public IActionResult Authenticate([FromBody] User user)
+        {
+            User fetchedUser = customAuthenticationManager.Authenticate(user, context);
+            Console.WriteLine("USER CHECKED");
+            return Ok(fetchedUser);
+        }
+
         // POST api/<CardController>
         [Authorize(Policy = "AdminOnly")]
         [HttpPost]
@@ -81,29 +121,11 @@ namespace RoyaleTrackerAPI.Controllers
         }
 
         [Authorize(Policy = "AdminOnly")]
-        // DELETE: api/Products/5
         [HttpPut]
         public void UpdateUser([FromBody] User user)
         {
             repo.UpdateUser(user);
         }
 
-
-        [AllowAnonymous]
-        [HttpPost("authenticate")]
-        public IActionResult Authenticate([FromBody] User userCred)
-        {
-            userCred.Role = "Admin";
-            context.Users.Add(userCred);
-            context.SaveChanges();
-
-            var token = customAuthenticationManager.Authenticate(userCred.Username, userCred.Password, context);
-
-            if(token == null)
-                return Unauthorized();
-            
-
-            return Ok(token);
-        }
     }
 }

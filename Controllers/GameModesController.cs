@@ -19,14 +19,14 @@ namespace RoyaleTrackerAPI.Controllers
     public class GameModesController : ControllerBase
     {
         //Authentication Manager for handling Bearer Token
-        private readonly ICustomAuthenticationManager customAuthenticationManager;
+        private readonly CustomAuthenticationManager customAuthenticationManager;
 
         //context to DB and Repo for handling
         private TRContext context;
         private GameModesRepo repo;
 
         //loading in injected dependancies
-        public GameModesController(ICustomAuthenticationManager m, TRContext c)
+        public GameModesController(CustomAuthenticationManager m, TRContext c)
         {
             customAuthenticationManager = m;
             // commented out while testing 
