@@ -147,6 +147,17 @@ namespace RoyaleTrackerAPI.Repos
         //returns a list of all battles from DB
         public List<Battle> GetAllBattles() { return context.Battles.ToList(); }
 
+        //returns a list of all battles from DB with specific tag
+        public List<Battle> GetAllBattles(User user) 
+        {
+            if(user.Tag!=null)
+            {
+                Player player = context.Players.Where(u => u.Tag == user.Tag).FirstOrDefault();
+                return context.Battles.Where(b => b.Team1Id == player.TeamId || b.Team2Id == player.TeamId).ToList();
+            }
+            else { return null; }
+        }
+
         //gets battle with given battleID
         public Battle GetBattleByID(int battleID) { return context.Battles.Find(battleID); }
 
