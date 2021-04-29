@@ -61,6 +61,7 @@ namespace RoyaleTrackerAPI.Controllers
             //returns battle with Id based off given battle, if said battle doesn't exist it is created and returned after assigned Id
             return repo.GetAllBattles(user);
         }
+       // [AllowAnonymous]
 
         [Authorize(Policy = "AdminOnly")]
         // GET: api/Battles
@@ -96,7 +97,7 @@ namespace RoyaleTrackerAPI.Controllers
             //deletes battle at given /Id
             repo.DeleteBattle(battleID);
         }
-
+        
         [Authorize(Policy = "AdminOnly")]
         // Update: api/Battles
         [HttpPut]
