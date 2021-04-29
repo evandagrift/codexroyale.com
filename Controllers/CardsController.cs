@@ -45,7 +45,7 @@ namespace RoyaleTrackerAPI.Controllers
             repo.AddCardIfNew(card);
         }
 
-        [Authorize(Policy = "AdminOnly")]
+        [AllowAnonymous]
         // GET: api/Cards
         [HttpGet]
         public string Get()

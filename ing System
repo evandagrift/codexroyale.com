@@ -1,0 +1,18 @@
+[0;1;32m●[0m royaleapi.service - Royale API
+   Loaded: loaded (/etc/systemd/system/royaleapi.service; enabled; vendor preset: enabled)
+   Active: [0;1;32mactive (running)[0m since Tue 2021-04-27 07:51:41 UTC; 1min 45s ago
+ Main PID: 9584 (dotnet)
+    Tasks: 14 (limit: 2360)
+   CGroup: /system.slice/royaleapi.service
+           └─9584 /usr/bin/dotnet /var/www/royaletracker.com/html/bin/Debug/netcoreapp3.1/publish/RoyaleTrackerAPI.dll
+
+Apr 27 07:51:41 RoyaleTrackerVM royaleAPI[9584]: info: Microsoft.Hosting.Lifetime[0]
+Apr 27 07:51:41 RoyaleTrackerVM royaleAPI[9584]:       Hosting environment: Production
+Apr 27 07:51:41 RoyaleTrackerVM royaleAPI[9584]: info: Microsoft.Hosting.Lifetime[0]
+Apr 27 07:51:41 RoyaleTrackerVM royaleAPI[9584]:       Content root path: /var/www/royaletracker.com/html
+Apr 27 07:51:52 RoyaleTrackerVM royaleAPI[9584]: warn: Microsoft.AspNetCore.HttpsPolicy.HttpsRedirectionMiddleware[3]
+Apr 27 07:51:52 RoyaleTrackerVM royaleAPI[9584]:       Failed to determine the https port for redirect.
+Apr 27 07:51:53 RoyaleTrackerVM royaleAPI[9584]: info: RoyaleTrackerAPI.CustomAuthenticationHandler[7]
+Apr 27 07:51:53 RoyaleTrackerVM royaleAPI[9584]:       Basic was not authenticated. Failure message: Unauthorized
+Apr 27 07:51:57 RoyaleTrackerVM royaleAPI[9584]: info: RoyaleTrackerAPI.CustomAuthenticationHandler[7]
+Apr 27 07:51:57 RoyaleTrackerVM royaleAPI[9584]:       Basic was not authenticated. Failure message: Unauthorized
