@@ -31,19 +31,7 @@
             // This method gets called by the runtime. Use this method to add services to the container.
             public void ConfigureServices(IServiceCollection services)
             {
-                services.AddCors(options =>
-                {
-                    options.AddDefaultPolicy(
-                        builder =>
-                        {
-                            builder
-                            .AllowCredentials()
-                            .WithMethods("POST","GET", "PUT", "DELETE")
-               .AllowAnyHeader()
-               .WithOrigins("http://localhost:3000")
-               ;
-                        });
-                });
+               
                 services.AddControllers();
 
 
@@ -53,14 +41,24 @@
 
 
                 services.AddAuthentication("Basic").AddScheme<AuthenticationSchemeOptions, CustomAuthenticationHandler>("Basic", null);
-
+            
                 services.AddAuthorization(options =>
                 {
                     options.AddPolicy("AdminOnly", policy => policy.RequireRole("Admin"));
                     options.AddPolicy("All", policy => policy.RequireRole("Admin", "User"));
                 });
-
-                services.AddSingleton<CustomAuthenticationManager>();
+            services.AddCors(options =>
+            {
+                options.AddDefaultPolicy(
+                    builder =>
+                    {
+                        builder.AllowAnyMethod()
+               //.WithMethods("POST", "GET", "PUT", "DELETE", "OPTIONS")
+               .AllowAnyHeader()
+               .WithOrigins("http://localhost:3000", "*").AllowCredentials();
+                    });
+            });
+            services.AddSingleton<CustomAuthenticationManager>();
                 services.AddSingleton<string>(Configuration["ConnectionStrings:BearerToken"]);
                 //allow connection between origins
 
