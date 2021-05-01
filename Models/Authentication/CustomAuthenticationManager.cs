@@ -75,7 +75,7 @@ namespace RoyaleTrackerAPI
                         //check if player clan is updated
 
 
-                        handler.SaveNew(user);
+                       handler.SaveNew(user);
 
 
 
