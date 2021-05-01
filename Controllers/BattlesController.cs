@@ -13,9 +13,9 @@ using RoyaleTrackerClasses;
 
 namespace RoyaleTrackerAPI.Controllers
 {
-    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class BattlesController : ControllerBase
     {
         //Authentication Manager for handling Bearer Token
@@ -62,8 +62,8 @@ namespace RoyaleTrackerAPI.Controllers
             return repo.GetAllBattles(user);
         }
        // [AllowAnonymous]
-
-        [Authorize(Policy = "AdminOnly")]
+        [Authorize(Policy = "All")]
+        //[AllowAnonymous]
         // GET: api/Battles
         [HttpGet]
         public string Get()
