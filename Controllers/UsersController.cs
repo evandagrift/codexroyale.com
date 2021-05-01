@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
@@ -14,9 +15,7 @@ using RoyaleTrackerClasses;
 
 namespace RoyaleTrackerAPI.Controllers
 {
-    [Authorize]
-    [Route("api/[controller]")]
-    [ApiController]
+    [ApiController, EnableCors("Policy"), Route("api/[controller]"),Authorize]
     public class UsersController : ControllerBase
     {
         //Authentication Manager for handling Bearer Token

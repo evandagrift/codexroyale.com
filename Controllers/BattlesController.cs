@@ -81,6 +81,7 @@ namespace RoyaleTrackerAPI.Controllers
         [HttpGet("{battleID}", Name = "getbattlebyid")]
         public string Get(int battleID)
         {
+            Console.WriteLine("test api/battles:GET");
             //returns player with given Id
             return JsonConvert.SerializeObject(repo.GetBattleByID(battleID), Formatting.Indented, new JsonSerializerSettings
             {
