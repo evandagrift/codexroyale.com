@@ -1,5 +1,4 @@
 ﻿using RoyaleTrackerAPI.Models;
-using RoyaleTrackerAPI.Repos.IRepos;
 using RoyaleTrackerClasses;
 using System;
 using System.Collections.Generic;
@@ -8,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace RoyaleTrackerAPI.Repos
 {
-    public class GameModesRepo : IGameModesRepo
+    public class GameModesRepo
     {
         //DB access
         private TRContext context;

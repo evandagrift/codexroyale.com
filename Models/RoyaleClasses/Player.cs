@@ -1,4 +1,5 @@
-﻿using System;
+﻿using RoyaleTrackerAPI.Models.RoyaleClasses;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -27,6 +28,8 @@ namespace RoyaleTrackerClasses
 
         [NotMapped]
         public List<Card> CurrentDeck { get; set; }
+        [NotMapped]
+        public List<Chest> Chests { get; set; }
         [NotMapped]
         public Deck Deck { get { return new Deck(CurrentDeck); } set { } }
 

@@ -1,4 +1,5 @@
-﻿using RoyaleTrackerAPI.Models;
+﻿using Newtonsoft.Json;
+using RoyaleTrackerAPI.Models;
 using RoyaleTrackerClasses;
 using System;
 using System.Collections.Generic;
@@ -7,14 +8,24 @@ using System.Threading.Tasks;
 
 namespace RoyaleTrackerAPI.Repos
 {
-    public class BattlesRepo : IBattlesRepo
+    public class BattlesRepo
     {
         //DB Access
         private TRContext context;
+        private Client client;
         //constructor, connects Connect argumented context
-        public BattlesRepo(TRContext c)
+
+
+
+
+        //connection sting for the Codex API Controller that is being handled\
+        private string officialConnectionString = "/v1/players/%23";
+
+
+        public BattlesRepo(Client c,TRContext ct)
         {
-            context = c;
+            context = ct;
+            client = c;
         }
 
         public void AddBattle(Battle battle)
@@ -247,6 +258,36 @@ namespace RoyaleTrackerAPI.Repos
                 battleToUpdate.GameModeId = battle.GameModeId;
                 context.SaveChanges();
             }
+        }
+
+
+        public async Task<List<Battle>> GetOfficialPlayerBattles(string tag)
+        {
+            //connection string to fetch player battles with given Tag
+            string connectionString = officialConnectionString + tag.Substring(1) + "/battlelog/";
+
+            //calls the official API
+            var result = await client.officialAPI.GetAsync(connectionString);
+
+            //if the call is a success it returns the List of Battles
+            if (result.IsSuccessStatusCode)
+            {
+                //content to json string once recieved and parsed
+                var content = await result.Content.ReadAsStringAsync();
+
+                //deserielizes the json to list of battles
+                var battles = JsonConvert.DeserializeObject<List<Battle>>(content);
+
+                //cleans up the time string, the official API includes a non functioning TimeZone offset to their datetime string
+                battles.ForEach(b =>
+                {
+                    b.BattleTime = b.BattleTime.Substring(0, 15);
+                });
+
+                //returns fetched list of battles
+                return battles;
+            }
+            return null;
         }
 
 

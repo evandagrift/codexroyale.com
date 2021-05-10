@@ -14,7 +14,7 @@ using RoyaleTrackerClasses;
 
 namespace RoyaleTrackerAPI.Controllers
 {
-    [ApiController, Route("api/[controller]"),Authorize]
+    [ApiController, Route("api/[controller]"), Authorize]
     public class UsersController : ControllerBase
     {
         //Authentication Manager for handling Bearer Token
@@ -23,18 +23,19 @@ namespace RoyaleTrackerAPI.Controllers
         //context to DB and Repo for handling
         private TRContext context;
         private Client client;
-        private UsersRepo repo;
+        private UsersRepo usersRepo;
 
         //loading in injected dependancies
-        public UsersController(CustomAuthenticationManager m, TRContext ct, string token)
+        public UsersController(CustomAuthenticationManager m, Client c,  TRContext ct)
         {
             customAuthenticationManager = m;
-            // commented out while testing 
+            client = c;
             context = ct;
-            client = new Client(token);
+
 
             //init the repo with DB context
-            repo = new UsersRepo(context);
+            usersRepo = new UsersRepo(client,context);
+
 
         }
 
@@ -42,7 +43,7 @@ namespace RoyaleTrackerAPI.Controllers
         [HttpPost("signup")]
         public IActionResult CreateAccount([FromBody] User user)
         {
-            user = customAuthenticationManager.CreateAccount(user, context, client);
+            user = customAuthenticationManager.CreateAccount(user, usersRepo, context);
             //return result based off of what is null
             if (user != null)
             {
@@ -55,30 +56,35 @@ namespace RoyaleTrackerAPI.Controllers
         [HttpPost("login")]
         public IActionResult Login([FromBody] User user)
         {
-            User fetchedUser = customAuthenticationManager.Login(user, context, client);
+
+
+            Console.WriteLine("PointA:" + user.Username + " " + user.Password);
+            User fetchedUser = customAuthenticationManager.Login(user, context);
+
             if (fetchedUser != null)
             {
+                Console.WriteLine("fetched" + user.Username + " " + user.Password);
                 return Ok(fetchedUser);
             }
             else return Unauthorized();
         }
 
 
-        [AllowAnonymous]
-        [HttpPost("authenticate")]
-        public IActionResult Authenticate([FromBody] User user)
-        {
-            User fetchedUser = customAuthenticationManager.Authenticate(user, context);
-            Console.WriteLine("USER CHECKED");
-            return Ok(fetchedUser);
-        }
+        //[AllowAnonymous]
+        //[HttpPost("authenticate")]
+        //public IActionResult Authenticate([FromBody] User user)
+        //{
+        //    User fetchedUser = customAuthenticationManager.Authenticate(user, context);
+        //    Console.WriteLine("USER CHECKED");
+        //    return Ok(fetchedUser);
+        //}
 
         // POST api/<CardController>
         [Authorize(Policy = "AdminOnly")]
         [HttpPost]
         public void PostUser([FromBody] User user)
         {
-            repo.AddUser(user);
+            usersRepo.AddUser(user);
         }
 
         //[AllowAnonymous]
@@ -87,7 +93,7 @@ namespace RoyaleTrackerAPI.Controllers
         [HttpGet]
         public string GetUsers()
         {
-            List<User> users = repo.GetAllUsers();
+            List<User> users = usersRepo.GetAllUsers();
 
             return JsonConvert.SerializeObject(users, Formatting.Indented, new JsonSerializerSettings
             {
@@ -101,7 +107,7 @@ namespace RoyaleTrackerAPI.Controllers
         [HttpGet("{username}", Name = "GetUser")]
         public string GetUser(string username)
         {
-            User user = repo.GetUserByUsername(username);
+            User user = usersRepo.GetUserByUsername(username);
             return JsonConvert.SerializeObject(user, Formatting.Indented, new JsonSerializerSettings
             {
                 NullValueHandling = NullValueHandling.Ignore
@@ -114,14 +120,14 @@ namespace RoyaleTrackerAPI.Controllers
         [HttpDelete("{username}")]
         public void DeleteUser(string username)
         {
-            repo.DeleteUser(username);
+            usersRepo.DeleteUser(username);
         }
 
         [Authorize(Policy = "AdminOnly")]
         [HttpPut]
         public void UpdateUser([FromBody] User user)
         {
-            repo.UpdateUser(user);
+            usersRepo.UpdateUser(user);
         }
 
     }

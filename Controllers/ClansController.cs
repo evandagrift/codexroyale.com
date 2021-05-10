@@ -23,17 +23,19 @@ namespace RoyaleTrackerAPI.Controllers
 
         //context to DB and Repo for handling
         private TRContext context;
+        private Client client;
         private ClansRepo repo;
 
         //loading in injected dependancies
-        public ClansController(CustomAuthenticationManager m, TRContext c)
+        public ClansController(CustomAuthenticationManager m, Client c, TRContext ct)
         {
             customAuthenticationManager = m;
             // commented out while testing 
-            context = c;
+            context = ct;
+            client = c;
 
             //init the repo with DB context
-            repo = new ClansRepo(context);
+            repo = new ClansRepo(client, context);
         }
         // POST api/Clans
         [Authorize(Policy = "AdminOnly")]
