@@ -1,4 +1,5 @@
-﻿using RoyaleTrackerAPI.Models;
+﻿using Newtonsoft.Json;
+using RoyaleTrackerAPI.Models;
 using RoyaleTrackerClasses;
 using System;
 using System.Collections.Generic;
@@ -7,13 +8,14 @@ using System.Threading.Tasks;
 
 namespace RoyaleTrackerAPI.Repos
 {
-    public class ClansRepo : IClansRepo
+    public class ClansRepo
     {
         //DB Access
         private TRContext context;
+        private Client client;
 
         //assigns argumented context
-        public ClansRepo(TRContext c) { context = c; }
+        public ClansRepo(Client c, TRContext ct) { context = ct; client = c; }
 
         //adds given clan to context
         public void AddClan(Clan clan) 
@@ -21,7 +23,43 @@ namespace RoyaleTrackerAPI.Repos
             context.Clans.Add(clan);
             context.SaveChanges();
         }
-        
+
+        //gets clan data from the official api via their clan tag
+        public async Task<Clan> GetOfficialClan(string tag)
+        {
+            string officialConnectionString = "/v1/clans/%23";
+
+            if (tag != null)
+            {
+                try
+                {
+                    //connection string for clan in offical API
+                    string connectionString = officialConnectionString + tag.Substring(1);
+
+                    //fetches clan data
+                    var result = await client.officialAPI.GetAsync(connectionString);
+
+
+                    if (result.IsSuccessStatusCode)
+                    {
+                        var content = await result.Content.ReadAsStringAsync();
+
+                        //deseriealizes json into Clan object
+                        Clan clan = JsonConvert.DeserializeObject<Clan>(content);
+
+                        //sets location code to a format that the DB can consume
+                        clan.LocationCode = (clan.Location["isCountry"] == "false") ? "International" : clan.Location["countryCode"];
+
+                        //update time in same format as official API
+                        clan.UpdateTime = DateTime.UtcNow.ToString("yyyyMMddTHHmmss");
+
+                        return clan;
+                    }
+                }
+                catch { return null; }
+            }
+            return null;
+        }
         //Deletes clan with given clanTag
         public void DeleteClan(int id)
         {

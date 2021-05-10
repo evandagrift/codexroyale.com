@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace RoyaleTrackerAPI.Repos
 {
-    public class TeamsRepo : ITeamsRepo
+    public class TeamsRepo 
     {
         //DB Access
         private TRContext context;

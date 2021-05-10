@@ -1,4 +1,6 @@
-﻿using RoyaleTrackerAPI.Models;
+﻿using Newtonsoft.Json;
+using RoyaleTrackerAPI.Models;
+using RoyaleTrackerAPI.Models.RoyaleClasses;
 using RoyaleTrackerClasses;
 using System;
 using System.Collections.Generic;
@@ -7,13 +9,14 @@ using System.Threading.Tasks;
 
 namespace RoyaleTrackerAPI.Repos
 {
-    public class PlayersRepo : IPlayersRepo
+    public class PlayersRepo 
     {
         //DB access
         private TRContext context;
-        
+        private Client client;
+
         //constructor loads in DB Context
-        public PlayersRepo(TRContext c) { context = c; }
+        public PlayersRepo(Client c, TRContext ct) { context = ct; client = c; }
 
         //Adds given Player
         public void AddPlayer(Player player) 
@@ -80,5 +83,87 @@ namespace RoyaleTrackerAPI.Repos
             }
             
         }
+
+        //Player Last seen is fetched from a Clan Api Call
+        public async Task<string> GetLastSeen(string playerTag, string clanTag)
+        {
+            //handler to fetch clan
+            ClansRepo clansHandler = new ClansRepo(client, context);
+
+            //fetch clan to get data from
+            Clan clan = await clansHandler.GetOfficialClan(clanTag);
+
+            //clan members are a list of players, we grab the player with matching tag
+            Player player = clan.MemberList.Where(p => p.Tag == playerTag).FirstOrDefault();
+
+            //return when last seen, Substringed because returned time has a timezone offset but all players are returned with an offset of 0
+            return player.LastSeen.Substring(0, 15);
+        }
+
+
+        //gets player data from the official api via their player tag
+        public async Task<Player> GetOfficialPlayer(string tag)
+        {
+            //teams handler to get/set teamId
+            TeamsRepo teamsHandler = new TeamsRepo(context);
+            //decks handler to get set deckId
+            DecksRepo decksHandler = new DecksRepo(context);
+
+            //try in case we get connection errors`
+            try
+            {
+                //
+                string connectionString = "/v1/players/%23" + tag.Substring(1);
+
+                var result = await client.officialAPI.GetAsync(connectionString);
+
+                if (result.IsSuccessStatusCode)
+                {
+                    var content = await result.Content.ReadAsStringAsync();
+                    Player player = JsonConvert.DeserializeObject<Player>(content);
+
+                    player.TeamId = teamsHandler.GetSetTeamId(player).TeamId;
+
+                    player.Deck = new Deck(player.CurrentDeck);
+
+                    player.CurrentDeckId = decksHandler.GetDeckId(player.Deck);
+                    player.CurrentFavouriteCardId = player.CurrentFavouriteCard.Id;
+                    player.UpdateTime = DateTime.UtcNow.ToString("yyyyMMddTHHmmss");
+
+                    if (player.Clan != null)
+                    {
+                        player.ClanTag = player.Clan.Tag;
+                        player.LastSeen = await GetLastSeen(player.Tag, player.ClanTag);
+                    }
+                    player.CardsDiscovered = player.Cards.Count;
+                    return player;
+                }
+            }
+            catch { return null; }
+            return null;
+        }
+        public async Task<Player> GetOfficialPlayerWithChests(string tag)
+        {
+            Player returnPlayer = GetOfficialPlayer(tag).Result;
+
+            //try in case we get connection errors`
+            try
+            {
+                //
+                string connectionString = "/v1/players/%23" + tag.Substring(1) + "/upcomingchests";
+
+                var result = await client.officialAPI.GetAsync(connectionString);
+
+                if (result.IsSuccessStatusCode)
+                {
+                    var content = await result.Content.ReadAsStringAsync();
+                    returnPlayer.Chests = JsonConvert.DeserializeObject<List<Chest>>(content);
+                }
+            }
+            catch { }
+
+            return returnPlayer;
+        }
+
     }
 }

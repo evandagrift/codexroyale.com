@@ -23,14 +23,16 @@ namespace RoyaleTrackerAPI.Controllers
 
         //context to DB and Repo for handling
         private TRContext context;
+        private Client client;
         private BattlesRepo repo;
 
         //loading in injected dependancies
-        public BattlesController(CustomAuthenticationManager m, TRContext c)
+        public BattlesController(CustomAuthenticationManager m, Client c, TRContext ct)
         {
             customAuthenticationManager = m;
-            context = c;
-            repo = new BattlesRepo(context);
+            context = ct;
+            client = c;
+            repo = new BattlesRepo(client, context);
         }
 
         // POST api/Battles

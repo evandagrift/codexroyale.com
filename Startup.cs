@@ -33,13 +33,6 @@ namespace RoyaleTrackerAPI
         public void ConfigureServices(IServiceCollection services)
         {
 
-            services.AddCors(options => options.AddDefaultPolicy( builder =>
-            {
-                builder
-                  .AllowAnyHeader()
-               .WithOrigins("http://localhost:3000")
-                  .AllowAnyMethod();
-            }));
             services.AddControllers();
 
             services.AddDbContext<TRContext>(options => options.UseMySQL(Configuration["ConnectionStrings:DBConnectionString"]));
@@ -54,8 +47,8 @@ namespace RoyaleTrackerAPI
             });
 
 
-
             services.AddSingleton<CustomAuthenticationManager>();
+            services.AddSingleton<Client>(new Client(Configuration["ConnectionStrings:DBConnectionString"]));
             services.AddSingleton<string>(Configuration["ConnectionStrings:BearerToken"]);
             //allow connection between origins
 
@@ -66,13 +59,10 @@ namespace RoyaleTrackerAPI
         {
 
             app.UseRouting();
-            var officialToken = Configuration["ConnectionStrings:BearerToken"];
             app.UseHttpsRedirection();
-            // global cors policy
-            app.UseCors();
             app.UseAuthentication();
             app.UseAuthorization();
-
+    
 
             app.UseEndpoints(endpoints =>
             {

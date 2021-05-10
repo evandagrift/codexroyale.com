@@ -25,16 +25,17 @@ namespace RoyaleTrackerAPI.Controllers
         //context to DB and Repo for handling
         private TRContext context;
         private PlayersRepo repo;
+        private Client client;
 
         //loading in injected dependancies
-        public PlayersController(CustomAuthenticationManager m, TRContext c)
+        public PlayersController(CustomAuthenticationManager m, Client c, TRContext ct)
         {
             customAuthenticationManager = m;
             // commented out while testing 
-            context = c;
+            context = ct;
 
             //init the repo with DB context
-            repo = new PlayersRepo(context);
+            repo = new PlayersRepo(client, context);
         }
 
         // POST api/Players
@@ -45,7 +46,8 @@ namespace RoyaleTrackerAPI.Controllers
             repo.AddPlayer(player);
         }
 
-        [Authorize(Policy = "AdminOnly")]
+        [AllowAnonymous]
+        //[Authorize(Policy = "AdminOnly")]
         // GET: api/<NameController>
         [HttpGet]
         public string Get()

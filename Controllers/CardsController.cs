@@ -23,17 +23,18 @@ namespace RoyaleTrackerAPI.Controllers
 
         //context to DB and Repo for handling
         private TRContext context;
+        private Client client;
         private CardsRepo repo;
 
         //loading in injected dependancies
-        public CardsController(CustomAuthenticationManager m, TRContext c)
+        public CardsController(CustomAuthenticationManager m, Client c, TRContext ct)
         {
             customAuthenticationManager = m;
-
-            context = c;
+            client = c;
+            context = ct;
 
             //init the repo with DB context
-            repo = new CardsRepo(context);
+            repo = new CardsRepo(client, context);
         }
 
         [Authorize(Policy = "AdminOnly")]

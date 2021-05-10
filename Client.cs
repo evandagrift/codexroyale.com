@@ -9,15 +9,15 @@ namespace RoyaleTrackerAPI
 {
     public class Client
     {
-        public static string officialAPIConnectionString = "https://api.clashroyale.com/";
+        public static string officialAPIConnectionString = "https://api.clashroyale.com/v1/";
 
         public HttpClient officialAPI;
 
-        public Client(string token)
+        public Client(string officialToken)
         {
             officialAPI = new HttpClient();
             officialAPI.BaseAddress = new Uri(officialAPIConnectionString);
-            officialAPI.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+            officialAPI.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", officialToken);
         }
     }
 }
