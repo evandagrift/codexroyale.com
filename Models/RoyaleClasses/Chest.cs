@@ -1,28 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Threading.Tasks;
+﻿    using System;
+    using System.Collections.Generic;
 
-namespace RoyaleTrackerAPI.Models.RoyaleClasses
-{
-    public class Chest
+    namespace RoyaleTrackerAPI.Models.RoyaleClasses
     {
-        [DatabaseGenerated(DatabaseGeneratedOption.None)]
-        public int Id { get; set; }
-        public string Name { get; set; }
-        public string Url { get; set; }
-
-        [NotMapped]
-        public IDictionary<string, string> IconUrls { get; set; }
-
-        public void SetUrl()
+        public class Chest
         {
-            if (IconUrls != null)
-            {
-                Url = IconUrls["medium"];
-            }
+            public int Index { get; set; }
+            public string Name { get; set; }
+
+            public string Url { get; set; }
         }
     }
-}

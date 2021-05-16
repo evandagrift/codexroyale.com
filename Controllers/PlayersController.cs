@@ -24,7 +24,7 @@ namespace RoyaleTrackerAPI.Controllers
 
         //context to DB and Repo for handling
         private TRContext context;
-        private PlayersRepo repo;
+        private PlayersRepo playersRepo;
         private Client client;
 
         //loading in injected dependancies
@@ -33,9 +33,9 @@ namespace RoyaleTrackerAPI.Controllers
             customAuthenticationManager = m;
             // commented out while testing 
             context = ct;
-
+            client = c;
             //init the repo with DB context
-            repo = new PlayersRepo(client, context);
+            playersRepo = new PlayersRepo(client, context);
         }
 
         // POST api/Players
@@ -43,16 +43,15 @@ namespace RoyaleTrackerAPI.Controllers
         [HttpPost]
         public void Post([FromBody] Player player)
         {
-            repo.AddPlayer(player);
+            playersRepo.AddPlayer(player);
         }
 
-        [AllowAnonymous]
-        //[Authorize(Policy = "AdminOnly")]
+        [Authorize(Policy = "AdminOnly")]
         // GET: api/<NameController>
         [HttpGet]
         public string Get()
         {
-            List<Player> players = repo.GetAllPlayers();
+            List<Player> players = playersRepo.GetAllPlayers();
 
             return JsonConvert.SerializeObject(players, Formatting.Indented, new JsonSerializerSettings
             {
@@ -66,20 +65,37 @@ namespace RoyaleTrackerAPI.Controllers
         [HttpGet("{playerId}", Name = "Get")]
         public string Get(int playerId)
         {
-            Player player = repo.GetPlayerById(playerId);
+            Player player = playersRepo.GetPlayerById(playerId);
             return JsonConvert.SerializeObject(player, Formatting.Indented, new JsonSerializerSettings
             {
                 NullValueHandling = NullValueHandling.Ignore
             });
         }
 
+        [Authorize(Policy = "All")]
+        //[AllowAnonymous]
+        [HttpPost("update")]
+        public async Task<Player> GetUpdatePlayer([FromBody] User user)
+        {
+            Player returnPlayer = await playersRepo.UpdateGetPlayerWithChestsBattles(user);
+
+
+            if (returnPlayer != null)
+            {
+
+                return returnPlayer;
+            }
+            else
+            {
+                return null; }
+        }
 
         [Authorize(Policy = "AdminOnly")]
         // DELETE: api/Products/5
         [HttpDelete("{playerId}")]
         public void Delete(int playerId)
         {
-            repo.DeletePlayer(playerId);
+            playersRepo.DeletePlayer(playerId);
         }
 
         [Authorize(Policy = "AdminOnly")]
@@ -87,7 +103,7 @@ namespace RoyaleTrackerAPI.Controllers
         [HttpPut]
         public void Update([FromBody] Player Player)
         {
-            repo.UpdatePlayer(Player);
+            playersRepo.UpdatePlayer(Player);
         }
 
 

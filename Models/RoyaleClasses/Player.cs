@@ -55,7 +55,7 @@ namespace RoyaleTrackerClasses
         [NotMapped]
         public List<Card> Cards { get; set; }
         [NotMapped]
-        public int CardsInGame { get; set; }
+        public List<Battle> Battles { get; set; }
         public int ClanCardsCollected { get; set; }
 
         public void SetDeck()
@@ -109,7 +109,7 @@ public override string ToString()
 
 
         returnString += "<div class=\"col-5 m-0\"><div class=\"text-center\"><p><b>Current Deck</b></p> " + Deck.ToString() + "<p>Profile Updated:" + UpdateTime + "</p></div></div></div></div>";
-
+63
         return returnString;
     }
     else { return null; }
