@@ -48,8 +48,7 @@ namespace RoyaleTrackerAPI
 
 
             services.AddSingleton<CustomAuthenticationManager>();
-            services.AddSingleton<Client>(new Client(Configuration["ConnectionStrings:DBConnectionString"]));
-            services.AddSingleton<string>(Configuration["ConnectionStrings:BearerToken"]);
+            services.AddSingleton<Client>(new Client(Configuration["ConnectionStrings:BearerToken"]));
             //allow connection between origins
 
         }

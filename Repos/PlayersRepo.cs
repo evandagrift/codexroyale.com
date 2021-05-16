@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace RoyaleTrackerAPI.Repos
 {
-    public class PlayersRepo 
+    public class PlayersRepo
     {
         //DB access
         private TRContext context;
@@ -19,8 +19,8 @@ namespace RoyaleTrackerAPI.Repos
         public PlayersRepo(Client c, TRContext ct) { context = ct; client = c; }
 
         //Adds given Player
-        public void AddPlayer(Player player) 
-        { 
+        public void AddPlayer(Player player)
+        {
             context.Players.Add(player);
             context.SaveChanges();
         }
@@ -32,7 +32,7 @@ namespace RoyaleTrackerAPI.Repos
             Player playerToDelete = GetPlayerById(playerId);
 
             //if a valid player instance i fetched from the database, it will be removed
-            if(playerToDelete != null)
+            if (playerToDelete != null)
             {
                 context.Players.Remove(playerToDelete);
                 context.SaveChanges();
@@ -52,7 +52,7 @@ namespace RoyaleTrackerAPI.Repos
             Player playerToUpdate = GetPlayerById(player.Id);
 
             //if a valid player is returned it updates all the fields in the fetched class
-            if(playerToUpdate != null)
+            if (playerToUpdate != null)
             {
                 playerToUpdate.Tag = player.Tag;
                 playerToUpdate.Name = player.Name;
@@ -60,7 +60,6 @@ namespace RoyaleTrackerAPI.Repos
                 playerToUpdate.Trophies = player.Trophies;
 
                 playerToUpdate.CardsDiscovered = player.CardsDiscovered;
-                playerToUpdate.CardsInGame = player.CardsInGame;
 
                 playerToUpdate.ClanTag = player.ClanTag;
 
@@ -81,7 +80,7 @@ namespace RoyaleTrackerAPI.Repos
                 playerToUpdate.Losses = player.Losses;
                 context.SaveChanges();
             }
-            
+
         }
 
         //Player Last seen is fetched from a Clan Api Call
@@ -105,9 +104,9 @@ namespace RoyaleTrackerAPI.Repos
         public async Task<Player> GetOfficialPlayer(string tag)
         {
             //teams handler to get/set teamId
-            TeamsRepo teamsHandler = new TeamsRepo(context);
+            TeamsRepo temsRepo = new TeamsRepo(context);
             //decks handler to get set deckId
-            DecksRepo decksHandler = new DecksRepo(context);
+            DecksRepo decksRepo  = new DecksRepo(context);
 
             //try in case we get connection errors`
             try
@@ -116,17 +115,15 @@ namespace RoyaleTrackerAPI.Repos
                 string connectionString = "/v1/players/%23" + tag.Substring(1);
 
                 var result = await client.officialAPI.GetAsync(connectionString);
-
                 if (result.IsSuccessStatusCode)
                 {
                     var content = await result.Content.ReadAsStringAsync();
                     Player player = JsonConvert.DeserializeObject<Player>(content);
 
-                    player.TeamId = teamsHandler.GetSetTeamId(player).TeamId;
+                    player.TeamId = temsRepo.GetSetTeamId(player).TeamId;
+                    player.Deck = decksRepo.GetDeckWithId(player.CurrentDeck);
 
-                    player.Deck = new Deck(player.CurrentDeck);
-
-                    player.CurrentDeckId = decksHandler.GetDeckId(player.Deck);
+                    player.CurrentDeckId = player.Deck.Id;
                     player.CurrentFavouriteCardId = player.CurrentFavouriteCard.Id;
                     player.UpdateTime = DateTime.UtcNow.ToString("yyyyMMddTHHmmss");
 
@@ -138,32 +135,87 @@ namespace RoyaleTrackerAPI.Repos
                     player.CardsDiscovered = player.Cards.Count;
                     return player;
                 }
+                else return null;
+
             }
             catch { return null; }
-            return null;
+
         }
-        public async Task<Player> GetOfficialPlayerWithChests(string tag)
+        public async Task<List<Chest>> GetPlayerChestsAsync(string tag)
         {
-            Player returnPlayer = GetOfficialPlayer(tag).Result;
+            string connectionString = "/v1/players/%23" + tag.Substring(1) + "/upcomingchests";
 
             //try in case we get connection errors`
             try
             {
-                //
-                string connectionString = "/v1/players/%23" + tag.Substring(1) + "/upcomingchests";
-
                 var result = await client.officialAPI.GetAsync(connectionString);
 
                 if (result.IsSuccessStatusCode)
                 {
                     var content = await result.Content.ReadAsStringAsync();
-                    returnPlayer.Chests = JsonConvert.DeserializeObject<List<Chest>>(content);
-                }
-            }
-            catch { }
 
-            return returnPlayer;
+                    List<Chest> chests = JsonConvert.DeserializeObject<List<Chest>>(content.Substring(9, content.Length - 10));
+                    return chests;
+                }
+                else return null;
+            }
+            catch { return null; }
+
         }
 
+        public async Task<Player> UpdateGetPlayerWithChestsBattles(User user)
+        {
+
+            //check if the inserted tag is correct, and if so. get clan tag as well
+            BattlesRepo battlesRepo = new BattlesRepo(client, context);
+
+            Player fetchedPlayer = await GetOfficialPlayer(user.Tag);
+
+            List<Chest> playerChests = await GetPlayerChestsAsync(user.Tag);
+
+            Player lastSavedPlayer;
+
+            try
+            {
+                lastSavedPlayer = context.Players.Where(p => p.Tag == user.Tag).FirstOrDefault();
+            }
+            catch { lastSavedPlayer = null; }
+
+            if (fetchedPlayer != null)
+            {
+                //attach battles
+                List<Battle> pBattles;
+                //TODO:get save user and their battles to DB
+                //fetches the current player battles from the official DB
+                pBattles = await battlesRepo.GetOfficialPlayerBattles(fetchedPlayer.Tag);
+
+                if (lastSavedPlayer == null || fetchedPlayer.Wins != lastSavedPlayer.Wins || fetchedPlayer.Losses != lastSavedPlayer.Losses ||
+                    fetchedPlayer.ClanTag != lastSavedPlayer.ClanTag)
+                {
+
+                    if (user.ClanTag != fetchedPlayer.ClanTag || user.Tag != fetchedPlayer.Tag)
+                    {
+                        user = context.Users.Find(user.Username);
+                        user.ClanTag = fetchedPlayer.ClanTag;
+                        context.SaveChanges();
+                    }
+
+                    //adds new fetched battles to the DB and gets a count of added lines
+                    battlesRepo.AddBattles(pBattles);
+
+                    context.Players.Add(fetchedPlayer);
+                    context.SaveChanges();
+                    
+                }
+                else { fetchedPlayer = lastSavedPlayer; }
+
+
+                fetchedPlayer.Battles = pBattles;
+                fetchedPlayer.Chests = playerChests;
+
+                return fetchedPlayer;
+            }
+            else return null;
+        }
     }
 }

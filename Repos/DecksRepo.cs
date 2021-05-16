@@ -50,7 +50,12 @@ namespace RoyaleTrackerAPI.Repos
             //returns the fetched or created+fetched deck with Id 
             return deckToReturn;
         }
-        public int GetDeckId(Deck deck)
+
+        public Deck GetDeckWithId(List<Card> listCards)
+        {
+            return GetDeckWithId(new Deck(listCards));
+        }
+            public int GetDeckId(Deck deck)
         {
             //fetches/creates the deck with given cards
             Deck temp = GetDeckWithId(deck);

@@ -183,53 +183,6 @@ namespace RoyaleTrackerAPI.Repos
         }
 
 
-        //public User SaveNew(User user)
-        //{
-        //    //check if the inserted tag is correct, and if so. get clan tag as well
-        //    PlayersHandler playersHandler = new PlayersHandler(client, context);
-        //    BattlesHandler battlesHandler = new BattlesHandler(client, context);
-        //    ClansHandler clansHandler = new ClansHandler(client, context);
-        //    BattlesRepo battleRepo = new BattlesRepo(context);
-
-        //    try
-        //    {
-        //        Player player = playersHandler.GetOfficialPlayer(user.Tag).Result;
-        //        if (player != null)
-        //        {
-        //            //get newest player
-        //            //if it's been more than 24 hours save player/clan
-        //            Player fetchedPlayer = context.Players.Where(p => p.Tag == player.Tag).FirstOrDefault();
-
-        //            if(fetchedPlayer.Wins != player.Wins ||fetchedPlayer.Losses != player.Losses || fetchedPlayer.ClanTag != player.ClanTag)
-        //            {
-
-        //                context.Players.Add(player);
-
-        //                List<Battle> pBattles;
-        //                //TODO:get save user and their battles to DB
-        //                //fetches the current player battles from the official DB
-        //                pBattles = battlesHandler.GetOfficialPlayerBattles(player.Tag).Result;
-
-
-        //                //adds new fetched battles to the DB and gets a count of added lines
-        //                battleRepo.AddBattles(pBattles);
-
-        //            }
-        //            if (user.ClanTag != player.ClanTag || user.Tag != player.Tag)
-        //            {
-        //                user = context.Users.Find(user.Username);
-        //                user.Tag = player.Tag;
-        //                user.ClanTag = player.ClanTag;
-        //                context.SaveChanges();
-        //            }
-
-
-        //        }
-        //    }
-        //    catch { return null; }
-
-        //    return user;
-        //}
 
 
     }

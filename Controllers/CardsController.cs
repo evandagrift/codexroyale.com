@@ -60,8 +60,21 @@ namespace RoyaleTrackerAPI.Controllers
 
         }
 
-        [Authorize(Policy = "AdminOnly")]
+        [Authorize(Policy ="AdminOnly")]
+        [HttpPost("updatecards")]
+        public string UpdateCards()
+        {
+
+            List<Card> cards = repo.UpdateCards().Result;
+            return JsonConvert.SerializeObject(cards, Formatting.Indented, new JsonSerializerSettings
+            {
+                NullValueHandling = NullValueHandling.Ignore
+            });
+        }
+
+
         // GET api/Cards/
+        [Authorize(Policy = "AdminOnly")]
 
         [HttpGet("{cardID}", Name = "GetCard")]
         public string Get(int cardID)

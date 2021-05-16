@@ -17,8 +17,6 @@ namespace RoyaleTrackerAPI
             User userToReturn = new User() { Token = token };
             userToReturn = context.Users.Where(u => u.Token == token).FirstOrDefault();
 
-            if (userToReturn != null)
-                userToReturn.Password = null;
 
             return userToReturn;
         }
@@ -28,7 +26,7 @@ namespace RoyaleTrackerAPI
             //fetches a user by email or username if there is a match
             var checkValid = context.Users.Where(u => u.Username == user.Username || u.Email == user.Email).FirstOrDefault();
 
-            //if there are no users with those credentials checkValid will be null
+            //if there are no users with those credentials checkValid will be k
             if (checkValid == null)
             {
                 //make sure all neccessary fields are filled
@@ -42,7 +40,7 @@ namespace RoyaleTrackerAPI
                     user.Token = Guid.NewGuid().ToString() + Guid.NewGuid().ToString();
 
                     user = usersRepo.SaveAllByUser(user);
-                    context.Add(user);
+                    context.Users.Add(user);
                     context.SaveChanges();
 
                     return user;
@@ -77,21 +75,25 @@ namespace RoyaleTrackerAPI
                         {
                             return null;
                         }
+                        else
+                        {
+                            return user;
+                        }
 
-                        return fetchedUser;
                     }
                 }
             }
-            return null;
+                return null;
+            
         }
-        public Player Update(User user, TRContext context)
-        {
+        //public Player Update(User user, TRContext context)
+        //{
 
 
 
             
-            return null;
-        }
+        //    return null;
+        //}
 
     }
 }

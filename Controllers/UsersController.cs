@@ -24,6 +24,7 @@ namespace RoyaleTrackerAPI.Controllers
         private TRContext context;
         private Client client;
         private UsersRepo usersRepo;
+        private PlayersRepo playersRepo;
 
         //loading in injected dependancies
         public UsersController(CustomAuthenticationManager m, Client c,  TRContext ct)
@@ -35,6 +36,7 @@ namespace RoyaleTrackerAPI.Controllers
 
             //init the repo with DB context
             usersRepo = new UsersRepo(client,context);
+            playersRepo = new PlayersRepo(client, context);
 
 
         }
@@ -57,13 +59,10 @@ namespace RoyaleTrackerAPI.Controllers
         public IActionResult Login([FromBody] User user)
         {
 
-
-            Console.WriteLine("PointA:" + user.Username + " " + user.Password);
             User fetchedUser = customAuthenticationManager.Login(user, context);
 
             if (fetchedUser != null)
             {
-                Console.WriteLine("fetched" + user.Username + " " + user.Password);
                 return Ok(fetchedUser);
             }
             else return Unauthorized();

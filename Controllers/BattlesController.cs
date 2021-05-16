@@ -63,9 +63,9 @@ namespace RoyaleTrackerAPI.Controllers
             //returns battle with Id based off given battle, if said battle doesn't exist it is created and returned after assigned Id
             return repo.GetAllBattles(user);
         }
-       // [AllowAnonymous]
+
+
         [Authorize(Policy = "All")]
-        //[AllowAnonymous]
         // GET: api/Battles
         [HttpGet]
         public string Get()
@@ -83,7 +83,6 @@ namespace RoyaleTrackerAPI.Controllers
         [HttpGet("{battleID}", Name = "getbattlebyid")]
         public string Get(int battleID)
         {
-            Console.WriteLine("test api/battles:GET");
             //returns player with given Id
             return JsonConvert.SerializeObject(repo.GetBattleByID(battleID), Formatting.Indented, new JsonSerializerSettings
             {

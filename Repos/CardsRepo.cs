@@ -69,7 +69,7 @@ namespace RoyaleTrackerAPI.Repos
             try
             {
                 //connection string for official cards
-                string connectionString = "v1/cards";
+                string connectionString = "cards";
 
                 //gets the cards in a response message variable
                 var result = await client.officialAPI.GetAsync(connectionString);
@@ -93,50 +93,50 @@ namespace RoyaleTrackerAPI.Repos
 
             }
             catch { return null; }
-            return null;
 
         }
+        public async Task<List<Card>> UpdateCards()
+        {
+            //test against official
+            //add any that aren't in DB
+            List<Card> officialCards = await GetAllOfficialCards();
+            List<Card> codexCards = context.Cards.ToList();
+
+            //if successfully returned
+            //NEED TO TEST AGAINST 0 in Codex
+            if (officialCards != null && codexCards != null)
+            {
+                List<Card> cardsToAdd = new List<Card>();
+                if (officialCards.Count > codexCards.Count)
+                {
+                    //cycles through all cards in the codex
+                    officialCards.ForEach(card =>
+                    {
+                        if (!codexCards.Contains(card)) { cardsToAdd.Add(card); }
+                    });
+
+
+                    cardsToAdd.ForEach(card => card.Url = card.IconUrls["medium"]);
+                }
+
+                if(cardsToAdd.Count > 0)
+                {
+                    context.AddRange(cardsToAdd);
+                    context.SaveChanges();
+                }
+
+            }
+
+
+            return context.Cards.ToList();
+        }
+
     }
+
 }
-        //public async Task UpdateCodex()
-        //{
-        //    //test against official
-        //    //add any that aren't in DB
-        //    List<Card> officialCards = await GetAllOfficialCards();
-        //    List<Card> codexCards = await GetAllCodexCards();
-
-        //    //if successfully returned
-        //    //NEED TO TEST AGAINST 0 in Codex
-        //    if (officialCards != null && codexCards != null)
-        //    {
-        //        if (officialCards.Count > codexCards.Count)
-        //        {
-        //            //cycles through all cards in the codex
-        //            codexCards.ForEach(codexCard =>
-        //            {
-        //                //finds card in official with matching Id
-        //                //I'm doing it this way because the returned official cards class instance won't be an exact match to the one in codex
-        //                Card cardToRemove = officialCards.Where(c => c.Id == codexCard.Id).FirstOrDefault();
-
-        //                //if card was properly located it removes it from the list of official cards
-        //                if (cardToRemove != null)
-        //                    officialCards.Remove(cardToRemove);
-        //            });
-
-        //            //after all the codex cards have been removed
-        //            //adds all the remaining cards that aren't in the codex
-        //            for(int i = 0; i < officialCards.Count; i++)
-        //            {
-        //                await AddCard(officialCards[i]);
-        //            }
-
-        //        }
-        //    }
 
 
-
-
-        //}
+//}
 /*
         public CardsHandler()
         {
