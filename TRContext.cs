@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using RoyaleTrackerAPI.Models.RoyaleClasses;
 using RoyaleTrackerClasses;
 using System;
 using System.Collections.Generic;
@@ -21,5 +22,6 @@ namespace RoyaleTrackerAPI.Models
         public DbSet<GameMode> GameModes { get; set; }
         public DbSet<Team> Teams { get; set; }
         public DbSet<User> Users { get; set; }
+        public DbSet<Chest> Chests { get; set; }
     }
 }
