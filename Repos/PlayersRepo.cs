@@ -159,6 +159,7 @@ namespace RoyaleTrackerAPI.Repos
                 }
                 else return null;
             }
+
             catch { return null; }
 
         }
@@ -169,8 +170,11 @@ namespace RoyaleTrackerAPI.Repos
             //check if the inserted tag is correct, and if so. get clan tag as well
             BattlesRepo battlesRepo = new BattlesRepo(client, context);
 
+            //player fetched from official API
+            //still needs to be packaged for front end
             Player fetchedPlayer = await GetOfficialPlayer(user.Tag);
 
+            //gets players Chests r
             List<Chest> playerChests = await GetPlayerChestsAsync(user.Tag);
 
             Player lastSavedPlayer;

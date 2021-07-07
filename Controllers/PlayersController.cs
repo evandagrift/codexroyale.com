@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using RoyaleTrackerAPI.Models;
+using RoyaleTrackerAPI.Models.RoyaleClasses;
 using RoyaleTrackerAPI.Repos;
 using RoyaleTrackerClasses;
 
@@ -25,6 +26,7 @@ namespace RoyaleTrackerAPI.Controllers
         //context to DB and Repo for handling
         private TRContext context;
         private PlayersRepo playersRepo;
+        private ChestsRepo chestsRepo;
         private Client client;
 
         //loading in injected dependancies
@@ -36,6 +38,7 @@ namespace RoyaleTrackerAPI.Controllers
             client = c;
             //init the repo with DB context
             playersRepo = new PlayersRepo(client, context);
+            chestsRepo = new ChestsRepo(context);
         }
 
         // POST api/Players
@@ -78,16 +81,23 @@ namespace RoyaleTrackerAPI.Controllers
         public async Task<Player> GetUpdatePlayer([FromBody] User user)
         {
             Player returnPlayer = await playersRepo.UpdateGetPlayerWithChestsBattles(user);
-
-
-            if (returnPlayer != null)
+            if (returnPlayer != null && returnPlayer.Chests != null)
             {
+                returnPlayer.Chests = await chestsRepo.FillChestUrls(returnPlayer.Chests);
 
+                Console.WriteLine("Flag Hit");
+
+
+                //returnPlayer.Chests.ForEach(c =>{
+                //    c.IconUrl = chestsRepo.GetChestByName(c.Name).IconUrl;
+                //});
+                //return returnPlayer;
                 return returnPlayer;
             }
             else
             {
-                return null; }
+                return null;
+            }
         }
 
         [Authorize(Policy = "AdminOnly")]

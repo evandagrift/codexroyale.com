@@ -1,13 +1,19 @@
-﻿    using System;
-    using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
-    namespace RoyaleTrackerAPI.Models.RoyaleClasses
+namespace RoyaleTrackerAPI.Models.RoyaleClasses
+{
+    public class Chest
     {
-        public class Chest
-        {
-            public int Index { get; set; }
-            public string Name { get; set; }
+        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.None)]
+        public string Name { get; set; }
 
-            public string Url { get; set; }
-        }
+        public string IconUrl { get; set; }
+
+        [NotMapped]
+        public int Index { get; set; }
     }
+}
