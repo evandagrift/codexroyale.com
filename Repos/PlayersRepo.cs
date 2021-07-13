@@ -212,10 +212,10 @@ namespace RoyaleTrackerAPI.Repos
                     
                 }
                 else { fetchedPlayer = lastSavedPlayer; }
-
-
-                fetchedPlayer.Battles = pBattles;
+                
                 fetchedPlayer.Chests = playerChests;
+
+                fetchedPlayer.Battles = battlesRepo.GetAllBattles(user);
 
                 return fetchedPlayer;
             }

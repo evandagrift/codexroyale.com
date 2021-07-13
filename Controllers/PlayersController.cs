@@ -80,24 +80,13 @@ namespace RoyaleTrackerAPI.Controllers
         [HttpPost("update")]
         public async Task<Player> GetUpdatePlayer([FromBody] User user)
         {
+            //get the users's player data w/ their chests in rotation as well as battles
             Player returnPlayer = await playersRepo.UpdateGetPlayerWithChestsBattles(user);
-            if (returnPlayer != null && returnPlayer.Chests != null)
-            {
-                returnPlayer.Chests = await chestsRepo.FillChestUrls(returnPlayer.Chests);
-
-                Console.WriteLine("Flag Hit");
 
 
-                //returnPlayer.Chests.ForEach(c =>{
-                //    c.IconUrl = chestsRepo.GetChestByName(c.Name).IconUrl;
-                //});
-                //return returnPlayer;
-                return returnPlayer;
-            }
-            else
-            {
-                return null;
-            }
+        //
+
+            return returnPlayer;
         }
 
         [Authorize(Policy = "AdminOnly")]
