@@ -23,7 +23,7 @@
             //fetches game mode from DB at given ChestID
             public Chest GetChestByName(string chestName) { return context.Chests.Find(chestName); }
 
-            public async Task<List<Chest>> FillChestUrls(List<Chest> chestsToBeFilled)
+            public List<Chest> FillChestUrls(List<Chest> chestsToBeFilled)
             {
                 List<Chest> urlChests = GetAllChests();
 
@@ -32,7 +32,7 @@
                 {
                 urlChests.ForEach(u =>
                 {
-                    if (chestsToBeFilled[c].Name == u.Name) { chestsToBeFilled[c].IconUrl = u.IconUrl; }
+                    if (chestsToBeFilled[c].Name == u.Name) { chestsToBeFilled[c].Url = u.Url; }
                 });
                 }
 
@@ -49,7 +49,7 @@
                 //if a valid gameMode is fetched from the database it updates it
                 if (chestToUpdate != null)
                 {
-                    chestToUpdate.IconUrl = chest.IconUrl;
+                    chestToUpdate.Url = chest.Url;
                     context.SaveChanges();
                 }
             }
