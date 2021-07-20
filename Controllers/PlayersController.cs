@@ -82,8 +82,6 @@ namespace RoyaleTrackerAPI.Controllers
         {
             //get the users's player data w/ their chests in rotation as well as battles
             Player returnPlayer = await playersRepo.UpdateGetPlayerWithChestsBattles(user);
-
-
         //
 
             return returnPlayer;

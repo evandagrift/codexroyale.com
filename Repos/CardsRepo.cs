@@ -13,9 +13,28 @@ namespace RoyaleTrackerAPI.Repos
         //Access to DB
         private TRContext context;
         private Client client;
-
+        private List<Card> cardsWthUrl;
         //Constructor assigning argumented context
-        public CardsRepo(Client c, TRContext ct) { context = ct; client = c; }
+        public CardsRepo(Client c, TRContext ct) 
+        { 
+            context = ct; 
+            client = c; 
+            cardsWthUrl = context.Cards.ToList();
+            //cardsWthUrl.ForEach(c =>
+            //{
+            //    AddCardIfNew(c);
+            //});
+        }
+        //Constructor assigning argumented context
+        public CardsRepo(TRContext ct) 
+        { 
+            context = ct;
+            cardsWthUrl = context.Cards.ToList();
+            //cardsWthUrl.ForEach(c =>
+            //{
+            //    AddCardIfNew(c);
+            //});
+        }
 
         //adds given card to context
         public void AddCardIfNew(Card card)
@@ -42,10 +61,10 @@ namespace RoyaleTrackerAPI.Repos
         }
 
         //returns a list of all cards in DB
-        public List<Card> GetAllCards() { return context.Cards.ToList(); }
+        public List<Card> GetAllCards() { return cardsWthUrl; }
 
         //returns Card from Db with given Card ID
-        public Card GetCardByID(int cardID) { return context.Cards.Find(cardID); }
+        public Card GetCardByID(int cardId) { return cardsWthUrl.Where( c => c.Id == cardId).FirstOrDefault(); }
 
         //updates card at given ID
         public void UpdateCard(Card card)
@@ -60,6 +79,30 @@ namespace RoyaleTrackerAPI.Repos
                 cardToUpdate.Url = cardToUpdate.Url;
                 context.SaveChanges();
             }
+        }
+
+        public Deck FillDeckUrls(Deck deckToBeFilled)
+        {
+            deckToBeFilled.Card1 = FillCardUrl(deckToBeFilled.Card1);
+            deckToBeFilled.Card2 = FillCardUrl(deckToBeFilled.Card2);
+            deckToBeFilled.Card3 = FillCardUrl(deckToBeFilled.Card3);
+            deckToBeFilled.Card4 = FillCardUrl(deckToBeFilled.Card4);
+            deckToBeFilled.Card5 = FillCardUrl(deckToBeFilled.Card5);
+            deckToBeFilled.Card6 = FillCardUrl(deckToBeFilled.Card6);
+            deckToBeFilled.Card7 = FillCardUrl(deckToBeFilled.Card7);
+            deckToBeFilled.Card8 = FillCardUrl(deckToBeFilled.Card8);
+
+            return deckToBeFilled;
+        }
+        public List<Card> FillCardUrls(List<Card> cardsToBeFilled)
+        {
+            cardsToBeFilled.ForEach(card => card = FillCardUrl(card));
+
+            return cardsToBeFilled;
+        }
+        public Card FillCardUrl(Card cardToBeFilled)
+        {
+            return cardsWthUrl.Where(c => c.Id == cardToBeFilled.Id).FirstOrDefault();
         }
 
         //retrieves all cards in the game from official API
@@ -116,11 +159,13 @@ namespace RoyaleTrackerAPI.Repos
                     });
 
 
-                    cardsToAdd.ForEach(card => card.Url = card.IconUrls["medium"]);
                 }
 
                 if(cardsToAdd.Count > 0)
                 {
+                    //assigns url variable from IconUrl
+                    cardsToAdd = FillCardUrls(cardsToAdd);
+
                     context.AddRange(cardsToAdd);
                     context.SaveChanges();
                 }

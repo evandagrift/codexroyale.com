@@ -11,7 +11,7 @@ namespace RoyaleTrackerAPI.Models.RoyaleClasses
         [DatabaseGenerated(DatabaseGeneratedOption.None)]
         public string Name { get; set; }
 
-        public string IconUrl { get; set; }
+        public string Url { get; set; }
 
         [NotMapped]
         public int Index { get; set; }

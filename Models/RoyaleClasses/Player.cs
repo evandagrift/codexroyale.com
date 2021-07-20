@@ -31,7 +31,7 @@ namespace RoyaleTrackerClasses
         [NotMapped]
         public List<Chest> Chests { get; set; }
         [NotMapped]
-        public Deck Deck { get { return new Deck(CurrentDeck); } set { } }
+        public Deck Deck { get; set; }
 
         [NotMapped]
         public Clan Clan { get; set; }

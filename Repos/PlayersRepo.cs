@@ -106,43 +106,71 @@ namespace RoyaleTrackerAPI.Repos
             //teams handler to get/set teamId
             TeamsRepo temsRepo = new TeamsRepo(context);
             //decks handler to get set deckId
-            DecksRepo decksRepo  = new DecksRepo(context);
+            DecksRepo decksRepo = new DecksRepo(context);
+            CardsRepo cardsRepo = new CardsRepo(context);
+            ClansRepo clansRepo = new ClansRepo(client, context);
 
             //try in case we get connection errors`
             try
             {
-                //
+
                 string connectionString = "/v1/players/%23" + tag.Substring(1);
 
                 var result = await client.officialAPI.GetAsync(connectionString);
+
                 if (result.IsSuccessStatusCode)
                 {
                     var content = await result.Content.ReadAsStringAsync();
                     Player player = JsonConvert.DeserializeObject<Player>(content);
 
+                    //gets the players team ID
                     player.TeamId = temsRepo.GetSetTeamId(player).TeamId;
+
+
                     player.Deck = decksRepo.GetDeckWithId(player.CurrentDeck);
-
                     player.CurrentDeckId = player.Deck.Id;
-                    player.CurrentFavouriteCardId = player.CurrentFavouriteCard.Id;
-                    player.UpdateTime = DateTime.UtcNow.ToString("yyyyMMddTHHmmss");
 
+
+
+                    //assigns current favorite card details
+                    player.CurrentFavouriteCardId = player.CurrentFavouriteCard.Id;
+                    player.CurrentFavouriteCard = cardsRepo.FillCardUrl(player.CurrentFavouriteCard);
+
+
+
+                    //assigns Discovered Card URLS
+                    player.Cards = cardsRepo.FillCardUrls(player.Cards);
+                    player.CardsDiscovered = player.Cards.Count;
+
+
+
+                    Console.WriteLine("Making it to Here");
+                    //if the player has a clan it assigns the tag to the player and get's their last seen time
+                    //also collects the players Clan Info if they have one
                     if (player.Clan != null)
                     {
                         player.ClanTag = player.Clan.Tag;
                         player.LastSeen = await GetLastSeen(player.Tag, player.ClanTag);
+                        player.Clan = await clansRepo.GetOfficialClan(player.ClanTag);
                     }
-                    player.CardsDiscovered = player.Cards.Count;
+
+                    //sets the time of this update
+                    player.UpdateTime = DateTime.UtcNow.ToString("yyyyMMddTHHmmss");
+
+                    Console.WriteLine("Returning player to the FrontEnd");
                     return player;
                 }
                 else return null;
 
             }
-            catch { return null; }
+                
+            catch { Console.WriteLine("something is failing in the get Official Player Try"); return null; }
 
         }
         public async Task<List<Chest>> GetPlayerChestsAsync(string tag)
         {
+            ChestsRepo chestsRepo = new ChestsRepo(context);
+
             string connectionString = "/v1/players/%23" + tag.Substring(1) + "/upcomingchests";
 
             //try in case we get connection errors`
@@ -155,7 +183,9 @@ namespace RoyaleTrackerAPI.Repos
                     var content = await result.Content.ReadAsStringAsync();
 
                     List<Chest> chests = JsonConvert.DeserializeObject<List<Chest>>(content.Substring(9, content.Length - 10));
-                    return chests;
+
+                    //fills returned chests with urls
+                    return chestsRepo.FillChestUrls(chests);
                 }
                 else return null;
             }
@@ -167,16 +197,15 @@ namespace RoyaleTrackerAPI.Repos
         public async Task<Player> UpdateGetPlayerWithChestsBattles(User user)
         {
 
-            //check if the inserted tag is correct, and if so. get clan tag as well
             BattlesRepo battlesRepo = new BattlesRepo(client, context);
+            ChestsRepo chestsRepo = new ChestsRepo(context);
 
             //player fetched from official API
             //still needs to be packaged for front end
             Player fetchedPlayer = await GetOfficialPlayer(user.Tag);
 
-            //gets players Chests r
-            List<Chest> playerChests = await GetPlayerChestsAsync(user.Tag);
 
+            //creating the variable outside try so the function has access
             Player lastSavedPlayer;
 
             try
@@ -185,14 +214,16 @@ namespace RoyaleTrackerAPI.Repos
             }
             catch { lastSavedPlayer = null; }
 
+
+
+            //makes sure new player data is recieved from the offical API
             if (fetchedPlayer != null)
             {
-                //attach battles
-                List<Battle> pBattles;
-                //TODO:get save user and their battles to DB
                 //fetches the current player battles from the official DB
-                pBattles = await battlesRepo.GetOfficialPlayerBattles(fetchedPlayer.Tag);
+                List<Battle> pBattles = await battlesRepo.GetOfficialPlayerBattles(fetchedPlayer.Tag); ;
 
+
+                //if there are no instances of this player saved or
                 if (lastSavedPlayer == null || fetchedPlayer.Wins != lastSavedPlayer.Wins || fetchedPlayer.Losses != lastSavedPlayer.Losses ||
                     fetchedPlayer.ClanTag != lastSavedPlayer.ClanTag)
                 {
@@ -201,6 +232,7 @@ namespace RoyaleTrackerAPI.Repos
                     {
                         user = context.Users.Find(user.Username);
                         user.ClanTag = fetchedPlayer.ClanTag;
+
                         context.SaveChanges();
                     }
 
@@ -209,17 +241,19 @@ namespace RoyaleTrackerAPI.Repos
 
                     context.Players.Add(fetchedPlayer);
                     context.SaveChanges();
-                    
                 }
                 else { fetchedPlayer = lastSavedPlayer; }
-                
+
+                //gets players Chests r
+                List<Chest> playerChests = await GetPlayerChestsAsync(user.Tag);
+
                 fetchedPlayer.Chests = playerChests;
 
                 fetchedPlayer.Battles = battlesRepo.GetAllBattles(user);
+            }//if 
+            else { return null;  }
 
-                return fetchedPlayer;
-            }
-            else return null;
+            return fetchedPlayer;
         }
     }
 }
