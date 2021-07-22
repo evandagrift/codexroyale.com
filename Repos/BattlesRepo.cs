@@ -159,12 +159,32 @@ namespace RoyaleTrackerAPI.Repos
         public List<Battle> GetAllBattles() { return context.Battles.ToList(); }
 
         //returns a list of all battles from DB with specific tag
-        public List<Battle> GetAllBattles(User user) 
+        public List<Battle> GetAllBattles(User user)
         {
-            if(user.Tag!=null)
+            if (user.Tag != null)
             {
                 Player player = context.Players.Where(u => u.Tag == user.Tag).FirstOrDefault();
                 return context.Battles.Where(b => b.Team1Id == player.TeamId || b.Team2Id == player.TeamId).ToList();
+            }
+            else { return null; }
+        }
+        //returns a list of all battles from DB with specific tag
+        public List<Battle> GetRecentBattles(User user)
+        {
+            if (user.Tag != null)
+            {
+                Player player = context.Players.Where(u => u.Tag == user.Tag).FirstOrDefault();
+                int numPlayerBattles = context.Battles.Where(b => b.Team1Id == player.TeamId || b.Team2Id == player.TeamId).Count();
+
+                int fetchThisMany = 30;
+
+                if (fetchThisMany > numPlayerBattles) fetchThisMany = numPlayerBattles;
+
+                List<Battle> battlesToReturn = context.Battles.Where(b => b.Team1Id == player.TeamId || b.Team2Id == player.TeamId).OrderByDescending(b => b.BattleId).Take(fetchThisMany).ToList();
+
+                Console.WriteLine("Player has played" + numPlayerBattles + "battles");
+
+                return battlesToReturn;
             }
             else { return null; }
         }
