@@ -18,10 +18,11 @@ namespace RoyaleTrackerAPI.Repos
         public ClansRepo(Client c, TRContext ct) { context = ct; client = c; }
 
         //adds given clan to context
-        public void AddClan(Clan clan) 
+        public Clan AddClan(Clan clan) 
         { 
             context.Clans.Add(clan);
             context.SaveChanges();
+            return clan;
         }
 
         //gets clan data from the official api via their clan tag
@@ -60,6 +61,31 @@ namespace RoyaleTrackerAPI.Repos
             }
             return null;
         }
+        public async Task<Clan> SaveClansNewest(string clanTag)
+        {
+            Clan clan = await GetOfficialClan(clanTag);
+            //gets the last saved line in the Clan DB for this particuar Clan
+            Clan lastLoggedClan = context.Clans.Where(c => c.Tag == clan.Tag).OrderByDescending(c => c.Id).FirstOrDefault();
+
+            //if this clan has been saved before it makes sure the data is new
+            //otherwise it will save it by default
+            if(lastLoggedClan != null)
+            {
+                if (clan.BadgeId != lastLoggedClan.BadgeId || clan.ClanChestLevel != lastLoggedClan.ClanChestLevel || clan.ClanChestStatus != lastLoggedClan.ClanChestStatus || clan.ClanScore != lastLoggedClan.ClanScore ||
+                    clan.ClanWarTrophies != lastLoggedClan.ClanWarTrophies || clan.Description != lastLoggedClan.Description || clan.DonationsPerWeek != lastLoggedClan.DonationsPerWeek || clan.LocationCode != lastLoggedClan.LocationCode || 
+                    clan.Members != lastLoggedClan.Members || clan.Name != lastLoggedClan.Name || clan.RequiredTrophies != lastLoggedClan.RequiredTrophies || clan.Type != lastLoggedClan.Type)
+                {
+                    //if the clan has changed it adds it to DB and returns the new
+                    lastLoggedClan = AddClan(clan);
+                }
+
+            }//if there are no instances of this clan saved it goes ahead and saves it then assigns to return variable
+            else { lastLoggedClan = AddClan(clan); }
+
+            return lastLoggedClan;
+        }
+
+
         //Deletes clan with given clanTag
         public void DeleteClan(int id)
         {

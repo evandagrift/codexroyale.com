@@ -22,7 +22,7 @@ namespace RoyaleTrackerAPI.Repos
 
 
             //sorts cards in deck highest to lowest so any combo will register the same
-            deck.SortCards(); 
+            deck.SortCards();
 
             //once the deck has an Id this will be set
             Deck deckToReturn = null;
@@ -33,7 +33,7 @@ namespace RoyaleTrackerAPI.Repos
                 //finds deck with given cards and sets the returnDeck to the deck from the DB w/ Id
                 deckToReturn = context.Decks.Where(d => d.Card1Id == deck.Card1Id && d.Card2Id == deck.Card2Id &&
             d.Card3Id == deck.Card3Id && d.Card4Id == deck.Card4Id && d.Card5Id == deck.Card5Id &&
-            d.Card6Id == deck.Card6Id && d.Card7Id == deck.Card7Id && d.Card8Id == deck.Card8Id).FirstOrDefault(); 
+            d.Card6Id == deck.Card6Id && d.Card7Id == deck.Card7Id && d.Card8Id == deck.Card8Id).FirstOrDefault();
             }
 
             //if this deck isn't in the DB
@@ -51,25 +51,32 @@ namespace RoyaleTrackerAPI.Repos
                 //d.Card3Id == deck.Card3Id && d.Card4Id == deck.Card4Id && d.Card5Id == deck.Card5Id &&
                 //d.Card6Id == deck.Card6Id && d.Card7Id == deck.Card7Id && d.Card8Id == deck.Card8Id).FirstOrDefault();
             }
-            deckToReturn.Card1 = deck.Card1;
-            deckToReturn.Card2 = deck.Card2;
-            deckToReturn.Card3 = deck.Card3;
-            deckToReturn.Card4 = deck.Card4;
-            deckToReturn.Card5 = deck.Card5;
-            deckToReturn.Card6 = deck.Card6;
-            deckToReturn.Card7 = deck.Card7;
-            deckToReturn.Card8 = deck.Card8;
 
-           // deckToReturn = cardsRepo.FillDeckUrls(deckToReturn); 
+            return FillDeckUrls(deckToReturn);
+        }
 
-            return deckToReturn;
+        public Deck FillDeckUrls(Deck deck)
+        {
+            CardsRepo carsdRepo = new CardsRepo(context);
+
+            deck.Card1 = carsdRepo.GetCardByID(deck.Card1Id);
+            deck.Card2 = carsdRepo.GetCardByID(deck.Card2Id);
+            deck.Card3 = carsdRepo.GetCardByID(deck.Card3Id);
+            deck.Card4 = carsdRepo.GetCardByID(deck.Card4Id);
+            deck.Card5 = carsdRepo.GetCardByID(deck.Card5Id);
+            deck.Card6 = carsdRepo.GetCardByID(deck.Card6Id);
+            deck.Card7 = carsdRepo.GetCardByID(deck.Card7Id);
+            deck.Card8 = carsdRepo.GetCardByID(deck.Card8Id);
+
+            return deck;
         }
 
         public Deck GetDeckWithId(List<Card> listCards)
         {
             return GetDeckWithId(new Deck(listCards));
         }
-            public int GetDeckId(Deck deck)
+
+        public int GetDeckId(Deck deck)
         {
             //fetches/creates the deck with given cards
             Deck temp = GetDeckWithId(deck);
@@ -83,9 +90,9 @@ namespace RoyaleTrackerAPI.Repos
         {
             //fetches deck with given ID
             Deck deckToRemove = GetDeckByID(deckID);
-            
+
             //if a valid deck is fetched from DB it removes it from context
-            if(deckToRemove != null)
+            if (deckToRemove != null)
             {
                 context.Decks.Remove(deckToRemove);
                 context.SaveChanges();
@@ -105,7 +112,7 @@ namespace RoyaleTrackerAPI.Repos
             Deck deckToUpdate = GetDeckByID(deck.Id);
 
             //if a valid deck is fetched it updates all of the fields of that deck
-            if(deckToUpdate!=null)
+            if (deckToUpdate != null)
             {
                 deckToUpdate.Card1Id = deck.Card1Id;
                 deckToUpdate.Card2Id = deck.Card2Id;

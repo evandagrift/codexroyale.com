@@ -139,19 +139,20 @@ namespace RoyaleTrackerAPI.Repos
                         c = cardsRepo.ConvertCardUrl(c);
                     });
 
-
-                    // player.Deck = decksRepo.GetDeckWithId(player.CurrentDeck);
-                    // player.CurrentDeckId = player.Deck.Id;
-
-
-                    //if the player has a clan it assigns the tag to the player and get's their last seen time
-                    //also collects the players Clan Info if they have one
                     if (player.Clan != null)
                     {
                         player.ClanTag = player.Clan.Tag;
                         player.LastSeen = await GetLastSeen(player.Tag, player.ClanTag);
-                        player.Clan = await clansRepo.GetOfficialClan(player.ClanTag);
+                        player.Clan = await clansRepo.SaveClansNewest(player.ClanTag);
                     }
+
+
+                    player.Deck = decksRepo.GetDeckWithId(player.CurrentDeck);
+                    player.CurrentDeckId = player.Deck.Id;
+                    
+                    //removing this from the provided data so Front end doesn't use currentdeck instead of the dressed Deck with all details
+                    player.CurrentDeck = null;
+
 
                     //sets the time of this update
                     player.UpdateTime = DateTime.UtcNow.ToString("yyyyMMddTHHmmss");
@@ -228,9 +229,9 @@ namespace RoyaleTrackerAPI.Repos
 
                     if (user.ClanTag != fetchedPlayer.ClanTag || user.Tag != fetchedPlayer.Tag)
                     {
+                        //if the user's Player's Clan has changed it will Automatically
                         user = context.Users.Find(user.Username);
                         user.ClanTag = fetchedPlayer.ClanTag;
-
                         context.SaveChanges();
                     }
 
@@ -247,7 +248,7 @@ namespace RoyaleTrackerAPI.Repos
 
                 fetchedPlayer.Chests = playerChests;
 
-                fetchedPlayer.Battles = battlesRepo.GetAllBattles(user);
+                fetchedPlayer.Battles = battlesRepo.GetRecentBattles(user);
             }//if 
             else { return null;  }
 
