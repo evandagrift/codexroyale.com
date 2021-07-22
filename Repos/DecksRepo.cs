@@ -60,7 +60,7 @@ namespace RoyaleTrackerAPI.Repos
             deckToReturn.Card7 = deck.Card7;
             deckToReturn.Card8 = deck.Card8;
 
-            deckToReturn = cardsRepo.FillDeckUrls(deckToReturn); 
+           // deckToReturn = cardsRepo.FillDeckUrls(deckToReturn); 
 
             return deckToReturn;
         }
