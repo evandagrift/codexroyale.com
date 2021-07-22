@@ -107,7 +107,10 @@ namespace RoyaleTrackerAPI.Repos
             TeamsRepo temsRepo = new TeamsRepo(context);
             //decks handler to get set deckId
             DecksRepo decksRepo = new DecksRepo(context);
-            CardsRepo cardsRepo = new CardsRepo(context);
+
+            //Needs client so it can autofill new cards if they're missing
+            CardsRepo cardsRepo = new CardsRepo(client,context);
+
             ClansRepo clansRepo = new ClansRepo(client, context);
 
             //try in case we get connection errors`
@@ -127,24 +130,20 @@ namespace RoyaleTrackerAPI.Repos
                     player.TeamId = temsRepo.GetSetTeamId(player).TeamId;
 
 
-                    player.Deck = decksRepo.GetDeckWithId(player.CurrentDeck);
-                    player.CurrentDeckId = player.Deck.Id;
-
-
-
                     //assigns current favorite card details
                     player.CurrentFavouriteCardId = player.CurrentFavouriteCard.Id;
-                    player.CurrentFavouriteCard = cardsRepo.FillCardUrl(player.CurrentFavouriteCard);
-
-
-
-                    //assigns Discovered Card URLS
-                    player.Cards = cardsRepo.FillCardUrls(player.Cards);
+                    player.CurrentFavouriteCard = cardsRepo.ConvertCardUrl(player.CurrentFavouriteCard);
                     player.CardsDiscovered = player.Cards.Count;
+                    player.Cards.ForEach(c =>
+                    {
+                        c = cardsRepo.ConvertCardUrl(c);
+                    });
 
 
+                    // player.Deck = decksRepo.GetDeckWithId(player.CurrentDeck);
+                    // player.CurrentDeckId = player.Deck.Id;
 
-                    Console.WriteLine("Making it to Here");
+
                     //if the player has a clan it assigns the tag to the player and get's their last seen time
                     //also collects the players Clan Info if they have one
                     if (player.Clan != null)
@@ -157,14 +156,13 @@ namespace RoyaleTrackerAPI.Repos
                     //sets the time of this update
                     player.UpdateTime = DateTime.UtcNow.ToString("yyyyMMddTHHmmss");
 
-                    Console.WriteLine("Returning player to the FrontEnd");
                     return player;
                 }
                 else return null;
 
             }
                 
-            catch { Console.WriteLine("something is failing in the get Official Player Try"); return null; }
+            catch { return null; }
 
         }
         public async Task<List<Chest>> GetPlayerChestsAsync(string tag)
