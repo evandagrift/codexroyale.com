@@ -1,56 +1,44 @@
-<div display="flex" align="center">
+<div display="flex" align="center"> 
 <br />
-  
+
 # Codex Royale REST API 
-  
 ![clash-logo]
 
-  
+Codex Royale REST API consumes game data via JSON from the [Clash Royale API](https://developer.clashroyale.com), packages the recieved data into [more practical classes](https://github.com/evandagrift/clash-royale-classes) and services [codexroyale.com](www.codexroyale.com) \**still in development\**
 
-  
-  
-  
-  
-Codex Royale REST API consumes game data via JSON from the ![Clash Royale API](https://developer.clashroyale.com), packages the recieved JSON into [more practical classes](https://github.com/evandagrift/clash-royale-classes) and services [codexroyale.com](www.codexroyale.com) 
-  
 ---
-
 ## Build Dependancies
-
-You will need to install all the below packages to be build the project
+You will need to install all the below packages to be able to build the project<br />
 <br />
-<br />
-[Newtonsoft.Json (12.0.3)](https://www.newtonsoft.com/json)
-<br />
+[Newtonsoft.Json (12.0.3)](https://www.newtonsoft.com/json)<br />
 <br />
 [Microsoft.EntityFrameworkCore (3.1.9)](https://docs.microsoft.com/en-us/ef/core/)
 <br />
 [Microsoft.EntityFrameworkCore.Design (3.1.9)](https://docs.microsoft.com/en-us/ef/core/)
 <br />
-[Microsoft.EntityFrameworkCore.Tools (3.1.9)](https://docs.microsoft.com/en-us/ef/core/)
+[Microsoft.EntityFrameworkCore.Tools (3.1.9)](https://docs.microsoft.com/en-us/ef/core/)<br />
 <br />
-<br />
-the two dependancies below this are for using SqlServer, this can be connected to any DB though with the correct dependancies installed
+the two dependancies below this are for using SqlServer, this can be connected to any DB though with the correct dependancies installed<br />
 <br />
 [Microsoft.EntityFrameworkCore.SqlServer (3.1.9)](https://docs.microsoft.com/en-us/ef/core/)
 <br />
-[Microsoft.EntityFrameworkCore.SqlServer.Design (3.1.9)](https://docs.microsoft.com/en-us/ef/core/)
+[Microsoft.EntityFrameworkCore.SqlServer.Design (3.1.9)](https://docs.microsoft.com/en-us/ef/core/)<br />
 <br />
-<br />
-[Microsoft.AspNetCore.Cors (2.2.0)](https://www.nuget.org/packages/Microsoft.AspNetCore.Cors/)
-<br />
+[Microsoft.AspNetCore.Cors (2.2.0)](https://www.nuget.org/packages/Microsoft.AspNetCore.Cors/)<br />
 <br />
 [Microsoft.AspNetCore.Authentication (2.2.0)](https://docs.microsoft.com/en-us/aspnet/core/security/authentication/?view=aspnetcore-3.1)
 <br />
-[Microsoft.AspNetCore.Authentication.JwtBearer (3.1.9)](https://docs.microsoft.com/en-us/aspnet/core/security/authentication/?view=aspnetcore-3.1)
-<br />
+[Microsoft.AspNetCore.Authentication.JwtBearer (3.1.9)](https://docs.microsoft.com/en-us/aspnet/core/security/authentication/?view=aspnetcore-3.1)<br />
 <br />
 [BCrypt.Net-Next (4.0.2)](https://github.com/BcryptNet/bcrypt.net/)
 
 ---
 
 ### Setup
-
+<p text-align="left">
+1. Clone this repository <br />
+2. Install the above packages in Visual Studio Package Manager
+</p>
 ---
 
 ### contact, etc
