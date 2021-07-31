@@ -1,1 +1,1 @@
-# Codex-Royale-API
+## Codex-Royale-API
