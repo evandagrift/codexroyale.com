@@ -19,7 +19,9 @@ Codex Royale REST API consumes game data via JSON from the ![Clash Royale API](h
 
 You will need to install all the below packages to be build the project
 <br />
+<br />
 [Newtonsoft.Json (12.0.3)](https://www.newtonsoft.com/json)
+<br />
 <br />
 [Microsoft.EntityFrameworkCore (3.1.9)](https://docs.microsoft.com/en-us/ef/core/)
 <br />
