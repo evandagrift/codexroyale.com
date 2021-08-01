@@ -2,9 +2,10 @@
 <br />
 
 # Codex Royale REST API 
-[clash-logo]
+<br />
+<p display="flex" align="center"><img src="images/clash-logo.png"  alt="Clash Banner" width='60%' height="auto" /></p>
 
-Codex Royale REST API consumes game data via JSON from the [Clash Royale API](https://developer.clashroyale.com), packages the recieved data into [more practical classes](https://github.com/evandagrift/clash-royale-classes) and services [codexroyale.com](www.codexroyale.com) \**still in development\**
+### Codex Royale REST API consumes game data via JSON from the [Clash Royale API](https://developer.clashroyale.com), packages the recieved data into [more practical classes](https://github.com/evandagrift/clash-royale-classes) and services [codexroyale.com](www.codexroyale.com) \**still in development\**
 
 ---
 ## Build Dependancies
