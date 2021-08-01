@@ -2,7 +2,7 @@
 <br />
 
 # Codex Royale REST API 
-![clash-logo]
+[clash-logo]
 
 Codex Royale REST API consumes game data via JSON from the [Clash Royale API](https://developer.clashroyale.com), packages the recieved data into [more practical classes](https://github.com/evandagrift/clash-royale-classes) and services [codexroyale.com](www.codexroyale.com) \**still in development\**
 
