@@ -2,25 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
-    <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
   </PropertyGroup>
-
-  <ItemGroup>
-    <Compile Remove="RoyaleTrackerClasses\**" />
-    <Content Remove="RoyaleTrackerClasses\**" />
-    <EmbeddedResource Remove="RoyaleTrackerClasses\**" />
-    <None Remove="RoyaleTrackerClasses\**" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Compile Remove="IJWTAuthenticationManager.cs" />
-    <Compile Remove="JWTAuthenticationManager.cs" />
-    <Compile Remove="Models\Authentication\ICustomAuthenticationManager.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Include="..\.editorconfig" Link=".editorconfig" />
-  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="BCrypt.Net-Next" Version="4.0.2" />
