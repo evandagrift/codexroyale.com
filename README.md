@@ -4,7 +4,7 @@
 
 ### Codex Royale API is a REST API built in Asp.Net Core 3.1. This program calls the [Clash Royale API](https://developer.clashroyale.com) and repackages the recieved data into [more practical classes](https://github.com/evandagrift/clash-royale-classes) using [Newtonsoft](https://www.newtonsoft.com/json). Consumed data is saved to a Database using [EF Core](https://docs.microsoft.com/en-us/ef/core/). This API also services [codexroyale.com](www.codexroyale.com) \**still in development\**
 
-# Setup </span>
+# Setup
 1. Get a bearer token for the [Clash Royale API](https://developer.clashroyale.com) connected to the IP you will be using
 2. Clone this repository
 3. <a href="#dependancies">Install the dependancies in Visual Studio Package Manager</a>
@@ -47,10 +47,56 @@ the two dependancies below this are for using SqlServer, this can be connected t
 [BCrypt.Net-Next (4.0.2)](https://github.com/BcryptNet/bcrypt.net/)
 
 # Endpoints
-ASP.Net Core uses the [MVC Pattern](https://docs.microsoft.com/en-us/aspnet/core/mvc/overview?WT.mc_id=dotnet-35129-website&view=aspnetcore-3.1) so all the end points can be found in the Controllers folder. These files can be identified by end-point-name-Controller.cs
+ASP.Net Core uses the [MVC Pattern](https://docs.microsoft.com/en-us/aspnet/core/mvc/overview?WT.mc_id=dotnet-35129-website&view=aspnetcore-3.1) so all the end points can be found in the Controllers folder. These files can be identified by end-point-name-Controller.cs and can be called at http://localhost:52003/api/EndPoint
+
+# add data about dotnet authentication Bearer token
+
 ## Battles 
-#### _http://localhost:52003/api/Battles/End-point_ 
-### Battles[Admin Only](Post w/ JSON in Body)
+
+* ### //api/Battles [Admin Only] (POST w/ JSON in header)
+Adds the battle to the database if it is new.
+
+* ### //api/Battles [Admin Only] (POST w/ JSON List in header)
+Adds all new battles to the database
+
+* ### //api/Battles/User [All] (GET w/ JSON User in body)
+Returns a list of all battles played by the given user
+
+* ### //api/Battles [Admin Only] (GET)
+Returns all battles saved within the Database
+
+* ### //api/Battles [Admin Only] (GET w/ id in header)
+Returns the battle with given id
+
+* ### //api/Battles [Admin Only] (DELETE w/ id in header)
+Deletes battle with given id
+
+* ### //api/Battles [Admin Only](PUT w/ Battle in Body)
+Updates the battle in the database with the given data
+
+
+
+
+## Cards 
+
+* ### //api/Cards [Admin Only] (POST w/ JSON in Body)
+Adds the card to the database if it is new.
+
+* ### //api/Cards [All] (GET)
+Returns all cards in the database
+
+* ### //api/Cards [All] (GET w/ id in header)
+Returns card with given id
+
+* ### //api/Cards [Admin Only] (DELETE w/ id in header)
+Deletes card with given id
+
+* ### //api/Cards/UpdateCards [Admin Only] (Post)
+Calls the cards from offical database and adds new cards
+
+* ### //api/Cards [Admin Only] (Put with Card in body)
+Updates the given Card
+
 
 
 
