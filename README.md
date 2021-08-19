@@ -284,33 +284,6 @@ Deletes the player data at given id from the database
 Updates the given save of player data
 
 
-## Players
-
-* ### Post://api/Players
-###### [Admin Only] (Post with the player JSON in body)
-saves given player data 
-
-* ### Get://api/Players
-###### [Admin Only] (Get)
-Gets all saved player data in the Database
-
-* ### Get://api/Players/id
-###### [Admin Only] (Get with id in header)
-Gets player data with given id
-
-* ### Post://api/Players/update
-###### [Admin Only] (Get with user JSON in body)
-Packages all player data and saves it to the database if new, then returns filled player data
-
-* ### Delete://api/Players/id
-###### [Admin Only] (Delete with id in header)
-Deletes the player data at given id from the database
-
-* ### Put://api/Players
-###### [Admin Only] (Put with player JSON in body)
-Updates the given save of player data
-
-
 
 ## Teams
 
