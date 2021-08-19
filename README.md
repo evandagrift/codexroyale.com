@@ -51,27 +51,57 @@ ASP.Net Core uses the [MVC Pattern](https://docs.microsoft.com/en-us/aspnet/core
 
 # add data about dotnet authentication Bearer token
 
+
+
+## Users 
+
+* ### //api/Users/Signup [Public] (Post w/ User JSON in Body)
+if there is no user with this username or email, the user's password is encrypted and then the user is saved into the database, and a user token is generated. The server then returns the User with relevant fields filled, and a token included for access.
+
+* ### //api/Users/Login [Public] (Post with User JSON in Body)
+If the username and password is correct it returns the user with relevant data including the user token for access to the API
+
+* ### //api/Users [AdminOnly] (Get)
+Returns all User saved in the databse
+
+* ### //api/Users [AdminOnly] (Post with user JSON in Body)
+Saves the given user to the database
+
+* ### //api/Users/username [AdminOnly] (Get with username in header)
+Returns user with given username
+
+
+* ### //api/Users/username [AdminOnly] (Delete with username in header)
+Returns user with given username
+
+* ### //api/Users [AdminOnly] (Put with User JSON in Body)
+Updates user with given username
+
+
+
+
 ## Battles 
 
-* ### //api/Battles [Admin Only] (POST w/ JSON in header)
+* ### //api/Battles [AdminOnly] (Post w/ JSON in body)
 Adds the battle to the database if it is new.
 
-* ### //api/Battles [Admin Only] (POST w/ JSON List in header)
+* ### //api/Battles [AdminOnly] (Post w/ JSON List in body)
 Adds all new battles to the database
 
-* ### //api/Battles/User [All] (GET w/ JSON User in body)
+#this needs fixing
+* ### //api/Battles/User [All] (Get w/ JSON User in body)
 Returns a list of all battles played by the given user
 
-* ### //api/Battles [Admin Only] (GET)
+* ### //api/Battles [AdminOnly] (Get)
 Returns all battles saved within the Database
 
-* ### //api/Battles [Admin Only] (GET w/ id in header)
+* ### //api/Battles/id [AdminOnly] (Get w/ id in header)
 Returns the battle with given id
 
-* ### //api/Battles [Admin Only] (DELETE w/ id in header)
+* ### //api/Battles/id [AdminOnly] (Delete w/ id in header)
 Deletes battle with given id
 
-* ### //api/Battles [Admin Only](PUT w/ Battle in Body)
+* ### //api/Battles/{Battle} [AdminOnly] (Put w/ Battle in Header)
 Updates the battle in the database with the given data
 
 
@@ -79,19 +109,19 @@ Updates the battle in the database with the given data
 
 ## Cards 
 
-* ### //api/Cards [Admin Only] (POST w/ JSON in Body)
+* ### //api/Cards [Admin Only] (Post w/ JSON in Body)
 Adds the card to the database if it is new.
 
-* ### //api/Cards [All] (GET)
+* ### //api/Cards [All] (Get)
 Returns all cards in the database
 
-* ### //api/Cards [All] (GET w/ id in header)
+* ### //api/Cards [All] (Get w/ id in header)
 Returns card with given id
 
-* ### //api/Cards [Admin Only] (DELETE w/ id in header)
+* ### //api/Cards [Admin Only] (Delete w/ id in header)
 Deletes card with given id
 
-* ### //api/Cards/UpdateCards [Admin Only] (Post)
+* ### //api/Cards/UpdateCards [Admin Only] (Post w/ JSON in Body)
 Calls the cards from offical database and adds new cards
 
 * ### //api/Cards [Admin Only] (Put with Card in body)
