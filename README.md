@@ -52,83 +52,295 @@ ASP.Net Core uses the [MVC Pattern](https://docs.microsoft.com/en-us/aspnet/core
 # add data about dotnet authentication Bearer token
 
 
+# ADD A NAVIGATION SYSTEM SO Contact is easy to find below everything
 
 ## Users 
 
-* ### //api/Users/Signup [Public] (Post w/ User JSON in Body)
-if there is no user with this username or email, the user's password is encrypted and then the user is saved into the database, and a user token is generated. The server then returns the User with relevant fields filled, and a token included for access.
+* ### Post://Users/Signup 
+###### [Public] (Post w/ User JSON in Body)
+If there is no user with this username or email, the user's password is encrypted and then the user is saved into the database, and a user token is generated. The server then returns the User with relevant fields filled, and a token included for access. 
+<br />
+<br />
 
-* ### //api/Users/Login [Public] (Post with User JSON in Body)
+* ### Post://Users/Login 
+###### [Public] (Post with User JSON in Body)
 If the username and password is correct it returns the user with relevant data including the user token for access to the API
+<br />
+<br />
 
-* ### //api/Users [AdminOnly] (Get)
+* ### Get://Users 
+###### [AdminOnly] (Get)
 Returns all User saved in the databse
+<br />
+<br />
 
-* ### //api/Users [AdminOnly] (Post with user JSON in Body)
+* ### Post://Users 
+###### [AdminOnly] (Post with user JSON in Body)
 Saves the given user to the database
+<br />
+<br />
 
-* ### //api/Users/username [AdminOnly] (Get with username in header)
+* ### Get://Users/username 
+###### [AdminOnly] (Get with username in header)
 Returns user with given username
+<br />
+<br />
 
 
-* ### //api/Users/username [AdminOnly] (Delete with username in header)
+* ### Delete://Users/username 
+###### [AdminOnly] (Delete with username in header)
 Returns user with given username
+<br />
+<br />
 
-* ### //api/Users [AdminOnly] (Put with User JSON in Body)
+* ### Put://Users 
+###### [AdminOnly] (Put with User JSON in Body)
 Updates user with given username
+<br />
+<br />
 
 
 
 
 ## Battles 
 
-* ### //api/Battles [AdminOnly] (Post w/ JSON in body)
+* ### Post://Battles 
+###### [AdminOnly] (Post w/ JSON in body)
 Adds the battle to the database if it is new.
 
-* ### //api/Battles [AdminOnly] (Post w/ JSON List of battles in body)
+* ### Post://Battles 
+###### [AdminOnly] (Post w/ JSON List of battles in body)
 Adds all new battles to the database
 
-* ### //api/Battles/{User} [All] (Get w/ JSON User in Header)
+* ### Get://Battles/{User} 
+###### [All] (Get w/ JSON User in Header)
 Returns a list of all battles played by the given user
 
-* ### //api/Battles [AdminOnly] (Get)
+* ### Get://Battles 
+###### [AdminOnly] (Get)
 Returns all battles saved within the Database
 
-* ### //api/Battles/id [AdminOnly] (Get w/ id in header)
+* ### Get://Battles/id 
+###### [AdminOnly] (Get w/ id in header)
 Returns the battle with given id
 
-* ### //api/Battles/id [AdminOnly] (Delete w/ id in header)
+* ### Delete://Battles/id 
+###### [AdminOnly] (Delete w/ id in header)
 Deletes battle with given id
 
-* ### //api/Battles/{Battle} [AdminOnly] (Put w/ Battle JSON in body)
+* ### Put://api/Battles/{Battle} 
+###### [AdminOnly] (Put w/ Battle JSON in body)
 Updates the battle in the database with the given data
-
-
 
 
 ## Cards 
 
-* ### //api/Cards [Admin Only] (Post w/ JSON in Body)
+* ### Post://api/Cards 
+###### [Admin Only] (Post w/ JSON in Body)
 Adds the card to the database if it is not currently in the database
 
-* ### //api/Cards [All] (Get)
+* ### Get://api/Cards 
+###### [All] (Get)
 Returns all cards in the database
 
-* ### //api/Cards [All] (Get w/ id in header)
+* ### Get://api/Cards/id 
+###### [All] (Get w/ id in header)
 Returns card with given id
 
-* ### //api/Cards [Admin Only] (Delete w/ id in header)
+* ### Delete://api/Cards/id 
+###### [Admin Only] (Delete w/ id in header)
 Deletes card with given id
 
-* ### //api/Cards/UpdateCards [Admin Only] (Post)
+* ### Post://api/Cards/UpdateCards |
+###### [Admin Only] (Post)
 Calls the cards from offical database and adds new cards to the database
 
-* ### //api/Cards [Admin Only] (Put with Card in body)
+* ### Put://api/Cards 
+###### [Admin Only] (Put with Card in body)
 Updates the given Card
 
 
-
 ## Chests 
+
+* ### Post://api/Chests
+###### [Admin Only] (Post with the Chest JSON in body)
+Adds given Chest item to the database
+
+* ### Get://api/Chests
+###### [Admin Only] (Get)
+Gets all chests saved in the Database
+
+* ### Get://api/Chests/chest-name
+###### [Admin Only] (Get with chest name in header)
+Gets chest details on the chest saved in the database with that name
+
+* ### Delete://api/Chests/chest-name
+###### [Admin Only] (Delete with chest name in header)
+Deletes the chest with the given name from the database
+
+* ### Put://api/Chests
+###### [Admin Only] (Put with chest JSON in body)
+Updates the given chest
+
+
+
+
+
+## Clans
+
+* ### Post://api/Clans
+###### [Admin Only] (Post with the clan JSON in body)
+Adds given clan instance to the database
+
+* ### Get://api/Clans
+###### [Admin Only] (Get)
+Gets all clan data saved in the Database
+
+* ### Get://api/Clans/id
+###### [Admin Only] (Get with id in header)
+Gets clan data at given id
+
+* ### Delete://api/Clans/id
+###### [Admin Only] (Delete with id in header)
+Deletes the clan save at given id from the database
+
+* ### Put://api/Clans
+###### [Admin Only] (Put with clan JSON in body)
+Updates the given clan data save
+
+
+## Decks
+
+* ### Post://api/Decks
+###### [Admin Only] (Post with the Deck JSON in body)
+Takes deck data, organizes it and checks if it is in the database, if it is not it adds it. The deck is then returned with an assigned id
+
+* ### Get://api/Decks
+###### [Admin Only] (Get)
+Gets all decks saved in the Database
+
+* ### Get://api/Decks/id
+###### [Admin Only] (Get with id in header)
+Gets deck with given id
+
+* ### Delete://api/Decks/id
+###### [Admin Only] (Delete with id in header)
+Deletes the deck at given id from the database
+
+* ### Put://api/Decks
+###### [Admin Only] (Put with clan JSON in body)
+Updates the given deck
+
+
+
+
+## GameModes
+
+* ### Post://api/GameModes
+###### [Admin Only] (Post with the game mode JSON in body)
+Adds given gamemode if it is not already saved
+
+* ### Get://api/GameModes
+###### [Admin Only] (Get)
+Gets all game modes saved in the Database
+
+* ### Get://api/GameModes/id
+###### [Admin Only] (Get with id in header)
+Gets game mode with given id
+
+* ### Delete://api/GameModes/id
+###### [Admin Only] (Delete with id in header)
+Deletes the game mode at given id from the database
+
+* ### Put://api/GameModes
+###### [Admin Only] (Put with game mode JSON in body)
+Updates the given game mode
+
+
+## Players
+
+* ### Post://api/Players
+###### [Admin Only] (Post with the player JSON in body)
+saves given player data 
+
+* ### Get://api/Players
+###### [Admin Only] (Get)
+Gets all saved player data in the Database
+
+* ### Get://api/Players/id
+###### [Admin Only] (Get with id in header)
+Gets player data with given id
+
+* ### Post://api/Players/update
+###### [Admin Only] (Get with user JSON in body)
+Packages all player data and saves it to the database if new, then returns filled player data
+
+* ### Delete://api/Players/id
+###### [Admin Only] (Delete with id in header)
+Deletes the player data at given id from the database
+
+* ### Put://api/Players
+###### [Admin Only] (Put with player JSON in body)
+Updates the given save of player data
+
+
+## Players
+
+* ### Post://api/Players
+###### [Admin Only] (Post with the player JSON in body)
+saves given player data 
+
+* ### Get://api/Players
+###### [Admin Only] (Get)
+Gets all saved player data in the Database
+
+* ### Get://api/Players/id
+###### [Admin Only] (Get with id in header)
+Gets player data with given id
+
+* ### Post://api/Players/update
+###### [Admin Only] (Get with user JSON in body)
+Packages all player data and saves it to the database if new, then returns filled player data
+
+* ### Delete://api/Players/id
+###### [Admin Only] (Delete with id in header)
+Deletes the player data at given id from the database
+
+* ### Put://api/Players
+###### [Admin Only] (Put with player JSON in body)
+Updates the given save of player data
+
+
+
+## Teams
+
+* ### Post://api/Teams
+###### [Admin Only] (Post with the Team JSON in body)
+Creates a team with the player combination if nonexistent, then returns the team with an assigned id
+
+* ### Get://api/Teams
+###### [Admin Only] (Get)
+Gets all teams in the database
+
+* ### Get://api/Teams/id
+###### [Admin Only] (Get with id in header)
+Gets team with given id
+
+* ### Delete://api/Teams/id
+###### [Admin Only] (Delete with id in header)
+Deletes the team at given id from the database
+
+* ### Put://api/Teams
+###### [Admin Only] (Put with player JSON in body)
+Updates the given team
+
+
+
+
+
+
+
+
 
 
 
