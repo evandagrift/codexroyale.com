@@ -85,11 +85,10 @@ Updates user with given username
 * ### //api/Battles [AdminOnly] (Post w/ JSON in body)
 Adds the battle to the database if it is new.
 
-* ### //api/Battles [AdminOnly] (Post w/ JSON List in body)
+* ### //api/Battles [AdminOnly] (Post w/ JSON List of battles in body)
 Adds all new battles to the database
 
-#this needs fixing
-* ### //api/Battles/User [All] (Get w/ JSON User in body)
+* ### //api/Battles/{User} [All] (Get w/ JSON User in Header)
 Returns a list of all battles played by the given user
 
 * ### //api/Battles [AdminOnly] (Get)
@@ -101,7 +100,7 @@ Returns the battle with given id
 * ### //api/Battles/id [AdminOnly] (Delete w/ id in header)
 Deletes battle with given id
 
-* ### //api/Battles/{Battle} [AdminOnly] (Put w/ Battle in Header)
+* ### //api/Battles/{Battle} [AdminOnly] (Put w/ Battle JSON in body)
 Updates the battle in the database with the given data
 
 
@@ -110,7 +109,7 @@ Updates the battle in the database with the given data
 ## Cards 
 
 * ### //api/Cards [Admin Only] (Post w/ JSON in Body)
-Adds the card to the database if it is new.
+Adds the card to the database if it is not currently in the database
 
 * ### //api/Cards [All] (Get)
 Returns all cards in the database
@@ -121,11 +120,15 @@ Returns card with given id
 * ### //api/Cards [Admin Only] (Delete w/ id in header)
 Deletes card with given id
 
-* ### //api/Cards/UpdateCards [Admin Only] (Post w/ JSON in Body)
-Calls the cards from offical database and adds new cards
+* ### //api/Cards/UpdateCards [Admin Only] (Post)
+Calls the cards from offical database and adds new cards to the database
 
 * ### //api/Cards [Admin Only] (Put with Card in body)
 Updates the given Card
+
+
+
+## Chests 
 
 
 
