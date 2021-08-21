@@ -64,23 +64,19 @@ the two dependancies below this are for using SqlServer, this can be connected t
 [BCrypt.Net-Next (4.0.2)](https://github.com/BcryptNet/bcrypt.net/)
 
 # End Points
-ASP.Net Core uses the [MVC Pattern](https://docs.microsoft.com/en-us/aspnet/core/mvc/overview?WT.mc_id=dotnet-35129-website&view=aspnetcore-3.1) so all the end points can be found in the Controllers folder. These files can be identified by end-point-name-Controller.cs and can be called at http://localhost:52003/api/EndPoint
+ASP.Net Core uses the [MVC Pattern](https://docs.microsoft.com/en-us/aspnet/core/mvc/overview?WT.mc_id=dotnet-35129-website&view=aspnetcore-3.1) so all the end points can be found in the Controllers folder. These files can be identified by end-point-name-Controller.cs and can be called at `http://localhost:52003/api/EndPoint`. This API uses [AspNet Core Authorization](https://docs.microsoft.com/en-us/aspnet/core/security/authentication/?view=aspnetcore-5.0) to handle authentication. There are three level of authorization Anonymous [AllowAnonymous], Any user with a valid user token [All], and Admin users [Admin Only]. If there are no users within the database, the first user created will be given admin privledges. 
 
-# add data about dotnet authentication Bearer token
-
-
-# ADD A NAVIGATION SYSTEM SO Contact is easy to find below everything
 
 ## Users 
 
 * ### Post://Users/Signup 
-###### [Public] (Post w/ User JSON in Body)
+###### [AllowAnonymous] (Post w/ User JSON in Body)
 If there is no user with this username or email, the user's password is encrypted and then the user is saved into the database, and a user token is generated. The server then returns the User with relevant fields filled, and a token included for access. 
 <br />
 <br />
 
 * ### Post://Users/Login 
-###### [Public] (Post with User JSON in Body)
+###### [AllowAnonymous] (Post with User JSON in Body)
 If the username and password is correct it returns the user with relevant data including the user token for access to the API
 <br />
 <br />
@@ -325,6 +321,7 @@ Deletes the team at given id from the database
 Updates the given team
 
 # Contact
-Hi, if you have any questions feel free to email me at <a href = "mailto: Evandagrift@gmail.com">Evandagrift@gmail.com</a> I'm currently looking for my first job as a software developer. Any feedback would be greatly appreciated :)
+<p>If you have any questions feel free to email me at <a href = "mailto: Evandagrift@gmail.com">Evandagrift@gmail.com</a></p>
+<p>I'm currently looking for my first job as a software developer. Any feedback would be greatly appreciated 😃</p>
 
 [clash-logo]:https://uc09cdbb3b2643b7064228146b69.previews.dropboxusercontent.com/p/thumb/ABMP6UdWBTH37pdZewBaJ7FywNLGhdKXUOVOxOSen902cGr-b01gnUUbTc81ZwKb7CpNcL_T9sdP_jVPN0fsdajS0BPUefVjl7gZtVPBfNIDFa8zAj66Fh4ExDaNKQHk3J7KS0111Evph892MpySuhmigW0puuKuDGmPtT3fUqZGWfsJRDkoBOxQA8ZQiL2f4NC72a2oNwwuh21lFNxY9RpB4Yp0t3T6iVw0LbqLIlT383277nXxyrwb-FJVVFTH0gtq60Xk1CMmsW3Om5D-CFj6hIVhISqGdezPPJW1RAuljNr6Xu43_oilpnPJPTL9UgsUISk4jEva1Cl95ToUqZlWpS5rTF433YReGD7yoS9O3Exl1nL0fNrdpTumeLu6BZ5rmRCuYEHdim_oFNGxsnCZFhdLa8i3R4PCnp7y9UaU_WIERgLzheXfCRG4uk4ceoZNXGqzQhLqOqWCTVU_iAWs_x8PQ0tRI7uVX-bPdTLnHosQz1llf79YUQPyFhgT04GQeBzw1_Gf6wLn3pYRN21pr6kOW85mfpMhGWlTWx4g8A/p.png
