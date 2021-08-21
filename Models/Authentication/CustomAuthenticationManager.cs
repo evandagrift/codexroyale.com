@@ -23,33 +23,33 @@ namespace RoyaleTrackerAPI
         //for users to create accounts
         public User CreateAccount(User user,UsersRepo usersRepo, TRContext context)
         {
-            //fetches a user by email or username if there is a match
-            var checkValid = context.Users.Where(u => u.Username == user.Username || u.Email == user.Email).FirstOrDefault();
-
-            //if there are no users with those credentials checkValid will be k
-            if (checkValid == null)
+            if (context.Users.Any(u => u.Username == user.Username || u.Email == user.Email))
+            { return null; }
+            else
             {
                 //make sure all neccessary fields are filled
                 if (user.Username != null && user.Password.Length >= 8 && user.Email != null)
                 {
-                    user.Password = BCrypt.Net.BCrypt.HashPassword(user.Password);
+                    try
+                    {
+                        user.Password = BCrypt.Net.BCrypt.HashPassword(user.Password);
 
-                    if (context.Users.Count() == 0) { user.Role = "Admin"; }
-                    else { user.Role = "User"; }
+                        if (context.Users.Count() == 0) { user.Role = "Admin"; }
+                        else { user.Role = "User"; }
 
-                    user.Token = Guid.NewGuid().ToString() + Guid.NewGuid().ToString();
+                        user.Token = Guid.NewGuid().ToString() + Guid.NewGuid().ToString();
 
-                    user = usersRepo.SaveAllByUser(user);
-                    context.Users.Add(user);
-                    context.SaveChanges();
+                        user = usersRepo.SaveAllByUser(user);
+                        context.Users.Add(user);
+                        context.SaveChanges();
 
-                    return user;
+                        user.Password = null;
+                        return user;
+                    }
+                    catch { return null; }
                 }
-                //if a field isn't valid
                 return null;
             }
-            //if a user is already using these credentials
-            return null;
         }
 
 
@@ -77,6 +77,7 @@ namespace RoyaleTrackerAPI
                         }
                         else
                         {
+                            user.Password = null;
                             return user;
                         }
 

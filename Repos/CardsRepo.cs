@@ -29,7 +29,7 @@ namespace RoyaleTrackerAPI.Repos
             //New cards will be added when they are found within a battle/when the deck is registered
             if (cardsWthUrl.Count == 0)
             {
-                cardsWthUrl = UpdateCards().Result;
+                cardsWthUrl = UpdateGetCards().Result;
             }
         }
         //Constructor assigning argumented context
@@ -90,7 +90,7 @@ namespace RoyaleTrackerAPI.Repos
         }
 
 
-        public async Task<List<Card>> UpdateCards()
+        public async Task UpdateCards()
         {
             //test against official
             //add any that aren't in DB
@@ -123,12 +123,16 @@ namespace RoyaleTrackerAPI.Repos
                 context.AddRange(cardsToAdd);
                 context.SaveChanges();
             }
+        }
+
+        public async Task<List<Card>> UpdateGetCards()
+        {
+            await UpdateCards();
             return context.Cards.ToList();
         }
 
-        
-        //adds given card to context
-        public void AddCardIfNew(Card card)
+            //adds given card to context
+            public void AddCardIfNew(Card card)
         {
             if (context.Cards.Find(card.Id) == null)
             {

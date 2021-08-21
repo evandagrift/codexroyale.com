@@ -37,8 +37,8 @@ namespace RoyaleTrackerAPI.Controllers
         }
 
         [Authorize(Policy = "AdminOnly")]
-        [HttpPost("getsetteamid")]
-        // POST: api/Teams/getsetteamid
+        [HttpPost]
+        // POST: api/Teams
         public Team GetSetTeamId([FromBody] Team team)
         {
             Team returnTeam = repo.GetSetTeamId(team);
@@ -61,11 +61,11 @@ namespace RoyaleTrackerAPI.Controllers
         }
 
         [Authorize(Policy = "AdminOnly")]
-        // GET api/Teams/teamId
-        [HttpGet("{teamid}", Name = "GetTeam")]
-        public string Get(int teamid)
+        // GET api/Teams/id
+        [HttpGet]
+        public string Get([FromHeader] int id)
         {
-            Team team = repo.GetTeamById(teamid);
+            Team team = repo.GetTeamById(id);
             return JsonConvert.SerializeObject(team, Formatting.Indented, new JsonSerializerSettings
             {
                 NullValueHandling = NullValueHandling.Ignore

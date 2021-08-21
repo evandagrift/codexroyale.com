@@ -61,9 +61,9 @@ namespace RoyaleTrackerAPI.Controllers
         }
 
         [Authorize(Policy = "AdminOnly")]
-        // GET api/Chests/ChestTag
-        [HttpGet("{chestName}", Name = "GetChest")]
-        public string Get(string chestName)
+        // GET api/Chests/chest-name
+        [HttpGet]
+        public string Get([FromHeader] string chestName)
         {
             Chest chest = repo.GetChestByName(chestName);
             return JsonConvert.SerializeObject(chest, Formatting.Indented, new JsonSerializerSettings
@@ -74,9 +74,9 @@ namespace RoyaleTrackerAPI.Controllers
 
 
         [Authorize(Policy = "AdminOnly")]
-        // DELETE: api/Chests/{ChestTag}
-        [HttpDelete("{chestName}")]
-        public void Delete(string chestName)
+        // DELETE: api/Chests/{ChestName}
+        [HttpDelete]
+        public void Delete([FromHeader] string chestName)
         {
             repo.DeleteChest(chestName);
         }

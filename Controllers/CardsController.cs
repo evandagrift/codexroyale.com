@@ -46,7 +46,7 @@ namespace RoyaleTrackerAPI.Controllers
             repo.AddCardIfNew(card);
         }
 
-        [AllowAnonymous]
+        [Authorize(Policy = "All")]
         // GET: api/Cards
         [HttpGet]
         public string Get()
@@ -60,26 +60,13 @@ namespace RoyaleTrackerAPI.Controllers
 
         }
 
-        [Authorize(Policy ="AdminOnly")]
-        [HttpPost("updatecards")]
-        public string UpdateCards()
-        {
-
-            List<Card> cards = repo.UpdateCards().Result;
-            return JsonConvert.SerializeObject(cards, Formatting.Indented, new JsonSerializerSettings
-            {
-                NullValueHandling = NullValueHandling.Ignore
-            });
-        }
-
-
         // GET api/Cards/
         [Authorize(Policy = "AdminOnly")]
 
-        [HttpGet("{cardID}", Name = "GetCard")]
-        public string Get(int cardID)
+        [HttpGet]
+        public string Get([FromHeader] int id)
         {
-            Card card = repo.GetCardByID(cardID);
+            Card card = repo.GetCardByID(id);
             return JsonConvert.SerializeObject(card, Formatting.Indented, new JsonSerializerSettings
             {
                 NullValueHandling = NullValueHandling.Ignore
@@ -89,11 +76,21 @@ namespace RoyaleTrackerAPI.Controllers
 
         [Authorize(Policy = "AdminOnly")]
         // DELETE: api/Cards/{cardID}
-        [HttpDelete("{cardID}")]
-        public void Delete(int cardID)
+        [HttpDelete]
+        public void Delete([FromHeader] int id)
         {
-            repo.DeleteCard(cardID);
+            repo.DeleteCard(id);
         }
+
+
+        [Authorize(Policy = "AdminOnly")]
+        [HttpPost("UpdateCards")]
+        public void UpdateCards()
+        {
+            repo.UpdateCards();
+        }
+
+
 
         [Authorize(Policy = "AdminOnly")]
         // Update: api/Cards

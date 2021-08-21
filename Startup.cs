@@ -35,8 +35,15 @@ namespace RoyaleTrackerAPI
 
             services.AddControllers();
 
-            services.AddDbContext<TRContext>(options => options.UseMySQL(Configuration["ConnectionStrings:DBConnectionString"]));
+            services.AddDbContext<TRContext>(options => options.UseSqlServer(Configuration["ConnectionStrings:LocalConnectionString"]));
 
+            services.AddCors(options => {
+                options.AddPolicy("local", builder => builder
+                 .WithOrigins("http://localhost:3000/")
+                 .SetIsOriginAllowed((host) => true)
+                 .AllowAnyMethod()
+                 .AllowAnyHeader());
+            });
             services.AddAuthentication("Basic").AddScheme<AuthenticationSchemeOptions, CustomAuthenticationHandler>("Basic", null);
 
 
@@ -58,10 +65,11 @@ namespace RoyaleTrackerAPI
         {
 
             app.UseRouting();
+            app.UseCors("local");
             app.UseHttpsRedirection();
             app.UseAuthentication();
             app.UseAuthorization();
-    
+
 
             app.UseEndpoints(endpoints =>
             {
