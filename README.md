@@ -2,9 +2,19 @@
 
 <p display="flex" align="center"><img src="images/clash-logo.png"  alt="Clash Banner" width='60%' height="auto" /></p>
 
-### Codex Royale API is a REST API built in Asp.Net Core 3.1. This program calls the [Clash Royale API](https://developer.clashroyale.com) and repackages the recieved data into [more practical classes](https://github.com/evandagrift/clash-royale-classes) using [Newtonsoft](https://www.newtonsoft.com/json). Consumed data is saved to a Database using [EF Core](https://docs.microsoft.com/en-us/ef/core/). This API also services [codexroyale.com](www.codexroyale.com) \**still in development\**
 
-# Setup
+
+
+*   [Overview](#overview)
+*   [Setup](#setup)
+*   [Dependancies](#span)
+*   [EndPoints](#misc)
+    *   [Backslash Escapes](#backslash)
+
+## Overview
+#### Codex Royale API is a REST API built in Asp.Net Core 3.1. This program calls the [Clash Royale API](https://developer.clashroyale.com) and repackages the recieved data into [more practical classes](https://github.com/evandagrift/clash-royale-classes) using [Newtonsoft](https://www.newtonsoft.com/json). Consumed data is saved to a Database using [EF Core](https://docs.microsoft.com/en-us/ef/core/). This API also services [codexroyale.com](www.codexroyale.com) \**still in development\**
+
+## <a name="setup"></a>Setup ##
 1. Get a bearer token for the [Clash Royale API](https://developer.clashroyale.com) connected to the IP you will be using
 2. Clone this repository
 3. <a href="#dependancies">Install the dependancies in Visual Studio Package Manager</a>
@@ -21,7 +31,8 @@
 * Build the database for the project `dotnet ef database update`
 7. Run the program
 
-## <a id="dependancies"> Build Dependancies </a>
+
+## Build Dependancies 
 You will need to install all the below packages to be able to build the project<br />
 <br />
 [Newtonsoft.Json (12.0.3)](https://www.newtonsoft.com/json)<br />
