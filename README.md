@@ -64,7 +64,7 @@ the two dependancies below this are for using SqlServer, this can be connected t
 [BCrypt.Net-Next (4.0.2)](https://github.com/BcryptNet/bcrypt.net/)
 
 # End Points
-ASP.Net Core uses the [MVC Pattern](https://docs.microsoft.com/en-us/aspnet/core/mvc/overview?WT.mc_id=dotnet-35129-website&view=aspnetcore-3.1) so all the end points can be found in the Controllers folder. These files can be identified by end-point-name-Controller.cs and can be called at `http://localhost:52003/api/EndPoint`. This API uses [AspNet Core Authorization](https://docs.microsoft.com/en-us/aspnet/core/security/authentication/?view=aspnetcore-5.0) to handle authentication. There are three level of authorization Anonymous [AllowAnonymous], Any user with a valid user token [All], and Admin users [Admin Only]. If there are no users within the database, the first user created will be given admin privledges. 
+ASP.Net Core uses the [MVC Pattern](https://docs.microsoft.com/en-us/aspnet/core/mvc/overview?WT.mc_id=dotnet-35129-website&view=aspnetcore-3.1) so all the end points can be found in the /Controllers folder. These files can be identified by end-point-name-Controller.cs and can be called at `http://localhost:52003/api/EndPoint`. This API uses [AspNet Core Authorization](https://docs.microsoft.com/en-us/aspnet/core/security/authentication/?view=aspnetcore-5.0) to handle authentication. There are three level of authorization Anonymous [AllowAnonymous], Any user with a valid user token [All], and Admin users [Admin Only]. If there are no users within the database, the first user created will be given admin privledges. 
 
 
 ## Users 
