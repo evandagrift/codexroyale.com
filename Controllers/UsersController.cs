@@ -42,7 +42,7 @@ namespace RoyaleTrackerAPI.Controllers
         }
 
         [AllowAnonymous]
-        [HttpPost("signup")]
+        [HttpPost("Signup")]
         public IActionResult CreateAccount([FromBody] User user)
         {
             user = customAuthenticationManager.CreateAccount(user, usersRepo, context);
@@ -55,7 +55,7 @@ namespace RoyaleTrackerAPI.Controllers
         }
 
         [AllowAnonymous]
-        [HttpPost("login")]
+        [HttpPost("Login")]
         public IActionResult Login([FromBody] User user)
         {
 
@@ -68,17 +68,7 @@ namespace RoyaleTrackerAPI.Controllers
             else return Unauthorized();
         }
 
-
-        //[AllowAnonymous]
-        //[HttpPost("authenticate")]
-        //public IActionResult Authenticate([FromBody] User user)
-        //{
-        //    User fetchedUser = customAuthenticationManager.Authenticate(user, context);
-        //    Console.WriteLine("USER CHECKED");
-        //    return Ok(fetchedUser);
-        //}
-
-        // POST api/<CardController>
+        // POST api/Users
         [Authorize(Policy = "AdminOnly")]
         [HttpPost]
         public void PostUser([FromBody] User user)
@@ -86,9 +76,8 @@ namespace RoyaleTrackerAPI.Controllers
             usersRepo.AddUser(user);
         }
 
-        //[AllowAnonymous]
         [Authorize(Policy = "AdminOnly")]
-        // GET: api/<NameController>
+        // GET: api/Users
         [HttpGet]
         public string GetUsers()
         {
@@ -102,8 +91,8 @@ namespace RoyaleTrackerAPI.Controllers
         }
 
         [Authorize(Policy = "AdminOnly")]
-        // GET api/<NameController>/5
-        [HttpGet("{username}", Name = "GetUser")]
+        // GET api/Users/username
+        [HttpGet("{username}")]
         public string GetUser(string username)
         {
             User user = usersRepo.GetUserByUsername(username);
@@ -115,7 +104,7 @@ namespace RoyaleTrackerAPI.Controllers
 
 
         [Authorize(Policy = "AdminOnly")]
-        // DELETE: api/Products/5
+        // DELETE: api/Users/username
         [HttpDelete("{username}")]
         public void DeleteUser(string username)
         {

@@ -35,18 +35,10 @@ namespace RoyaleTrackerAPI.Controllers
             repo = new BattlesRepo(client, context);
         }
 
-        // POST api/Battles
-        [Authorize(Policy = "AdminOnly")]
-        [HttpPost("addbattles")]
-        public int Post([FromBody] List<Battle> battles)
-        {
-            //adds the list of battles to DB
-            return repo.AddBattles(battles);
-        }
 
         // POST api/Battles
         [Authorize(Policy = "AdminOnly")]
-        [HttpPost("addbattle")]
+        [HttpPost]
         // POST: api/Battles/addbattle
         public void Post([FromBody] Battle battle)
         {
@@ -54,37 +46,40 @@ namespace RoyaleTrackerAPI.Controllers
             repo.AddBattle(battle);
         }
 
-        [Authorize(Policy = "All")]
+        // POST api/Battles
+        [Authorize(Policy = "AdminOnly")]
+        [HttpPost]
+        public int Post([FromBody] List<Battle> battles)
+        {
+            //adds the list of battles to DB
+            return repo.AddBattles(battles);
+        }
 
-        [HttpPost("getbattlesbyuser")]
-        // POST: api/Battles/getbattlebyuser
-        public List<Battle> GetBattle([FromBody] User user)
+        [Authorize(Policy = "All")]
+        [HttpGet]
+        // GET: api/Battles/{user}
+        public List<Battle> GetBattle([FromHeader] User user)
         {
             //returns battle with Id based off given battle, if said battle doesn't exist it is created and returned after assigned Id
             return repo.GetAllBattles(user);
         }
 
 
-        [Authorize(Policy = "All")]
+        [Authorize(Policy = "AdminOnly")]
         // GET: api/Battles
         [HttpGet]
-        public string Get()
+        public List<Battle> Get()
         {
-            //returns all battles in the game via Json
-            return JsonConvert.SerializeObject(repo.GetAllBattles(), Formatting.Indented, new JsonSerializerSettings
-            {
-                NullValueHandling = NullValueHandling.Ignore
-            });
-
+            return repo.GetAllBattles();
         }
 
         [Authorize(Policy = "AdminOnly")]
-        // GET api/Battles/battleTID
-        [HttpGet("{battleID}", Name = "getbattlebyid")]
-        public string Get(int battleID)
+        // GET api/Battles/{id}
+        [HttpGet()]
+        public string Get([FromHeader] int id)
         {
             //returns player with given Id
-            return JsonConvert.SerializeObject(repo.GetBattleByID(battleID), Formatting.Indented, new JsonSerializerSettings
+            return JsonConvert.SerializeObject(repo.GetBattleByID(id), Formatting.Indented, new JsonSerializerSettings
             {
                 NullValueHandling = NullValueHandling.Ignore
             });
@@ -93,17 +88,17 @@ namespace RoyaleTrackerAPI.Controllers
 
         [Authorize(Policy = "AdminOnly")]
         // DELETE: api/Battles/{battleID}
-        [HttpDelete("{battleID}")]
-        public void Delete(int battleID)
+        [HttpDelete]
+        public void Delete([FromHeader] int id)
         {
             //deletes battle at given /Id
-            repo.DeleteBattle(battleID);
+            repo.DeleteBattle(id );
         }
         
         [Authorize(Policy = "AdminOnly")]
-        // Update: api/Battles
+        // PUT: api/Battles
         [HttpPut]
-        public void Update([FromBody] Battle battle)
+        public void Update([FromHeader] Battle battle)
         {
             //updates battle with same Id as argument
             repo.UpdateBattle(battle);

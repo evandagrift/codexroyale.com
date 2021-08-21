@@ -37,6 +37,18 @@ namespace RoyaleTrackerAPI.Controllers
         }
 
         [Authorize(Policy = "AdminOnly")]
+        [HttpPost]
+        // POST api/Decks
+        public Deck GetDeckWithId([FromBody] Deck deck)
+        {
+            //gets deck with the given deck id
+            Deck returnDeck = repo.GetDeckWithId(deck);
+
+            //returns the deck to the end user
+            return returnDeck;
+        }
+
+        [Authorize(Policy = "AdminOnly")]
         // GET: api/Decks
         [HttpGet]
         public string Get()
@@ -53,12 +65,12 @@ namespace RoyaleTrackerAPI.Controllers
         }
 
         [Authorize(Policy = "AdminOnly")]
-        // GET api/Decks/1
-        [HttpGet("{deckID}", Name = "GetDeck")]
-        public string Get(int deckID)
+        // GET api/Decks/id
+        [HttpGet]
+        public string Get([FromHeader]int id)
         {
             //gets deck by Id
-            Deck deck = repo.GetDeckByID(deckID);
+            Deck deck = repo.GetDeckByID(id);
 
             //returns fetched deck
             return JsonConvert.SerializeObject(deck, Formatting.Indented, new JsonSerializerSettings
@@ -68,25 +80,14 @@ namespace RoyaleTrackerAPI.Controllers
         }
 
 
-        [Authorize(Policy = "AdminOnly")]
-        [HttpPost("getdeckwithid")]
-        // POST api/Decks/getdeckwithid
-        public Deck GetDeckWithId([FromBody] Deck deck)
-        {
-            //gets deck with the given deck id
-            Deck returnDeck = repo.GetDeckWithId(deck);
-
-            //returns the deck to the end user
-            return returnDeck;
-        }
 
         [Authorize(Policy = "AdminOnly")]
-        // DELETE: api/Decks/{deckTag}
-        [HttpDelete("{deckID}")]
-        public void Delete(int deckID)
+        // DELETE: api/Decks/id
+        [HttpDelete]
+        public void Delete([FromHeader] int id)
         {
             //deletes deck at given Id
-            repo.DeleteDeck(deckID);
+            repo.DeleteDeck(id);
         }
 
         [Authorize(Policy = "AdminOnly")]

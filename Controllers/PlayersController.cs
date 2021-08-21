@@ -50,7 +50,7 @@ namespace RoyaleTrackerAPI.Controllers
         }
 
         [Authorize(Policy = "AdminOnly")]
-        // GET: api/<NameController>
+        // GET: api/players
         [HttpGet]
         public string Get()
         {
@@ -64,11 +64,11 @@ namespace RoyaleTrackerAPI.Controllers
         }
 
         [Authorize(Policy = "AdminOnly")]
-        // GET api/Players/5
-        [HttpGet("{playerId}", Name = "Get")]
-        public string Get(int playerId)
+        // GET api/Players/id
+        [HttpGet]
+        public string Get([FromHeader] int id)
         {
-            Player player = playersRepo.GetPlayerById(playerId);
+            Player player = playersRepo.GetPlayerById(id);
             return JsonConvert.SerializeObject(player, Formatting.Indented, new JsonSerializerSettings
             {
                 NullValueHandling = NullValueHandling.Ignore
@@ -88,15 +88,15 @@ namespace RoyaleTrackerAPI.Controllers
         }
 
         [Authorize(Policy = "AdminOnly")]
-        // DELETE: api/Products/5
-        [HttpDelete("{playerId}")]
-        public void Delete(int playerId)
+        // DELETE: api/Players/id
+        [HttpDelete]
+        public void Delete([FromHeader]int id)
         {
-            playersRepo.DeletePlayer(playerId);
+            playersRepo.DeletePlayer(id);
         }
 
         [Authorize(Policy = "AdminOnly")]
-        // DELETE: api/Products/5
+        // DELETE: api/Players/id
         [HttpPut]
         public void Update([FromBody] Player Player)
         {
