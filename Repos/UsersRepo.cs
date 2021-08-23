@@ -8,7 +8,7 @@ using BCrypt;
 
 namespace RoyaleTrackerAPI.Repos
 {
-    public class UsersRepo 
+    public class UsersRepo
     {
         //DB Context
         private TRContext context;
@@ -16,61 +16,61 @@ namespace RoyaleTrackerAPI.Repos
 
         //constructor, connects DB Context for usage
         public UsersRepo(Client c, TRContext ct) { context = ct; client = c; ; }
-/*
-        //for users to create accounts
-        public User CreateAccount(User user)
-        {
-            //fetches a user by email or username if there is a match
-            var checkValid = context.Users.Where(u => u.Username == user.Username || u.Email == user.Email).FirstOrDefault();
-            
-            //if there are no users with those credentials checkValid will be null
-            if(checkValid == null)
-            {
-                //make sure all neccessary fields are filled
-                if(user.Username != null && user.Password.Length > 8 && user.Email != null)
+        /*
+                //for users to create accounts
+                public User CreateAccount(User user)
                 {
-                    user.Password = BCrypt.Net.BCrypt.HashPassword(user.Password);
-                    context.Users.Add(user);
-                    context.SaveChanges();
-                    return user;
-                }
-                //if a field isn't valid
-                return null;
-            }
-            //if a user is already using these credentials
-            return null;
-        }
+                    //fetches a user by email or username if there is a match
+                    var checkValid = context.Users.Where(u => u.Username == user.Username || u.Email == user.Email).FirstOrDefault();
 
-
-        public string Login(User user)
-        {
-            User fetchedUser = context.Users.Where(u => u.Username == user.Username).FirstOrDefault();
-            if (fetchedUser != null)
-            {
-                //if the password is a match
-                if (BCrypt.Net.BCrypt.Verify( user.Password, fetchedUser.Password))
-                {
-                    //if no user is retrieved
-                    if (user == null)
+                    //if there are no users with those credentials checkValid will be null
+                    if(checkValid == null)
                     {
+                        //make sure all neccessary fields are filled
+                        if(user.Username != null && user.Password.Length > 8 && user.Email != null)
+                        {
+                            user.Password = BCrypt.Net.BCrypt.HashPassword(user.Password);
+                            context.Users.Add(user);
+                            context.SaveChanges();
+                            return user;
+                        }
+                        //if a field isn't valid
                         return null;
                     }
-
-                    if (user.Token == null)
-                    {
-                        user.Token = Guid.NewGuid().ToString();
-                        context.SaveChanges();
-                    }
-                    return user.Token;
+                    //if a user is already using these credentials
+                    return null;
                 }
-            }
-            return null;
-        }
 
-        */
+
+                public string Login(User user)
+                {
+                    User fetchedUser = context.Users.Where(u => u.Username == user.Username).FirstOrDefault();
+                    if (fetchedUser != null)
+                    {
+                        //if the password is a match
+                        if (BCrypt.Net.BCrypt.Verify( user.Password, fetchedUser.Password))
+                        {
+                            //if no user is retrieved
+                            if (user == null)
+                            {
+                                return null;
+                            }
+
+                            if (user.Token == null)
+                            {
+                                user.Token = Guid.NewGuid().ToString();
+                                context.SaveChanges();
+                            }
+                            return user.Token;
+                        }
+                    }
+                    return null;
+                }
+
+                */
         //create
-        public void AddUser(User user) 
-        { 
+        public void AddUser(User user)
+        {
             context.Add(user);
             context.SaveChanges();
         }
@@ -93,7 +93,7 @@ namespace RoyaleTrackerAPI.Repos
                 //if a valid user is returned it removes said user from context
                 context.Users.Remove(user);
                 context.SaveChanges();
-                    
+
             }
         }
 
@@ -103,7 +103,7 @@ namespace RoyaleTrackerAPI.Repos
             //get user by username
             User user = GetUserByUsername(username);
 
-            if(user !=null)
+            if (user != null)
             {
                 //if the user exists but doesn't have a token it creates a new token and save the new token to DB
                 if (user.Token == null)
@@ -122,14 +122,14 @@ namespace RoyaleTrackerAPI.Repos
             User userToUpdate = GetUserByUsername(user.Username);
 
             //changes all user fields to the given classes fields
-            if(userToUpdate != null)
+            if (userToUpdate != null)
             {
                 userToUpdate.Role = (user.Role != null) ? user.Role : userToUpdate.Role;
                 userToUpdate.Email = (user.Email != null) ? user.Email : userToUpdate.Email;
                 userToUpdate.Tag = (user.Tag != null) ? user.Tag : userToUpdate.Tag;
                 userToUpdate.ClanTag = (user.ClanTag != null) ? user.ClanTag : userToUpdate.ClanTag;
                 userToUpdate.Password = (user.Password != null) ? user.Password : userToUpdate.Password;
-                
+
                 context.SaveChanges();
             }
         }
@@ -141,44 +141,45 @@ namespace RoyaleTrackerAPI.Repos
             ClansRepo clansRepo = new ClansRepo(client, context);
             BattlesRepo battleRepo = new BattlesRepo(client, context);
             PlayersRepo playerRepo = new PlayersRepo(client, context);
-
-            try
+            if (user.Tag != null)
             {
-                Player player = playerRepo.GetOfficialPlayer(user.Tag).Result;
-                if (player != null)
+                try
                 {
-                    context.Players.Add(player);
-
-                    List<Battle> pBattles;
-                    //TODO:get save user and their battles to DB
-                    //fetches the current player battles from the official DB
-                    pBattles = battleRepo.GetOfficialPlayerBattles(player.Tag).Result;
-
-
-                    //adds new fetched battles to the DB and gets a count of added lines
-                    battleRepo.AddBattles(pBattles);
-
-                    if (player.ClanTag != "")
+                    Player player = playerRepo.GetOfficialPlayer(user.Tag).Result;
+                    if (player != null)
                     {
-                        //TODO:Save Clan to DB
-                        //gets current clan with Tag
-                        Clan clan = clansRepo.GetOfficialClan(player.ClanTag).Result;
+                        context.Players.Add(player);
 
-                        //saves clan data to DB
-                        context.Clans.Add(clan);
-                        user.ClanTag = player.ClanTag;
+                        List<Battle> pBattles;
+                        //TODO:get save user and their battles to DB
+                        //fetches the current player battles from the official DB
+                        pBattles = battleRepo.GetOfficialPlayerBattles(player.Tag).Result;
+
+
+                        //adds new fetched battles to the DB and gets a count of added lines
+                        battleRepo.AddBattles(pBattles);
+
+                        if (player.ClanTag != "")
+                        {
+                            //TODO:Save Clan to DB
+                            //gets current clan with Tag
+                            Clan clan = clansRepo.GetOfficialClan(player.ClanTag).Result;
+
+                            //saves clan data to DB
+                            context.Clans.Add(clan);
+                            user.ClanTag = player.ClanTag;
+                        }
+                        context.SaveChanges();
                     }
-                    context.SaveChanges();
-                }
-                else
-                {
+                    else
+                    {
 
-                    user.Tag = null;
-                    user.ClanTag = null;
+                        user.Tag = null;
+                        user.ClanTag = null;
+                    }
                 }
+                catch { return null; }
             }
-            catch { return null; }
-
             return user;
         }
 

@@ -40,28 +40,30 @@ namespace RoyaleTrackerAPI.Controllers
         [Authorize(Policy = "AdminOnly")]
         [HttpPost]
         // POST: api/Battles/addbattle
-        public void Post([FromBody] Battle battle)
+        public IActionResult Post([FromBody] Battle battle)
         {
             //adds the Posted battle to DB
             repo.AddBattle(battle);
+            return Ok();
         }
 
         // POST api/Battles
         [Authorize(Policy = "AdminOnly")]
-        [HttpPost]
-        public int Post([FromBody] List<Battle> battles)
+        [HttpPost("list")]
+        public IActionResult Post([FromBody] List<Battle> battles)
         {
             //adds the list of battles to DB
-            return repo.AddBattles(battles);
+            repo.AddBattles(battles);
+            return Ok();
         }
 
         [Authorize(Policy = "All")]
-        [HttpGet]
+        [HttpGet("player/{playerTag}")]
         // GET: api/Battles/{user}
-        public List<Battle> GetBattle([FromHeader] User user)
+        public List<Battle> GetBattle(string playerTag)
         {
             //returns battle with Id based off given battle, if said battle doesn't exist it is created and returned after assigned Id
-            return repo.GetAllBattles(user);
+            return repo.GetAllBattles(playerTag);
         }
 
 
@@ -75,8 +77,8 @@ namespace RoyaleTrackerAPI.Controllers
 
         [Authorize(Policy = "AdminOnly")]
         // GET api/Battles/{id}
-        [HttpGet()]
-        public string Get([FromHeader] int id)
+        [HttpGet("ID/{id}")]
+        public string Get(int id)
         {
             //returns player with given Id
             return JsonConvert.SerializeObject(repo.GetBattleByID(id), Formatting.Indented, new JsonSerializerSettings
@@ -88,8 +90,8 @@ namespace RoyaleTrackerAPI.Controllers
 
         [Authorize(Policy = "AdminOnly")]
         // DELETE: api/Battles/{battleID}
-        [HttpDelete]
-        public void Delete([FromHeader] int id)
+        [HttpDelete("{id}")]
+        public void Delete(int id)
         {
             //deletes battle at given /Id
             repo.DeleteBattle(id );
@@ -98,7 +100,7 @@ namespace RoyaleTrackerAPI.Controllers
         [Authorize(Policy = "AdminOnly")]
         // PUT: api/Battles
         [HttpPut]
-        public void Update([FromHeader] Battle battle)
+        public void Update([FromBody] Battle battle)
         {
             //updates battle with same Id as argument
             repo.UpdateBattle(battle);

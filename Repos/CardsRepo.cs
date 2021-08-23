@@ -117,11 +117,12 @@ namespace RoyaleTrackerAPI.Repos
 
 
             }
-
+            if(cardsToAdd != null){ 
             if (cardsToAdd.Count > 0)
             {
                 context.AddRange(cardsToAdd);
                 context.SaveChanges();
+            }
             }
         }
 

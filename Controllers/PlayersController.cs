@@ -78,13 +78,15 @@ namespace RoyaleTrackerAPI.Controllers
         [Authorize(Policy = "All")]
         //[AllowAnonymous]
         [HttpPost("update")]
-        public async Task<Player> GetUpdatePlayer([FromBody] User user)
+        public async Task<string> GetUpdatePlayer([FromBody] User user)
         {
             //get the users's player data w/ their chests in rotation as well as battles
             Player returnPlayer = await playersRepo.UpdateGetPlayerWithChestsBattles(user);
-        //
-
-            return returnPlayer;
+            //
+            return JsonConvert.SerializeObject(returnPlayer, Formatting.Indented, new JsonSerializerSettings
+            {
+                NullValueHandling = NullValueHandling.Ignore
+            });
         }
 
         [Authorize(Policy = "AdminOnly")]

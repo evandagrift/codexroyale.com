@@ -22,7 +22,7 @@ namespace RoyaleTrackerAPI.Repos
         private string officialConnectionString = "/v1/players/%23";
 
 
-        public BattlesRepo(Client c,TRContext ct)
+        public BattlesRepo(Client c, TRContext ct)
         {
             context = ct;
             client = c;
@@ -37,7 +37,7 @@ namespace RoyaleTrackerAPI.Repos
             AddBattles(battles);
         }
         //adds given battle to the context
-        public int AddBattles(List<Battle> battles)
+        public void AddBattles(List<Battle> battles)
         {
             //creates repos to handle deck and team intake/finding
             DecksRepo decksRepo = new DecksRepo(context);
@@ -46,22 +46,27 @@ namespace RoyaleTrackerAPI.Repos
 
             //sorts newest first 
             battles.OrderByDescending(b => b.BattleTime);
-            int linesSaved = 0;
 
             //battles that aren't already in the DB will be added to this list to be added
             List<Battle> battlesToSave = new List<Battle>();
 
+
+
             //battles not saved in DB will be added to the list to be saved
             battles.ForEach((b) =>
             {
-                //sets team Id's for the players(Teams are unique to the Codex)
-                b.Team1Id = teamsRepo.GetSetTeamId(b.Team).TeamId;
-                b.Team2Id = teamsRepo.GetSetTeamId(b.Opponent).TeamId;
+                Battle savedBattle = null;
 
-                //fetches any battles at this time with these players in any combination
-                var savedBattle = context.Battles.Where(t => t.Team1Id == b.Team1Id && t.BattleTime == b.BattleTime ||
-                t.Team2Id == b.Team1Id && t.BattleTime == b.BattleTime).FirstOrDefault();
+                if (b.Team != null)
+                {
+                    //sets team Id's for the players(Teams are unique to the Codex)
+                    b.Team1Id = teamsRepo.GetSetTeamId(b.Team).TeamId;
+                    b.Team2Id = teamsRepo.GetSetTeamId(b.Opponent).TeamId;
+                    //fetches any battles at this time with these players in any combination
+                    savedBattle = context.Battles.Where(t => t.Team1Id == b.Team1Id && t.BattleTime == b.BattleTime ||
+                    t.Team2Id == b.Team1Id && t.BattleTime == b.BattleTime).FirstOrDefault();
 
+                }
                 //if this battle isn't in DB save it adds it to the context to be saved
                 if (savedBattle == null)
                 {
@@ -72,98 +77,99 @@ namespace RoyaleTrackerAPI.Repos
             //battles that weren't already saved will be prepped then added to the DB
             battlesToSave.ForEach(b =>
             {
-                //makes sure this gamemode is saved in DB
-                gameModesRepo.AddGameModeIfNew(b.GameMode);
+                if (b.BattleId != null) b.BattleId = 0;
 
-                //trophies and how much they changed from the game
-                //only fetches one player from each team because 1v1 is the only format with trophies
-                b.Team1StartingTrophies = b.Team[0].StartingTrophies;
-                b.Team1TrophyChange = b.Team[0].TrophyChange;
-
-                b.Team2StartingTrophies = b.Opponent[0].StartingTrophies;
-                b.Team2TrophyChange = b.Opponent[0].TrophyChange;
-
-                //sets team names
-                b.Team1Name = b.Team[0].Name;
-                b.Team2Name = b.Opponent[0].Name;
-                
-                //if 2v2 sets both allied names to their team name
-                if (b.Team.Count > 1) 
-                { 
-                    b.Team1Name += " " + b.Team[1].Name; 
-                    b.Team2Name += " " + b.Opponent[1].Name;
-                }
-
-
-
-                //sets winners and losers, crowns are the overall score for a game
-                if (b.Team[0].Crowns > b.Opponent[0].Crowns)
-                { 
-                    b.Team1Win = true;
-                    b.Team2Win = false;
-                }
-                else 
-                { 
-                    b.Team1Win = false;
-                    b.Team2Win = true;
-                }
-
-
-                //deck needs to be created because it is recieved from the official API as a List<Card>
-                Deck d = new Deck(b.Team[0].Cards);
-                //gets the deck Id, if this deck doesn't it exist it will also add it
-                b.Team1DeckAId = decksRepo.GetDeckId(d);
-
-                //repeat of above for opponent
-                d = new Deck(b.Opponent[0].Cards);
-                b.Team2DeckAId = decksRepo.GetDeckId(d);
-
-                //if it's 2v2 it will add the deckId for the second teammate
-                if (b.Team.Count > 1)
+                if (b.GameMode != null)
                 {
-                    d = new Deck(b.Team[1].Cards);
-                    b.Team1DeckBId = decksRepo.GetDeckId(d);
-                    d = new Deck(b.Opponent[1].Cards);
-                    b.Team2DeckBId = decksRepo.GetDeckId(d);
+                    //makes sure this gamemode is saved in DB
+                    gameModesRepo.AddGameModeIfNew(b.GameMode);
+                    //sets GameModeId
+                    b.GameModeId = b.GameMode.Id;
                 }
+                if (b.Team != null)
+                {
+                    //trophies and how much they changed from the game
+                    //only fetches one player from each team because 1v1 is the only format with trophies
+                    b.Team1StartingTrophies = b.Team[0].StartingTrophies;
+                    b.Team1TrophyChange = b.Team[0].TrophyChange;
 
-                //setting score variables(2v2 both teammates will have the same values so variables are grabbed from player 1)
-                b.Team1Crowns = b.Team[0].Crowns;
-                b.Team1KingTowerHp = b.Team[0].KingTowerHitPoints;
-                b.Team1PrincessTowerHpA = b.Team[0].PrincessTowerA;
-                b.Team1PrincessTowerHpB = b.Team[0].PrincessTowerB;
+                    b.Team2StartingTrophies = b.Opponent[0].StartingTrophies;
+                    b.Team2TrophyChange = b.Opponent[0].TrophyChange;
 
-                b.Team2Crowns = b.Opponent[0].Crowns;
-                b.Team2KingTowerHp = b.Opponent[0].KingTowerHitPoints;
-                b.Team2PrincessTowerHpA = b.Opponent[0].PrincessTowerA;
-                b.Team2PrincessTowerHpB = b.Opponent[0].PrincessTowerB;
+                    //sets team names
+                    b.Team1Name = b.Team[0].Name;
+                    b.Team2Name = b.Opponent[0].Name;
 
-                //sets GameModeId
-                b.GameModeId = b.GameMode.Id;
+                    //if 2v2 sets both allied names to their team name
+                    if (b.Team.Count > 1)
+                    {
+                        b.Team1Name += " " + b.Team[1].Name;
+                        b.Team2Name += " " + b.Opponent[1].Name;
+                    }
 
+
+
+                    //sets winners and losers, crowns are the overall score for a game
+                    if (b.Team[0].Crowns > b.Opponent[0].Crowns)
+                    {
+                        b.Team1Win = true;
+                        b.Team2Win = false;
+                    }
+                    else
+                    {
+                        b.Team1Win = false;
+                        b.Team2Win = true;
+                    }
+
+
+                    //deck needs to be created because it is recieved from the official API as a List<Card>
+                    Deck d = new Deck(b.Team[0].Cards);
+                    //gets the deck Id, if this deck doesn't it exist it will also add it
+                    b.Team1DeckAId = decksRepo.GetDeckId(d);
+
+                    //repeat of above for opponent
+                    d = new Deck(b.Opponent[0].Cards);
+                    b.Team2DeckAId = decksRepo.GetDeckId(d);
+
+                    //if it's 2v2 it will add the deckId for the second teammate
+                    if (b.Team.Count > 1)
+                    {
+                        d = new Deck(b.Team[1].Cards);
+                        b.Team1DeckBId = decksRepo.GetDeckId(d);
+                        d = new Deck(b.Opponent[1].Cards);
+                        b.Team2DeckBId = decksRepo.GetDeckId(d);
+                    }
+
+                    //setting score variables(2v2 both teammates will have the same values so variables are grabbed from player 1)
+                    b.Team1Crowns = b.Team[0].Crowns;
+                    b.Team1KingTowerHp = b.Team[0].KingTowerHitPoints;
+                    b.Team1PrincessTowerHpA = b.Team[0].PrincessTowerA;
+                    b.Team1PrincessTowerHpB = b.Team[0].PrincessTowerB;
+
+                    b.Team2Crowns = b.Opponent[0].Crowns;
+                    b.Team2KingTowerHp = b.Opponent[0].KingTowerHitPoints;
+                    b.Team2PrincessTowerHpA = b.Opponent[0].PrincessTowerA;
+                    b.Team2PrincessTowerHpB = b.Opponent[0].PrincessTowerB;
+
+
+                }
                 //adds this battle to context to be saved
                 context.Battles.Add(b);
-
-                //adds to lines saved to be returned to end user
-                linesSaved++;
             });
 
             //after all new battles are added to context changes are saved
             context.SaveChanges();
-
-            //returns the number of battles added to the DB
-            return linesSaved;
         }
 
         //returns a list of all battles from DB
         public List<Battle> GetAllBattles() { return context.Battles.ToList(); }
 
         //returns a list of all battles from DB with specific tag
-        public List<Battle> GetAllBattles(User user)
+        public List<Battle> GetAllBattles(string playerTag)
         {
-            if (user.Tag != null)
+            if (playerTag != null)
             {
-                Player player = context.Players.Where(u => u.Tag == user.Tag).FirstOrDefault();
+                Player player = context.Players.Where(u => u.Tag == playerTag).FirstOrDefault();
                 return context.Battles.Where(b => b.Team1Id == player.TeamId || b.Team2Id == player.TeamId).ToList();
             }
             else { return null; }
