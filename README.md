@@ -69,15 +69,52 @@ ASP.Net Core uses the [MVC Pattern](https://docs.microsoft.com/en-us/aspnet/core
 
 ## Users 
 
-* ### Post://Users/Signup 
+* ### POST://Users/Signup 
 ###### [AllowAnonymous] (Post w/ User JSON in Body)
 If there is no user with this username or email, the user's password is encrypted and then the user is saved into the database, and a user token is generated. The server then returns the User with relevant fields filled, and a token included for access. 
+#### POST from body JSON format
+`{ 
+"username": "username", 
+"password": "password", 
+"email": "user-email", 
+"tag": "#user-Clash-Royale-Tag"
+}`
+#### Response JSON format
+`{
+    "username": "username",
+    "password": null,
+    "email": "user-email",
+    "tag": "#null-if-given-invalid-tag",
+    "clanTag": "#clantag-if-user-have-valid-tag",
+    "role": "user-role",
+    "token": "user-Token"
+}`
+
+
+
 <br />
 <br />
 
-* ### Post://Users/Login 
+* ### POST://Users/Login 
 ###### [AllowAnonymous] (Post with User JSON in Body)
 If the username and password is correct it returns the user with relevant data including the user token for access to the API
+#### Post from body  JSON format
+`{
+"username":"username",
+"password":"password"
+}`
+#### Response JSON format
+`{
+    "username": "username",
+    "password": null,
+    "email": "user-email",
+    "tag": "#user-tag-if-have",
+    "clanTag": "#clantag-if-have",
+    "role": "user-role",
+    "token": "user-access-token"
+}`
+
+
 <br />
 <br />
 
