@@ -9,8 +9,8 @@ using RoyaleTrackerAPI.Models;
 namespace RoyaleTrackerAPI.Migrations
 {
     [DbContext(typeof(TRContext))]
-    [Migration("20210219222109_Initial_MSSQL")]
-    partial class Initial_MSSQL
+    [Migration("20210821054129_local")]
+    partial class local
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -19,6 +19,19 @@ namespace RoyaleTrackerAPI.Migrations
                 .HasAnnotation("ProductVersion", "3.1.9")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+            modelBuilder.Entity("RoyaleTrackerAPI.Models.RoyaleClasses.Chest", b =>
+                {
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("Url")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Name");
+
+                    b.ToTable("Chests");
+                });
 
             modelBuilder.Entity("RoyaleTrackerClasses.Battle", b =>
                 {
@@ -157,7 +170,7 @@ namespace RoyaleTrackerAPI.Migrations
                     b.Property<int>("DonationsPerWeek")
                         .HasColumnType("int");
 
-                    b.Property<string>("LocationName")
+                    b.Property<string>("LocationCode")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("Members")
@@ -339,10 +352,19 @@ namespace RoyaleTrackerAPI.Migrations
                     b.Property<string>("Username")
                         .HasColumnType("nvarchar(450)");
 
+                    b.Property<string>("ClanTag")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Email")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Password")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Role")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Tag")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Token")

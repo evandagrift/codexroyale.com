@@ -113,9 +113,10 @@ namespace RoyaleTrackerAPI.Controllers
 
         [Authorize(Policy = "AdminOnly")]
         [HttpPut]
-        public void UpdateUser([FromBody] User user)
+        public IActionResult UpdateUser([FromBody] User user)
         {
             usersRepo.UpdateUser(user);
+            return Ok();
         }
 
     }

@@ -126,38 +126,42 @@ namespace RoyaleTrackerAPI.Repos
                     var content = await result.Content.ReadAsStringAsync();
                     Player player = JsonConvert.DeserializeObject<Player>(content);
 
-                    //gets the players team ID
-                    player.TeamId = temsRepo.GetSetTeamId(player).TeamId;
-
+                    
+                    if(player.Name != "")
+                    { 
+                        //gets the players team ID
+                        player.TeamId = temsRepo.GetSetTeamId(player).TeamId;
 
                     //assigns current favorite card details
                     player.CurrentFavouriteCardId = player.CurrentFavouriteCard.Id;
-                    player.CurrentFavouriteCard = cardsRepo.ConvertCardUrl(player.CurrentFavouriteCard);
-                    player.CardsDiscovered = player.Cards.Count;
-                    player.Cards.ForEach(c =>
-                    {
-                        c = cardsRepo.ConvertCardUrl(c);
-                    });
+                        player.CurrentFavouriteCard = cardsRepo.ConvertCardUrl(player.CurrentFavouriteCard);
+                        player.CardsDiscovered = player.Cards.Count;
+                        player.Cards.ForEach(c =>
+                        {
+                            c = cardsRepo.ConvertCardUrl(c);
+                        });
 
-                    if (player.Clan != null)
-                    {
-                        player.ClanTag = player.Clan.Tag;
-                        player.LastSeen = await GetLastSeen(player.Tag, player.ClanTag);
-                        player.Clan = await clansRepo.SaveClansNewest(player.ClanTag);
+                        if (player.Clan != null)
+                        {
+                            player.ClanTag = player.Clan.Tag;
+                            player.LastSeen = await GetLastSeen(player.Tag, player.ClanTag);
+                            player.Clan = await clansRepo.SaveClansNewest(player.ClanTag);
+                        }
+
+
+                        player.Deck = decksRepo.GetDeckWithId(player.CurrentDeck);
+                        player.CurrentDeckId = player.Deck.Id;
+
+                        //removing this from the provided data so Front end doesn't use currentdeck instead of the dressed Deck with all details
+                        player.CurrentDeck = null;
+
+
+                        //sets the time of this update
+                        player.UpdateTime = DateTime.UtcNow.ToString("yyyyMMddTHHmmss");
+
+                        return player;
                     }
-
-
-                    player.Deck = decksRepo.GetDeckWithId(player.CurrentDeck);
-                    player.CurrentDeckId = player.Deck.Id;
-                    
-                    //removing this from the provided data so Front end doesn't use currentdeck instead of the dressed Deck with all details
-                    player.CurrentDeck = null;
-
-
-                    //sets the time of this update
-                    player.UpdateTime = DateTime.UtcNow.ToString("yyyyMMddTHHmmss");
-
-                    return player;
+                    else{ return null; }
                 }
                 else return null;
 

@@ -1,9 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore.Migrations;
-using MySql.Data.EntityFrameworkCore.Metadata;
 
 namespace RoyaleTrackerAPI.Migrations
 {
-    public partial class MySQL : Migration
+    public partial class local : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -12,7 +11,7 @@ namespace RoyaleTrackerAPI.Migrations
                 columns: table => new
                 {
                     BattleId = table.Column<int>(nullable: false)
-                        .Annotation("MySQL:ValueGenerationStrategy", MySQLValueGenerationStrategy.IdentityColumn),
+                        .Annotation("SqlServer:Identity", "1, 1"),
                     BattleTime = table.Column<string>(nullable: true),
                     Team1Name = table.Column<string>(nullable: true),
                     Team1Id = table.Column<int>(nullable: false),
@@ -60,11 +59,23 @@ namespace RoyaleTrackerAPI.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Chests",
+                columns: table => new
+                {
+                    Name = table.Column<string>(nullable: false),
+                    Url = table.Column<string>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Chests", x => x.Name);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Clans",
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false)
-                        .Annotation("MySQL:ValueGenerationStrategy", MySQLValueGenerationStrategy.IdentityColumn),
+                        .Annotation("SqlServer:Identity", "1, 1"),
                     Tag = table.Column<string>(nullable: true),
                     UpdateTime = table.Column<string>(nullable: true),
                     Name = table.Column<string>(nullable: true),
@@ -90,7 +101,7 @@ namespace RoyaleTrackerAPI.Migrations
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false)
-                        .Annotation("MySQL:ValueGenerationStrategy", MySQLValueGenerationStrategy.IdentityColumn),
+                        .Annotation("SqlServer:Identity", "1, 1"),
                     Card1Id = table.Column<int>(nullable: false),
                     Card2Id = table.Column<int>(nullable: false),
                     Card3Id = table.Column<int>(nullable: false),
@@ -122,7 +133,7 @@ namespace RoyaleTrackerAPI.Migrations
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false)
-                        .Annotation("MySQL:ValueGenerationStrategy", MySQLValueGenerationStrategy.IdentityColumn),
+                        .Annotation("SqlServer:Identity", "1, 1"),
                     Tag = table.Column<string>(nullable: true),
                     TeamId = table.Column<int>(nullable: false),
                     Name = table.Column<string>(nullable: true),
@@ -154,7 +165,7 @@ namespace RoyaleTrackerAPI.Migrations
                 columns: table => new
                 {
                     TeamId = table.Column<int>(nullable: false)
-                        .Annotation("MySQL:ValueGenerationStrategy", MySQLValueGenerationStrategy.IdentityColumn),
+                        .Annotation("SqlServer:Identity", "1, 1"),
                     TeamName = table.Column<string>(nullable: true),
                     TwoVTwo = table.Column<bool>(nullable: false),
                     Name = table.Column<string>(nullable: true),
@@ -192,6 +203,9 @@ namespace RoyaleTrackerAPI.Migrations
 
             migrationBuilder.DropTable(
                 name: "Cards");
+
+            migrationBuilder.DropTable(
+                name: "Chests");
 
             migrationBuilder.DropTable(
                 name: "Clans");

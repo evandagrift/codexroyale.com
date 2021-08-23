@@ -20,59 +20,63 @@ namespace RoyaleTrackerAPI.Repos
         public Team GetSetTeamId(List<TeamMember> teamMembers)
         {
 
-            //defaults to 1 player
-            bool twoVtwo = false;
-
-            //if there are two players in the team members list, sets to 2v2
-            if (teamMembers.Count == 2) twoVtwo = true;
-
-            int teamId = 0;
-            Team teamToReturn = new Team();
-
-            //if there are teams in the DB
-            if (context.Teams.Count() > 0)
+            if (teamMembers != null)
             {
+                //defaults to 1 player
+                bool twoVtwo = false;
 
-                //searches db for all teams and focuses that search based on wether on not it's 2v2
-                var teams = context.Teams.Where(t => t.TwoVTwo == twoVtwo);
+                //if there are two players in the team members list, sets to 2v2
+                if (teamMembers.Count == 2) twoVtwo = true;
 
-                //if it's no 2v2
-                if (!twoVtwo)
+                int teamId = 0;
+                Team teamToReturn = new Team();
+
+                //if there are teams in the DB
+                if (context.Teams.Count() > 0)
                 {
-                    teamToReturn = teams.Where(t => t.Tag == teamMembers[0].Tag).FirstOrDefault();
+
+                    //searches db for all teams and focuses that search based on wether on not it's 2v2
+                    var teams = context.Teams.Where(t => t.TwoVTwo == twoVtwo);
+
+                    //if it's no 2v2
+                    if (!twoVtwo)
+                    {
+                        teamToReturn = teams.Where(t => t.Tag == teamMembers[0].Tag).FirstOrDefault();
+                    }
+                    else
+                    {
+                        teamToReturn = teams.Where(t => ((t.Tag == teamMembers[0].Tag && t.Tag2 == teamMembers[1].Tag) || (t.Tag == teamMembers[1].Tag && t.Tag2 == teamMembers[0].Tag))).FirstOrDefault();
+
+                    }
+                    if (teamToReturn != null) { teamId = teamToReturn.TeamId; }
+
                 }
-                else
+
+                //if a team hasn't been found with your specifications it creates a new one
+                if (teamId == 0)
                 {
-                    teamToReturn = teams.Where(t => ((t.Tag == teamMembers[0].Tag && t.Tag2 == teamMembers[1].Tag) || (t.Tag == teamMembers[1].Tag && t.Tag2 == teamMembers[0].Tag))).FirstOrDefault();
+                    Team newTeam = new Team();
+                    newTeam = new Team();
 
+                    newTeam.Tag = teamMembers[0].Tag;
+                    newTeam.Name = teamMembers[0].Name;
+                    newTeam.TeamName = teamMembers[0].Name;
+
+                    if (twoVtwo)
+                    {
+                        newTeam.TwoVTwo = true;
+                        newTeam.Tag2 = teamMembers[1].Tag;
+                        newTeam.Name2 = teamMembers[1].Name;
+                        newTeam.TeamName += " " + teamMembers[1].Name;
+                    }
+
+                    context.Teams.Add(newTeam);
+                    context.SaveChanges();
+                    teamToReturn = newTeam;
                 }
-                if (teamToReturn != null) { teamId = teamToReturn.TeamId; }
-
+                return teamToReturn;
             }
-
-            //if a team hasn't been found with your specifications it creates a new one
-            if (teamId == 0)
-            {
-                Team newTeam = new Team();
-                newTeam = new Team();
-
-                newTeam.Tag = teamMembers[0].Tag;
-                newTeam.Name = teamMembers[0].Name;
-                newTeam.TeamName = teamMembers[0].Name;
-
-                if (twoVtwo)
-                {
-                    newTeam.TwoVTwo = true;
-                    newTeam.Tag2 = teamMembers[1].Tag;
-                    newTeam.Name2 = teamMembers[1].Name;
-                    newTeam.TeamName += " " + teamMembers[1].Name;
-                }
-
-                context.Teams.Add(newTeam);
-                context.SaveChanges();
-                teamToReturn = newTeam;
-            }
-            return teamToReturn;
+            else return null;
 
         }
 
