@@ -149,19 +149,19 @@ Updates the battle in the database with the given data
 ## Cards 
 
 * ### Post://api/Cards 
-###### [Admin Only] (Post w/ JSON in Body)
+###### [Admin Only] (Post w/ [User](#user-content-user) in Body)
 Adds the card to the database if it is not currently in the database
 
 * ### Get://api/Cards 
 ###### [All] (Get)
-Returns all cards in the database
+Returns all [cards] () in the database
 
 * ### Get://api/Cards/id 
-###### [All] (Get w/ id in header)
+###### [All] (Get)
 Returns card with given id
 
 * ### Delete://api/Cards/id 
-###### [Admin Only] (Delete w/ id in header)
+###### [Admin Only] (Delete)
 Deletes card with given id
 
 * ### Post://api/Cards/UpdateCards |
@@ -319,6 +319,11 @@ Deletes the team at given id from the database
 * ### Put://api/Teams
 ###### [Admin Only] (Put with player JSON in body)
 Updates the given team
+
+# Relevant JSON Objects
+## User
+`{}`
+
 
 # Contact
 <p>If you have any questions feel free to email me at <a href = "mailto: Evandagrift@gmail.com">Evandagrift@gmail.com</a></p>
