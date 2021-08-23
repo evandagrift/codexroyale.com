@@ -281,7 +281,7 @@ Returns all battles saved within the Database
 ---
 
 * ### GET://Battles/player/{playerTag} 
-###### [All] (GET w/ JSON userTag in body)
+###### [All] (GET)
 Returns a list of all saved battles played by the given user. Note To send a user tag over the browser you will need to replace the # with the UTF-8 code %23. I.E. #player-tag would become %23player-tag
 
 ---
@@ -302,7 +302,7 @@ Deletes battle with given id
 ###### [AdminOnly] (PUT w/ Battle JSON in body)
 Updates the battle in the database with the given data
 
-#### PUT from body  JSON format
+#### PUT from body JSON format
 `{
   "BattleId": 78,
   "BattleTime": "20210821T213000",
@@ -333,7 +333,6 @@ Updates the battle in the database with the given data
   "IsLadderTournament": false,
   "GameModeId": 72000268
 }`
----
 
 ## Cards 
 
@@ -341,26 +340,56 @@ Updates the battle in the database with the given data
 ###### [Admin Only] (Post w/ [User](#user-content-user) in Body)
 Adds the card to the database if it is not currently in the database
 
+#### PUT from body JSON format
+`{
+  "Id": 26000000,
+  "Name": "Knight",
+  "Url": "https://api-assets.clashroyale.com/cards/300/jAj1Q5rclXxU9kVImGqSJxa4wEMfEhvwNQ_4jiGUuqg.png"
+}`
+
+---
+
 * ### Get://api/Cards 
 ###### [All] (Get)
 Returns all [cards] () in the database
+
+---
 
 * ### Get://api/Cards/id 
 ###### [All] (Get)
 Returns card with given id
 
-* ### Delete://api/Cards/id 
-###### [Admin Only] (Delete)
-Deletes card with given id
+#### Response JSON format
+`{
+  "Id": 26000000,
+  "Name": "Knight",
+  "Url": "https://api-assets.clashroyale.com/cards/300/jAj1Q5rclXxU9kVImGqSJxa4wEMfEhvwNQ_4jiGUuqg.png"
+}`
 
-* ### Post://api/Cards/UpdateCards |
-###### [Admin Only] (Post)
-Calls the cards from offical database and adds new cards to the database
+---
+
+* ### DELETE://api/Cards/id 
+###### [Admin Only] (DELETE)
+DELETEs card with given id
+
+---
+
+* ### POST://api/Cards/UpdateCards |
+###### [Admin Only] (POST)
+POST with no body, Calls the cards from offical database and adds new cards to the database
+
+---
 
 * ### Put://api/Cards 
-###### [Admin Only] (Put with Card in body)
+###### [Admin Only] (PUT with Card in body)
 Updates the given Card
 
+#### PUT JSON in body format
+`{
+  "Id": 26000000,
+  "Name": "Knight",
+  "Url": "https://api-assets.clashroyale.com/cards/300/jAj1Q5rclXxU9kVImGqSJxa4wEMfEhvwNQ_4jiGUuqg.png"
+}`
 
 ## Chests 
 
