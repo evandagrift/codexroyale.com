@@ -7,7 +7,7 @@
 *   [Dependancies](#build-dependancies)
 *   [EndPoints](#end-points)
     *   [Users](#users)
-    *   [battles](#battles)
+    *   [Battles](#battles)
     *   [Cards](#cards)
     *   [Chests](#chests)
     *   [Clans](#clans)
@@ -69,99 +69,288 @@ ASP.Net Core uses the [MVC Pattern](https://docs.microsoft.com/en-us/aspnet/core
 
 ## Users 
 
-* ### Post://Users/Signup 
-###### [AllowAnonymous] (Post w/ User JSON in Body)
-If there is no user with this username or email, the user's password is encrypted and then the user is saved into the database, and a user token is generated. The server then returns the User with relevant fields filled, and a token included for access. 
-<br />
-<br />
+* ### POST://Users/Signup 
+###### [AllowAnonymous] (POST w/ User JSON in Body)
+If there is no user with this username or email, the user's password is encrypted and then the user is saved into the database, and a user token is generated. The server then returns the User with relevant fields filled, and a token included for access. If signup fails returns 401
 
-* ### Post://Users/Login 
-###### [AllowAnonymous] (Post with User JSON in Body)
+#### POST from body JSON format
+`{ 
+"username": "username", 
+"password": "password", 
+"email": "user-email", 
+"tag": "#user-Clash-Royale-Tag"
+}`
+
+#### Response JSON format
+`{
+    "username": "username",
+    "password": null,
+    "email": "user-email",
+    "tag": "#null-if-given-invalid-tag",
+    "clanTag": "#clantag-if-user-have-valid-tag",
+    "role": "user-role",
+    "token": "user-Token"
+}`
+
+---
+
+* ### POST://Users/Login 
+###### [AllowAnonymous] (POST with User JSON in Body)
 If the username and password is correct it returns the user with relevant data including the user token for access to the API
-<br />
-<br />
 
-* ### Get://Users 
-###### [AdminOnly] (Get)
-Returns all User saved in the databse
-<br />
-<br />
+#### POST from body  JSON format
+`{
+"username":"username",
+"password":"password"
+}`
 
-* ### Post://Users 
-###### [AdminOnly] (Post with user JSON in Body)
-Saves the given user to the database
-<br />
-<br />
+#### Response JSON format
+`{
+    "username": "username",
+    "password": null,
+    "email": "user-email",
+    "tag": "#user-tag-if-have",
+    "clanTag": "#clantag-if-have",
+    "role": "user-role",
+    "token": "user-access-token"
+}`
 
-* ### Get://Users/username 
-###### [AdminOnly] (Get with username in header)
+---
+
+* ### GET://Users 
+###### [AdminOnly] (GET)
+Returns all Users saved in the databse
+
+#### Response JSON format
+`[{
+    "username": "username",
+    "password": null,
+    "email": "user-email",
+    "tag": "#user-tag-if-have",
+    "clanTag": "#clantag-if-have",
+    "role": "user-role",
+    "token": "user-access-token"
+}, 
+... ]`
+
+---
+
+* ### POST://Users 
+###### [AdminOnly] (POST with user JSON in Body)
+Saves the given user to the database. Note this will not encrypt passwords so users won't be able to login or be assigned a token through this end-point. See Users/Signup if you are trying to create a valid user.
+
+#### POST from body  JSON format
+`{
+    "username": "username",
+    "password": "password",
+    "email": "user-email",
+    "tag": "#user-tag",
+    "clanTag": "#clan-tag",
+    "role": "user-role",
+    "token": "user-access-token"
+}`
+
+---
+
+* ### GET://Users/username 
+###### [AdminOnly] (GET)
 Returns user with given username
-<br />
-<br />
+
+#### Response JSON format
+`{
+    "username": "username",
+    "password": null,
+    "email": "user-email",
+    "tag": "#user-tag-if-have",
+    "clanTag": "#clantag-if-have",
+    "role": "user-role",
+    "token": "user-access-token"
+}`
+
+---
 
 
-* ### Delete://Users/username 
-###### [AdminOnly] (Delete with username in header)
+* ### DELETE://Users/username 
+###### [AdminOnly] (DELETE)
 Returns user with given username
-<br />
-<br />
 
-* ### Put://Users 
-###### [AdminOnly] (Put with User JSON in Body)
+---
+
+
+* ### PUT://Users 
+###### [AdminOnly] (PUT with User JSON in Body)
 Updates user with given username
-<br />
-<br />
+
+#### PUT JSON format
+`{
+    "username": "username",
+    "password": null,
+    "email": "user-email",
+    "tag": "#user-tag",
+    "clanTag": "#clan-tag",
+    "role": "user-role",
+    "token": "user-access-token"
+}`
 
 
 
 
 ## Battles 
 
-* ### Post://Battles 
-###### [AdminOnly] (Post w/ JSON in body)
+* ### POST://Battles 
+###### [AdminOnly] (POST w/ JSON in body)
 Adds the battle to the database if it is new.
 
-* ### Post://Battles 
-###### [AdminOnly] (Post w/ JSON List of battles in body)
+#### POST from body  JSON format
+`{
+  "BattleTime": "20210821T213000",
+  "Team1Name": "Elodin",
+  "Team1Id": 1,
+  "Team1Win": false,
+  "Team1StartingTrophies": 5674,
+  "Team1TrophyChange": 0,
+  "Team1DeckAId": 2,
+  "Team1DeckBId": 0,
+  "Team1Crowns": 0,
+  "Team1KingTowerHp": 0,
+  "Team1PrincessTowerHpA": -1,
+  "Team1PrincessTowerHpB": -1,
+  "Team2Name": "xume",
+  "Team2Id": 2,
+  "Team2Win": true,
+  "Team2StartingTrophies": 5517,
+  "Team2TrophyChange": 0,
+  "Team2DeckAId": 3,
+  "Team2DeckBId": 0,
+  "Team2Crowns": 3,
+  "Team2KingTowerHp": 5832,
+  "Team2PrincessTowerHpA": 3237,
+  "Team2PrincessTowerHpB": 2183,
+  "Type": "riverRacePvP",
+  "DeckSelection": "collection",
+  "IsLadderTournament": false,
+  "GameModeId": 72000268
+}`
+
+
+---
+
+* ### POST://Battles/list
+###### [AdminOnly] (POST w/ JSON List of battles in body)
 Adds all new battles to the database
+#### POST from body  JSON format
+`[{
+  "BattleTime": "20210821T213000",
+  "Team1Name": "Elodin",
+  "Team1Id": 1,
+  "Team1Win": false,
+  "Team1StartingTrophies": 5674,
+  "Team1TrophyChange": 0,
+  "Team1DeckAId": 2,
+  "Team1DeckBId": 0,
+  "Team1Crowns": 0,
+  "Team1KingTowerHp": 0,
+  "Team1PrincessTowerHpA": -1,
+  "Team1PrincessTowerHpB": -1,
+  "Team2Name": "xume",
+  "Team2Id": 2,
+  "Team2Win": true,
+  "Team2StartingTrophies": 5517,
+  "Team2TrophyChange": 0,
+  "Team2DeckAId": 3,
+  "Team2DeckBId": 0,
+  "Team2Crowns": 3,
+  "Team2KingTowerHp": 5832,
+  "Team2PrincessTowerHpA": 3237,
+  "Team2PrincessTowerHpB": 2183,
+  "Type": "riverRacePvP",
+  "DeckSelection": "collection",
+  "IsLadderTournament": false,
+  "GameModeId": 72000268
+}, ...
+]`
 
-* ### Get://Battles/{User} 
-###### [All] (Get w/ JSON User in Header)
-Returns a list of all battles played by the given user
 
-* ### Get://Battles 
-###### [AdminOnly] (Get)
+
+---
+
+* ### GET://Battles 
+###### [AdminOnly] (GET)
 Returns all battles saved within the Database
 
-* ### Get://Battles/id 
-###### [AdminOnly] (Get w/ id in header)
+---
+
+* ### GET://Battles/player/{playerTag} 
+###### [All] (GET w/ JSON userTag in body)
+Returns a list of all saved battles played by the given user. Note To send a user tag over the browser you will need to replace the # with the UTF-8 code %23. I.E. #player-tag would become %23player-tag
+
+---
+
+* ### GET://Battles/id/battle-id
+###### [AdminOnly] (GET)
 Returns the battle with given id
 
-* ### Delete://Battles/id 
-###### [AdminOnly] (Delete w/ id in header)
+---
+
+* ### DELETE://Battles/id 
+###### [AdminOnly] (DELETE)
 Deletes battle with given id
 
-* ### Put://api/Battles/{Battle} 
-###### [AdminOnly] (Put w/ Battle JSON in body)
+---
+
+* ### PUT://api/Battles
+###### [AdminOnly] (PUT w/ Battle JSON in body)
 Updates the battle in the database with the given data
 
+#### PUT from body  JSON format
+`{
+  "BattleId": 78,
+  "BattleTime": "20210821T213000",
+  "Team1Name": "Elodin",
+  "Team1Id": 1,
+  "Team1Win": false,
+  "Team1StartingTrophies": 5674,
+  "Team1TrophyChange": 0,
+  "Team1DeckAId": 2,
+  "Team1DeckBId": 0,
+  "Team1Crowns": 0,
+  "Team1KingTowerHp": 0,
+  "Team1PrincessTowerHpA": -1,
+  "Team1PrincessTowerHpB": -1,
+  "Team2Name": "xume",
+  "Team2Id": 2,
+  "Team2Win": true,
+  "Team2StartingTrophies": 5517,
+  "Team2TrophyChange": 0,
+  "Team2DeckAId": 3,
+  "Team2DeckBId": 0,
+  "Team2Crowns": 3,
+  "Team2KingTowerHp": 5832,
+  "Team2PrincessTowerHpA": 3237,
+  "Team2PrincessTowerHpB": 2183,
+  "Type": "riverRacePvP",
+  "DeckSelection": "collection",
+  "IsLadderTournament": false,
+  "GameModeId": 72000268
+}`
+---
 
 ## Cards 
 
 * ### Post://api/Cards 
-###### [Admin Only] (Post w/ JSON in Body)
+###### [Admin Only] (Post w/ [User](#user-content-user) in Body)
 Adds the card to the database if it is not currently in the database
 
 * ### Get://api/Cards 
 ###### [All] (Get)
-Returns all cards in the database
+Returns all [cards] () in the database
 
 * ### Get://api/Cards/id 
-###### [All] (Get w/ id in header)
+###### [All] (Get)
 Returns card with given id
 
 * ### Delete://api/Cards/id 
-###### [Admin Only] (Delete w/ id in header)
+###### [Admin Only] (Delete)
 Deletes card with given id
 
 * ### Post://api/Cards/UpdateCards |
@@ -319,6 +508,11 @@ Deletes the team at given id from the database
 * ### Put://api/Teams
 ###### [Admin Only] (Put with player JSON in body)
 Updates the given team
+
+# Relevant JSON Objects
+## User
+`{}`
+
 
 # Contact
 <p>If you have any questions feel free to email me at <a href = "mailto: Evandagrift@gmail.com">Evandagrift@gmail.com</a></p>
