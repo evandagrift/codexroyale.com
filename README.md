@@ -2,6 +2,8 @@
 
 <p display="flex" align="center"><img src="images/clash-logo.png"  alt="Clash Banner" width='60%' height="auto" /></p>
 
+
+
 *   [Overview](#overview)
 *   [Setup](#setup)
 *   [Dependancies](#build-dependancies)
@@ -17,8 +19,12 @@
     *   [Teams](#teams)
 *   [Contact](#Contact)
 
+
+
 # Overview
 #### Codex Royale API is a REST API built in Asp.Net Core 3.1. This program calls the [Clash Royale API](https://developer.clashroyale.com) and repackages the recieved data into [more practical classes](https://github.com/evandagrift/clash-royale-classes) using [Newtonsoft](https://www.newtonsoft.com/json). Consumed data is saved to a Database using [EF Core](https://docs.microsoft.com/en-us/ef/core/). This API also services [codexroyale.com](www.codexroyale.com) \**still in development\**
+
+
 
 # Setup
 1. Get a bearer token for the [Clash Royale API](https://developer.clashroyale.com) connected to the IP you will be using
@@ -63,8 +69,11 @@ the two dependancies below this are for using SqlServer, this can be connected t
 <br />
 [BCrypt.Net-Next (4.0.2)](https://github.com/BcryptNet/bcrypt.net/)
 
+
+
 # End Points
 ASP.Net Core uses the [MVC Pattern](https://docs.microsoft.com/en-us/aspnet/core/mvc/overview?WT.mc_id=dotnet-35129-website&view=aspnetcore-3.1) so all the end points can be found in the /Controllers folder. These files can be identified by end-point-name-Controller.cs and can be called at `http://localhost:52003/api/EndPoint`. This API uses [AspNet Core Authorization](https://docs.microsoft.com/en-us/aspnet/core/security/authentication/?view=aspnetcore-5.0) to handle authentication. There are three level of authorization Anonymous [AllowAnonymous], Any user with a valid user token [All], and Admin users [Admin Only]. If there are no users within the database, the first user created will be given admin privledges. 
+
 
 
 ## Users 
@@ -84,23 +93,12 @@ ASP.Net Core uses the [MVC Pattern](https://docs.microsoft.com/en-us/aspnet/core
 ###### [AllowAnonymous] (POST w/ User JSON in Body)
 If there is no user with this username or email, the user's password is encrypted and then the user is saved into the database, and a user token is generated. The server then returns the User with relevant fields filled, and a token included for access. If signup fails returns 401
 
-#### POST from body JSON format
+#### POST from body JSON login format
 `{ 
 "username": "username", 
 "password": "password", 
 "email": "user-email", 
 "tag": "#user-Clash-Royale-Tag"
-}`
-
-#### Response JSON format
-`{
-    "username": "username",
-    "password": null,
-    "email": "user-email",
-    "tag": "#null-if-given-invalid-tag",
-    "clanTag": "#clantag-if-user-have-valid-tag",
-    "role": "user-role",
-    "token": "user-Token"
 }`
 
 * ### POST://Users/Login 
@@ -171,197 +169,93 @@ Adds the battle to the database if it is new. **BattleId is automatically genera
 ###### [AdminOnly] (POST w/ JSON List of battles in body)
 Adds all new battles to the database
 #### POST from body  JSON format
-`[{
-  "BattleTime": "20210821T213000",
-  "Team1Name": "Elodin",
-  "Team1Id": 1,
-  "Team1Win": false,
-  "Team1StartingTrophies": 5674,
-  "Team1TrophyChange": 0,
-  "Team1DeckAId": 2,
-  "Team1DeckBId": 0,
-  "Team1Crowns": 0,
-  "Team1KingTowerHp": 0,
-  "Team1PrincessTowerHpA": -1,
-  "Team1PrincessTowerHpB": -1,
-  "Team2Name": "xume",
-  "Team2Id": 2,
-  "Team2Win": true,
-  "Team2StartingTrophies": 5517,
-  "Team2TrophyChange": 0,
-  "Team2DeckAId": 3,
-  "Team2DeckBId": 0,
-  "Team2Crowns": 3,
-  "Team2KingTowerHp": 5832,
-  "Team2PrincessTowerHpA": 3237,
-  "Team2PrincessTowerHpB": 2183,
-  "Type": "riverRacePvP",
-  "DeckSelection": "collection",
-  "IsLadderTournament": false,
-  "GameModeId": 72000268
-}, {...}
-]`
 
 * ### GET://Battles 
 ###### [AdminOnly] (GET)
 Returns all battles saved within the Database
 
----
-
 * ### GET://Battles/player/{playerTag} 
 ###### [All] (GET)
 Returns a list of all saved battles played by the given user. Note To send a user tag over the browser you will need to replace the # with the UTF-8 code %23. I.E. #player-tag would become %23player-tag
-
----
 
 * ### GET://Battles/id/battle-id
 ###### [AdminOnly] (GET)
 Returns the battle with given id
 
----
-
 * ### DELETE://Battles/id 
 ###### [AdminOnly] (DELETE)
 Deletes battle with given id
-
----
 
 * ### PUT://api/Battles
 ###### [AdminOnly] (PUT w/ Battle JSON in body)
 Updates the battle in the database with the given data
 
-#### PUT from body JSON format
-`{
-  "BattleId": 78,
-  "BattleTime": "20210821T213000",
-  "Team1Name": "Elodin",
-  "Team1Id": 1,
-  "Team1Win": false,
-  "Team1StartingTrophies": 5674,
-  "Team1TrophyChange": 0,
-  "Team1DeckAId": 2,
-  "Team1DeckBId": 0,
-  "Team1Crowns": 0,
-  "Team1KingTowerHp": 0,
-  "Team1PrincessTowerHpA": -1,
-  "Team1PrincessTowerHpB": -1,
-  "Team2Name": "xume",
-  "Team2Id": 2,
-  "Team2Win": true,
-  "Team2StartingTrophies": 5517,
-  "Team2TrophyChange": 0,
-  "Team2DeckAId": 3,
-  "Team2DeckBId": 0,
-  "Team2Crowns": 3,
-  "Team2KingTowerHp": 5832,
-  "Team2PrincessTowerHpA": 3237,
-  "Team2PrincessTowerHpB": 2183,
-  "Type": "riverRacePvP",
-  "DeckSelection": "collection",
-  "IsLadderTournament": false,
-  "GameModeId": 72000268
-}`
+
 
 ## Cards 
+
+#### Card JSON format
+`{
+  "Id": 26000000,
+  "Name": "Knight",
+  "Url": "https://api-assets.clashroyale.com/cards/300/jAj1Q5rclXxU9kVImGqSJxa4wEMfEhvwNQ_4jiGUuqg.png"
+}`
+
 
 * ### Post://api/Cards 
 ###### [Admin Only] (Post w/ [User](#user-content-user) in Body)
 Adds the card to the database if it is not currently in the database
 
-#### PUT from body JSON format
-`{
-  "Id": 26000000,
-  "Name": "Knight",
-  "Url": "https://api-assets.clashroyale.com/cards/300/jAj1Q5rclXxU9kVImGqSJxa4wEMfEhvwNQ_4jiGUuqg.png"
-}`
-
----
-
 * ### Get://api/Cards 
 ###### [All] (Get)
 Returns all [cards] () in the database
-
----
 
 * ### Get://api/Cards/id 
 ###### [All] (Get)
 Returns card with given id
 
-#### Response JSON format
-`{
-  "Id": 26000000,
-  "Name": "Knight",
-  "Url": "https://api-assets.clashroyale.com/cards/300/jAj1Q5rclXxU9kVImGqSJxa4wEMfEhvwNQ_4jiGUuqg.png"
-}`
-
----
-
 * ### DELETE://api/Cards/id 
 ###### [Admin Only] (DELETE)
 DELETEs card with given id
 
----
-
-* ### POST://api/Cards/UpdateCards |
+* ### POST://api/Cards/UpdateCards
 ###### [Admin Only] (POST)
 POST with no body, Calls the cards from offical database and adds new cards to the database
-
----
 
 * ### Put://api/Cards 
 ###### [Admin Only] (PUT with Card in body)
 Updates the given Card
 
-#### PUT JSON in body format
-`{
-  "Id": 26000000,
-  "Name": "Knight",
-  "Url": "https://api-assets.clashroyale.com/cards/300/jAj1Q5rclXxU9kVImGqSJxa4wEMfEhvwNQ_4jiGUuqg.png"
-}`
+
 
 ## Chests 
+
+#### Chest JSON Format
+`{
+    "Name": "Crown Chest",
+    "Url": "https://static.wikia.nocookie.net/clashroyale/images/7/75/CrownChest.png"
+}`
+
 
 * ### Post://api/Chests
 ###### [Admin Only] (Post with the Chest JSON in body)
 Adds given Chest item to the database
 
-#### POST JSON in body format
-`{
-    "Name": "Crown Chest",
-    "Url": "https://static.wikia.nocookie.net/clashroyale/images/7/75/CrownChest.png"
-}`
-
----
-
 * ### GET://api/Chests
 ###### [Admin Only] (GET)
 Gets all chests saved in the Database
-
----
 
 * ### GET://api/Chests/chest-name
 ###### [Admin Only] (GET with chest name in header)
 Gets chest details on the chest saved in the database with that name
 
----
-
 * ### Delete://api/Chests/chest-name
 ###### [Admin Only] (Delete with chest name in header)
 Deletes the chest with the given name from the database
 
----
-
 * ### PUT://api/Chests
 ###### [Admin Only] (PUT with chest JSON in body)
 Updates the given chest
-
-#### PUT JSON in body format
-`{
-    "Name": "Crown Chest",
-    "Url": "https://static.wikia.nocookie.net/clashroyale/images/7/75/CrownChest.png"
-}`
-
-
 
 
 ## Clans
@@ -385,73 +279,94 @@ Updates the given chest
     "Members": 34
   }`
 
-* ### Post://api/Clans
-###### [Admin Only] (Post with the clan JSON in body)
+* ### POST://api/Clans
+###### [Admin Only] (POST with the clan JSON in body)
 Adds given clan instance to the database **POST without Id, the database will automatically assign a Primary Key/Id**
 
-* ### Get://api/Clans
-###### [Admin Only] (Get)
+* ### GET://api/Clans
+###### [Admin Only] (GET)
 Gets all clan data saved in the Database
 
 
-* ### Get://api/Clans/id
-###### [Admin Only] (Get with id in header)
+* ### GET://api/Clans/id
+###### [Admin Only] (GET with id in header)
 Gets clan data at given id
 
-* ### Delete://api/Clans/id
-###### [Admin Only] (Delete with id in header)
+* ### DELETE://api/Clans/id
+###### [Admin Only] (DELETE with id in header)
 Deletes the clan save at given id from the database
 
-* ### Put://api/Clans
-###### [Admin Only] (Put with clan JSON in body)
+* ### PUT://api/Clans
+###### [Admin Only] (PUT with clan JSON in body)
 Updates the given clan data save
+
 
 
 ## Decks
 
+#### Deck JSON format
+`{
+  "Id": 36,
+  "Card1Id": 77777777,
+  "Card2Id": 999999,
+  "Card3Id": 999999,
+  "Card4Id": 999999,
+  "Card5Id": 999999,
+  "Card6Id": 27000012,
+  "Card7Id": 27000013,
+  "Card8Id": 28000013
+  }`
+
 * ### Post://api/Decks
 ###### [Admin Only] (Post with the Deck JSON in body)
-Takes deck data, organizes it and checks if it is in the database, if it is not it adds it. The deck is then returned with an assigned id
+Takes deck data, organizes it and checks if it is in the database, if it is not it adds it. The deck is then returned with an assigned id. **Do not post with an Id, id is auto assigned**
 
-* ### Get://api/Decks
-###### [Admin Only] (Get)
+* ### GET://api/Decks
+###### [Admin Only] (GET)
 Gets all decks saved in the Database
 
-* ### Get://api/Decks/id
-###### [Admin Only] (Get with id in header)
+* ### GET://api/Decks/id
+###### [Admin Only] (GET with id in header)
 Gets deck with given id
 
-* ### Delete://api/Decks/id
-###### [Admin Only] (Delete with id in header)
+* ### DELETE://api/Decks/id
+###### [Admin Only] (DELETE with id in header)
 Deletes the deck at given id from the database
 
-* ### Put://api/Decks
-###### [Admin Only] (Put with clan JSON in body)
+* ### PUT://api/Decks
+###### [Admin Only] (PUT with clan JSON in body)
 Updates the given deck
-
 
 
 
 ## Game Modes
 
-* ### Post://api/GameModes
-###### [Admin Only] (Post with the game mode JSON in body)
+game modes are typically automatically added when new ones are encountered in the proccess of saving battles
+
+#### GameMode JSON format
+`{
+    "Id": 72000006,
+    "Name": "Ladder"
+  }`
+
+* ### POST://api/GameModes
+###### [Admin Only] (POST with the game mode JSON in body)
 Adds given gamemode if it is not already saved
 
-* ### Get://api/GameModes
-###### [Admin Only] (Get)
+* ### GET://api/GameModes
+###### [Admin Only] (GET)
 Gets all game modes saved in the Database
 
-* ### Get://api/GameModes/id
-###### [Admin Only] (Get with id in header)
+* ### GET://api/GameModes/id
+###### [Admin Only] (GET)
 Gets game mode with given id
 
-* ### Delete://api/GameModes/id
-###### [Admin Only] (Delete with id in header)
+* ### DELETE://api/GameModes/id
+###### [Admin Only] (DELETE)
 Deletes the game mode at given id from the database
 
-* ### Put://api/GameModes
-###### [Admin Only] (Put with game mode JSON in body)
+* ### PUT://api/GameModes
+###### [Admin Only] (PUT with game mode JSON in body)
 Updates the given game mode
 
 
