@@ -35,7 +35,7 @@
 * Reopen the terminal as you did previously
 * Create a migration for the database (Local SqlServer is chosen be default). Run `dotnet ef migrations add migration-name` in the terminal
 * Build the database for the project `dotnet ef database update`
-7. Run the program
+7. Run the program, neccesary data will automatically be seeded if your Clash Royale bearer token is valid
 
 
 # Build Dependancies 
@@ -69,6 +69,17 @@ ASP.Net Core uses the [MVC Pattern](https://docs.microsoft.com/en-us/aspnet/core
 
 ## Users 
 
+#### User JSON format
+`{
+    "username": "username",
+    "password": null,
+    "email": "user-email",
+    "tag": "#null-if-given-invalid-tag",
+    "clanTag": "#clantag-if-user-have-valid-tag",
+    "role": "user-role",
+    "token": "user-Token"
+}`
+
 * ### POST://Users/Signup 
 ###### [AllowAnonymous] (POST w/ User JSON in Body)
 If there is no user with this username or email, the user's password is encrypted and then the user is saved into the database, and a user token is generated. The server then returns the User with relevant fields filled, and a token included for access. If signup fails returns 401
@@ -92,117 +103,37 @@ If there is no user with this username or email, the user's password is encrypte
     "token": "user-Token"
 }`
 
----
-
 * ### POST://Users/Login 
 ###### [AllowAnonymous] (POST with User JSON in Body)
-If the username and password is correct it returns the user with relevant data including the user token for access to the API
-
-#### POST from body  JSON format
-`{
-"username":"username",
-"password":"password"
-}`
-
-#### Response JSON format
-`{
-    "username": "username",
-    "password": null,
-    "email": "user-email",
-    "tag": "#user-tag-if-have",
-    "clanTag": "#clantag-if-have",
-    "role": "user-role",
-    "token": "user-access-token"
-}`
-
----
+**Only Include Username and Password**, if the username and password is correct it returns the user with relevant data including the user token for access to the API
 
 * ### GET://Users 
 ###### [AdminOnly] (GET)
 Returns all Users saved in the databse
 
-#### Response JSON format
-`[{
-    "username": "username",
-    "password": null,
-    "email": "user-email",
-    "tag": "#user-tag-if-have",
-    "clanTag": "#clantag-if-have",
-    "role": "user-role",
-    "token": "user-access-token"
-}, 
-... ]`
-
----
-
 * ### POST://Users 
 ###### [AdminOnly] (POST with user JSON in Body)
 Saves the given user to the database. Note this will not encrypt passwords so users won't be able to login or be assigned a token through this end-point. See Users/Signup if you are trying to create a valid user.
-
-#### POST from body  JSON format
-`{
-    "username": "username",
-    "password": "password",
-    "email": "user-email",
-    "tag": "#user-tag",
-    "clanTag": "#clan-tag",
-    "role": "user-role",
-    "token": "user-access-token"
-}`
-
----
 
 * ### GET://Users/username 
 ###### [AdminOnly] (GET)
 Returns user with given username
 
-#### Response JSON format
-`{
-    "username": "username",
-    "password": null,
-    "email": "user-email",
-    "tag": "#user-tag-if-have",
-    "clanTag": "#clantag-if-have",
-    "role": "user-role",
-    "token": "user-access-token"
-}`
-
----
-
-
 * ### DELETE://Users/username 
 ###### [AdminOnly] (DELETE)
-Returns user with given username
-
----
-
+Deletes user with given Username
 
 * ### PUT://Users 
 ###### [AdminOnly] (PUT with User JSON in Body)
 Updates user with given username
 
-#### PUT JSON format
-`{
-    "username": "username",
-    "password": null,
-    "email": "user-email",
-    "tag": "#user-tag",
-    "clanTag": "#clan-tag",
-    "role": "user-role",
-    "token": "user-access-token"
-}`
-
-
 
 
 ## Battles 
 
-* ### POST://Battles 
-###### [AdminOnly] (POST w/ JSON in body)
-Adds the battle to the database if it is new.
-
-#### POST from body  JSON format
+#### Battle JSON Object format
 `{
+  "BattleId": 1,
   "BattleTime": "20210821T213000",
   "Team1Name": "Elodin",
   "Team1Id": 1,
@@ -232,8 +163,9 @@ Adds the battle to the database if it is new.
   "GameModeId": 72000268
 }`
 
-
----
+* ### POST://Battles 
+###### [AdminOnly] (POST w/ JSON in body)
+Adds the battle to the database if it is new. **BattleId is automatically generated so POST without an assigned ID**
 
 * ### POST://Battles/list
 ###### [AdminOnly] (POST w/ JSON List of battles in body)
@@ -267,12 +199,8 @@ Adds all new battles to the database
   "DeckSelection": "collection",
   "IsLadderTournament": false,
   "GameModeId": 72000268
-}, ...
+}, {...}
 ]`
-
-
-
----
 
 * ### GET://Battles 
 ###### [AdminOnly] (GET)
@@ -397,35 +325,74 @@ Updates the given Card
 ###### [Admin Only] (Post with the Chest JSON in body)
 Adds given Chest item to the database
 
-* ### Get://api/Chests
-###### [Admin Only] (Get)
+#### POST JSON in body format
+`{
+    "Name": "Crown Chest",
+    "Url": "https://static.wikia.nocookie.net/clashroyale/images/7/75/CrownChest.png"
+}`
+
+---
+
+* ### GET://api/Chests
+###### [Admin Only] (GET)
 Gets all chests saved in the Database
 
-* ### Get://api/Chests/chest-name
-###### [Admin Only] (Get with chest name in header)
+---
+
+* ### GET://api/Chests/chest-name
+###### [Admin Only] (GET with chest name in header)
 Gets chest details on the chest saved in the database with that name
+
+---
 
 * ### Delete://api/Chests/chest-name
 ###### [Admin Only] (Delete with chest name in header)
 Deletes the chest with the given name from the database
 
-* ### Put://api/Chests
-###### [Admin Only] (Put with chest JSON in body)
+---
+
+* ### PUT://api/Chests
+###### [Admin Only] (PUT with chest JSON in body)
 Updates the given chest
 
+#### PUT JSON in body format
+`{
+    "Name": "Crown Chest",
+    "Url": "https://static.wikia.nocookie.net/clashroyale/images/7/75/CrownChest.png"
+}`
 
 
 
 
 ## Clans
 
+#### Clan JSON format
+`{
+    "Id": 1,
+    "Tag": "#8CYPL8R",
+    "UpdateTime": "20210824T121500",
+    "Name": "We are Funny?",
+    "Type": "open",
+    "Description": "Welcome! We are an active clan that focuses on donations/participation. discord.gg/VRK4eVg over 10 days inactive booted.",
+    "BadgeId": 16000153,
+    "LocationCode": "International",
+    "RequiredTrophies": 4300,
+    "DonationsPerWeek": 1070,
+    "ClanChestStatus": "inactive",
+    "ClanChestLevel": 1,
+    "ClanScore": 49138,
+    "ClanWarTrophies": 1655,
+    "Members": 34
+  }`
+
 * ### Post://api/Clans
 ###### [Admin Only] (Post with the clan JSON in body)
-Adds given clan instance to the database
+Adds given clan instance to the database **POST without Id, the database will automatically assign a Primary Key/Id**
 
 * ### Get://api/Clans
 ###### [Admin Only] (Get)
 Gets all clan data saved in the Database
+
 
 * ### Get://api/Clans/id
 ###### [Admin Only] (Get with id in header)
