@@ -77,7 +77,7 @@ ASP.Net Core uses the [MVC Pattern](https://docs.microsoft.com/en-us/aspnet/core
 
 
 ## Users 
-
+Account to access deeper API functions, and log into [codexroyale.com](www.codexroyale.com)
 #### User JSON format
 `{
     "username": "username",
@@ -103,7 +103,7 @@ If there is no user with this username or email, the user's password is encrypte
 
 * ### POST://Users/Login 
 ###### [AllowAnonymous] (POST with User JSON in Body)
-**Only Include Username and Password**, if the username and password is correct it returns the user with relevant data including the user token for access to the API
+**Only Include Username and Password**, if the username and password are correct, returns the user with relevant data including the user token for access to the API
 
 * ### GET://Users 
 ###### [AdminOnly] (GET)
@@ -128,7 +128,7 @@ Updates user with given username
 
 
 ## Battles 
-
+battles are added if new, battles are returned from the viewpoint of a player, but via Teams I am able to avoid duplicate battles and have conistent battle formatting between 1v1 and 2v2
 #### Battle JSON Object format
 `{
   "BattleId": 1,
@@ -167,8 +167,7 @@ Adds the battle to the database if it is new. **BattleId is automatically genera
 
 * ### POST://Battles/list
 ###### [AdminOnly] (POST w/ JSON List of battles in body)
-Adds all new battles to the database
-#### POST from body  JSON format
+Adds all new battles to the database\
 
 * ### GET://Battles 
 ###### [AdminOnly] (GET)
@@ -193,7 +192,6 @@ Updates the battle in the database with the given data
 
 
 ## Cards 
-
 #### Card JSON format
 `{
   "Id": 26000000,
@@ -229,7 +227,7 @@ Updates the given Card
 
 
 ## Chests 
-
+Chests are seeded in with usable URL, if more chests are added to the game this will need to be updated.
 #### Chest JSON Format
 `{
     "Name": "Crown Chest",
@@ -294,7 +292,7 @@ Gets clan data at given id
 
 * ### DELETE://api/Clans/id
 ###### [Admin Only] (DELETE with id in header)
-Deletes the clan save at given id from the database
+Deletes the clan at given id from the database
 
 * ### PUT://api/Clans
 ###### [Admin Only] (PUT with clan JSON in body)
@@ -303,7 +301,7 @@ Updates the given clan data save
 
 
 ## Decks
-
+decks are typically automatically added when new ones are encountered in the proccess of saving battles
 #### Deck JSON format
 `{
   "Id": 36,
@@ -424,7 +422,7 @@ Updates the given save of player data
 
 
 ## Teams
-
+teams are generated for each unique combination of player(s) they are typically automatically added when new ones are encountered in the proccess of saving battles
 #### Team JSON format
 `{
     "TeamId": 1,
