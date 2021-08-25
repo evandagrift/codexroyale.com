@@ -202,27 +202,27 @@ Updates the battle in the database with the given data
 }`
 
 
-* ### Post://api/Cards 
-###### [Admin Only] (Post w/ [User](#user-content-user) in Body)
+* ### POST://api/Cards 
+###### [Admin Only] (POST w/ user JSON in Body)
 Adds the card to the database if it is not currently in the database
 
-* ### Get://api/Cards 
-###### [All] (Get)
-Returns all [cards] () in the database
+* ### GET://api/Cards 
+###### [All] (GET)
+Returns all cards in the database
 
-* ### Get://api/Cards/id 
-###### [All] (Get)
+* ### GET://api/Cards/id 
+###### [All] (GET)
 Returns card with given id
 
 * ### DELETE://api/Cards/id 
 ###### [Admin Only] (DELETE)
-DELETEs card with given id
+Deletes card with given id
 
 * ### POST://api/Cards/UpdateCards
 ###### [Admin Only] (POST)
-POST with no body, Calls the cards from offical database and adds new cards to the database
+POST with no body, Calls the cards from the clash royale database and adds new cards to the database
 
-* ### Put://api/Cards 
+* ### PUT://api/Cards 
 ###### [Admin Only] (PUT with Card in body)
 Updates the given Card
 
@@ -237,9 +237,9 @@ Updates the given Card
 }`
 
 
-* ### Post://api/Chests
-###### [Admin Only] (Post with the Chest JSON in body)
-Adds given Chest item to the database
+* ### POST://api/Chests
+###### [Admin Only] (POST with the Chest JSON in body)
+Adds given Chest to the database
 
 * ### GET://api/Chests
 ###### [Admin Only] (GET)
@@ -249,8 +249,8 @@ Gets all chests saved in the Database
 ###### [Admin Only] (GET with chest name in header)
 Gets chest details on the chest saved in the database with that name
 
-* ### Delete://api/Chests/chest-name
-###### [Admin Only] (Delete with chest name in header)
+* ### DELETE://api/Chests/chest-name
+###### [Admin Only] (DELETE with chest name in header)
 Deletes the chest with the given name from the database
 
 * ### PUT://api/Chests
@@ -317,8 +317,8 @@ Updates the given clan data save
   "Card8Id": 28000013
   }`
 
-* ### Post://api/Decks
-###### [Admin Only] (Post with the Deck JSON in body)
+* ### POST://api/Decks
+###### [Admin Only] (POST with the Deck JSON in body)
 Takes deck data, organizes it and checks if it is in the database, if it is not it adds it. The deck is then returned with an assigned id. **Do not post with an Id, id is auto assigned**
 
 * ### GET://api/Decks
@@ -372,57 +372,89 @@ Updates the given game mode
 
 ## Players
 
-* ### Post://api/Players
-###### [Admin Only] (Post with the player JSON in body)
+#### Player JSON format
+`{
+  "Id": 1,
+  "Tag": "#29PGJURQL",
+  "TeamId": 1,
+  "Name": "It's been changed!",
+  "UpdateTime": "20210824T121501",
+  "ClanTag": "#8CYPL8R",
+  "CurrentFavouriteCardId": 26000020,
+  "CurrentDeckId": 1,
+  "Role": "coLeader",
+  "LastSeen": "20210824T074916",
+  "ExpLevel": 13,
+  "Trophies": 5721,
+  "BestTrophies": 5750,
+  "StarPoints": 4272,
+  "Wins": 9671,
+  "Losses": 10413,
+  "Donations": 106,
+  "DonationsReceived": 160,
+  "TotalDonations": 152367,
+  "CardsDiscovered": 103,
+  "ClanCardsCollected": 348242
+}`
+
+* ### POST://api/Players
+###### [Admin Only] (POST with the player JSON in body)
 saves given player data 
 
-* ### Get://api/Players
-###### [Admin Only] (Get)
+* ### GET://api/Players
+###### [Admin Only] (GET)
 Gets all saved player data in the Database
 
-* ### Get://api/Players/id
-###### [Admin Only] (Get with id in header)
+* ### GET://api/Players/id
+###### [Admin Only] (GET)
 Gets player data with given id
 
-* ### Post://api/Players/update
-###### [Admin Only] (Get with user JSON in body)
-Packages all player data and saves it to the database if new, then returns filled player data
+* ### POST://api/Players/update
+###### [Admin Only] (POST with User JSON in body)
+Packages all player data and saves it to the database if new, then returns current filled player data, upcoming chests in rotation, and recent battles.
 
-* ### Delete://api/Players/id
-###### [Admin Only] (Delete with id in header)
+* ### DELETE://api/Players/id
+###### [Admin Only] (DELETE with id in header)
 Deletes the player data at given id from the database
 
-* ### Put://api/Players
-###### [Admin Only] (Put with player JSON in body)
+* ### PUT://api/Players
+###### [Admin Only] (PUT with player JSON in body)
 Updates the given save of player data
 
 
 
 ## Teams
 
-* ### Post://api/Teams
-###### [Admin Only] (Post with the Team JSON in body)
+#### Team JSON format
+`{
+    "TeamId": 1,
+    "TeamName": "Elodin",
+    "TwoVTwo": false,
+    "Name": "Elodin",
+    "Tag": "#29PGJURQL"
+  }`
+
+
+* ### POST://api/Teams
+###### [Admin Only] (POST with Team JSON in body)
 Creates a team with the player combination if nonexistent, then returns the team with an assigned id
 
-* ### Get://api/Teams
-###### [Admin Only] (Get)
+* ### GET://api/Teams
+###### [Admin Only] (GET)
 Gets all teams in the database
 
-* ### Get://api/Teams/id
-###### [Admin Only] (Get with id in header)
+* ### GET://api/Teams/id
+###### [Admin Only] (GET)
 Gets team with given id
 
-* ### Delete://api/Teams/id
-###### [Admin Only] (Delete with id in header)
+* ### DELETE://api/Teams/id
+###### [Admin Only] (DELETE)
 Deletes the team at given id from the database
 
-* ### Put://api/Teams
-###### [Admin Only] (Put with player JSON in body)
+* ### PUT://api/Teams
+###### [Admin Only] (PUT with player JSON in body)
 Updates the given team
 
-# Relevant JSON Objects
-## User
-`{}`
 
 
 # Contact
