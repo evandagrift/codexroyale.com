@@ -15,29 +15,23 @@ namespace RoyaleTrackerAPI.Repos
         private Client client;
         private List<Card> cardsWthUrl;
         //Constructor assigning argumented context
-        public CardsRepo(Client c, TRContext ct) 
-        { 
-            context = ct; 
-            client = c; 
-
-
-
-            cardsWthUrl = new List<Card>();
+        public CardsRepo(Client c, TRContext ct)
+        {
+            context = ct;
+            client = c;
             cardsWthUrl = context.Cards.ToList();
-
-            //if the DB is empty it will populate the DB with the cards
-            //New cards will be added when they are found within a battle/when the deck is registered
-            if (cardsWthUrl.Count == 0)
-            {
-                cardsWthUrl = UpdateGetCards().Result;
-            }
         }
         //Constructor assigning argumented context
-        public CardsRepo(TRContext ct) 
-        { 
+        public CardsRepo(TRContext ct)
+        {
             context = ct;
             cardsWthUrl = new List<Card>();
             cardsWthUrl = context.Cards.ToList();
+        }
+        //Constructor assigning argumented context
+        public CardsRepo(Client cl)
+        {
+            client = cl;
         }
 
         //I recieve card URL as Card.IconUrls["medium"] from the official API
@@ -97,12 +91,12 @@ namespace RoyaleTrackerAPI.Repos
             List<Card> officialCards = await GetAllOfficialCards();
             List<Card> codexCards = context.Cards.ToList();
             List<Card> cardsToAdd = new List<Card>();
-            
-            if(codexCards.Count == 0)
+
+            if (codexCards.Count == 0)
             {
                 cardsToAdd = officialCards;
             }
-            else if (codexCards.Count!= officialCards.Count && officialCards != null && codexCards != null)
+            else if (codexCards.Count != officialCards.Count && officialCards != null && codexCards != null)
             {
                 if (officialCards.Count > codexCards.Count)
                 {
@@ -117,12 +111,13 @@ namespace RoyaleTrackerAPI.Repos
 
 
             }
-            if(cardsToAdd != null){ 
-            if (cardsToAdd.Count > 0)
+            if (cardsToAdd != null)
             {
-                context.AddRange(cardsToAdd);
-                context.SaveChanges();
-            }
+                if (cardsToAdd.Count > 0)
+                {
+                    context.AddRange(cardsToAdd);
+                    context.SaveChanges();
+                }
             }
         }
 
@@ -132,10 +127,11 @@ namespace RoyaleTrackerAPI.Repos
             return context.Cards.ToList();
         }
 
-            //adds given card to context
-            public void AddCardIfNew(Card card)
+        //adds given card to context
+        public void AddCardIfNew(Card card)
         {
-            if (context.Cards.Find(card.Id) == null)
+            //makes sure the card doesn't exists before trying to add
+            if (!context.Cards.Any(c => c.Id == card.Id))
             {
                 context.Cards.Add(card);
                 context.SaveChanges();
@@ -180,12 +176,13 @@ namespace RoyaleTrackerAPI.Repos
         //deletes card at given cardID
         public void DeleteCard(int cardID)
         {
-            //fetches card with given cardID
-            Card cardToDelete = GetCardByID(cardID);
-
             //if a valid card is fetched from the database that card is removed from the context
-            if (cardToDelete != null)
+            if (context.Cards.Any(c => c.Id == cardID))
             {
+                //fetches card with given cardID
+                Card cardToDelete = GetCardByID(cardID);
+
+                //removes that card and saves changes
                 context.Cards.Remove(cardToDelete);
                 context.SaveChanges();
             }
@@ -195,24 +192,28 @@ namespace RoyaleTrackerAPI.Repos
         public List<Card> GetAllCards() { return cardsWthUrl; }
 
         //returns Card from Db with given Card ID
-        public Card GetCardByID(int cardId) { return cardsWthUrl.Where( c => c.Id == cardId).FirstOrDefault(); }
+        public Card GetCardByID(int cardId) { return cardsWthUrl.Where(c => c.Id == cardId).FirstOrDefault(); }
 
         //updates card at given ID
         public void UpdateCard(Card card)
         {
-            //fetches card with given ID
-            Card cardToUpdate = GetCardByID(card.Id);
-
-            //if a valid card is fetched from the DB that card is Updated
-            if (cardToUpdate != null)
+            //if this card exists in the databases
+            if (context.Cards.Any(c => c.Id == card.Id))
             {
+
+                //fetches card with given ID
+                Card cardToUpdate = GetCardByID(card.Id);
+
+                //updates fields
                 cardToUpdate.Name = card.Name;
-                cardToUpdate.Url = cardToUpdate.Url;
+                cardToUpdate.Url = card.Url;
+
+                //saves changes to DB
                 context.SaveChanges();
             }
         }
 
-        
+
 
     }
 

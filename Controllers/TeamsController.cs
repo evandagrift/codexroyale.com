@@ -62,8 +62,8 @@ namespace RoyaleTrackerAPI.Controllers
 
         [Authorize(Policy = "AdminOnly")]
         // GET api/Teams/id
-        [HttpGet]
-        public string Get([FromHeader] int id)
+        [HttpGet("{id}")]
+        public string Get(int id)
         {
             Team team = repo.GetTeamById(id);
             return JsonConvert.SerializeObject(team, Formatting.Indented, new JsonSerializerSettings

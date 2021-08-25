@@ -42,7 +42,7 @@ namespace RoyaleTrackerAPI.Controllers
         // POST: api/Battles/addbattle
         public IActionResult Post([FromBody] Battle battle)
         {
-            //adds the Posted battle to DB
+            //adds the Posted battle to DB if it's new
             repo.AddBattle(battle);
             return Ok();
         }
@@ -52,7 +52,7 @@ namespace RoyaleTrackerAPI.Controllers
         [HttpPost("list")]
         public IActionResult Post([FromBody] List<Battle> battles)
         {
-            //adds the list of battles to DB
+            //adds the list of battles to DB if they are new
             repo.AddBattles(battles);
             return Ok();
         }
@@ -60,24 +60,34 @@ namespace RoyaleTrackerAPI.Controllers
         [Authorize(Policy = "All")]
         [HttpGet("player/{playerTag}")]
         // GET: api/Battles/{user}
-        public List<Battle> GetBattle(string playerTag)
+        public string GetBattles(string playerTag)
         {
             //returns battle with Id based off given battle, if said battle doesn't exist it is created and returned after assigned Id
-            return repo.GetAllBattles(playerTag);
+            List<Battle> battles = repo.GetAllBattles(playerTag);
+            return JsonConvert.SerializeObject(battles, Formatting.Indented, new JsonSerializerSettings
+            {
+                NullValueHandling = NullValueHandling.Ignore
+            });
         }
 
 
         [Authorize(Policy = "AdminOnly")]
         // GET: api/Battles
         [HttpGet]
-        public List<Battle> Get()
+        public string Get()
         {
-            return repo.GetAllBattles();
+            List<Battle> battles = repo.GetAllBattles();
+
+            //returns list of battles
+            return JsonConvert.SerializeObject(battles, Formatting.Indented, new JsonSerializerSettings
+            {
+                NullValueHandling = NullValueHandling.Ignore
+            });
         }
 
         [Authorize(Policy = "AdminOnly")]
         // GET api/Battles/{id}
-        [HttpGet("ID/{id}")]
+        [HttpGet("id/{id}")]
         public string Get(int id)
         {
             //returns player with given Id
@@ -94,7 +104,7 @@ namespace RoyaleTrackerAPI.Controllers
         public void Delete(int id)
         {
             //deletes battle at given /Id
-            repo.DeleteBattle(id );
+            repo.DeleteBattle(id);
         }
         
         [Authorize(Policy = "AdminOnly")]

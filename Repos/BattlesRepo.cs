@@ -229,12 +229,13 @@ namespace RoyaleTrackerAPI.Repos
         //deletes battle at given ID
         public void DeleteBattle(int battleID)
         {
-            //fetches the battle at given ID
-            Battle battleToDelete = GetBattleByID(battleID);
-
-            //if a valid battle is fetched from the DB it is removed from the DB
-            if (battleToDelete != null)
+            //checks if this battles exists before trying to delete
+            if (context.Battles.Any(b => b.BattleId == battleID))
             {
+                //fetches the battle at given ID
+                Battle battleToDelete = GetBattleByID(battleID);
+
+                //removes it from the database and saves chages
                 context.Battles.Remove(battleToDelete);
                 context.SaveChanges();
 
@@ -242,15 +243,16 @@ namespace RoyaleTrackerAPI.Repos
         }
 
 
+
         //updates battle at given ID
         public void UpdateBattle(Battle battle)
         {
-            //fetches battle with given ID
-            Battle battleToUpdate = GetBattleByID(battle.BattleId);
-
-            //if a valid battle is fetched it updates it
-            if (battleToUpdate != null)
+            //checks if this battles exists before trying to Update it
+            if (context.Battles.Any(b => b.BattleId == battle.BattleId))
             {
+                //fetches battle with given ID
+                Battle battleToUpdate = GetBattleByID(battle.BattleId);
+
                 //updates all the fields
                 battleToUpdate.BattleTime = battle.BattleTime;
 
@@ -282,6 +284,8 @@ namespace RoyaleTrackerAPI.Repos
                 battleToUpdate.DeckSelection = battle.DeckSelection;
                 battleToUpdate.IsLadderTournament = battle.IsLadderTournament;
                 battleToUpdate.GameModeId = battle.GameModeId;
+
+                //saves the changes to the database
                 context.SaveChanges();
             }
         }

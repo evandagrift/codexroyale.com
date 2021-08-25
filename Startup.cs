@@ -52,8 +52,6 @@ namespace RoyaleTrackerAPI
                 options.AddPolicy("AdminOnly", policy => policy.RequireRole("Admin"));
                 options.AddPolicy("All", policy => policy.RequireRole("Admin", "User"));
             });
-
-
             services.AddSingleton<CustomAuthenticationManager>();
             services.AddSingleton<Client>(new Client(Configuration["ConnectionStrings:BearerToken"]));
             //allow connection between origins
@@ -69,7 +67,6 @@ namespace RoyaleTrackerAPI
             app.UseHttpsRedirection();
             app.UseAuthentication();
             app.UseAuthorization();
-
 
             app.UseEndpoints(endpoints =>
             {

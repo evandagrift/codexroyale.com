@@ -60,8 +60,8 @@ namespace RoyaleTrackerAPI.Controllers
 
         [Authorize(Policy = "AdminOnly")]
         // GET api/GameModes/id
-        [HttpGet]
-        public string Get([FromHeader] int id)
+        [HttpGet("{id}")]
+        public string Get(int id)
         {
             GameMode gameMode = repo.GetGameModeByID(id);
             return JsonConvert.SerializeObject(gameMode, Formatting.Indented, new JsonSerializerSettings
@@ -73,8 +73,8 @@ namespace RoyaleTrackerAPI.Controllers
 
         [Authorize(Policy = "AdminOnly")]
         // DELETE: api/GameModes/{gameModeTag}
-        [HttpDelete]
-        public void Delete([FromHeader] int id)
+        [HttpDelete("{id}")]
+        public void Delete(int id)
         {
             repo.DeleteGameMode(id);
         }

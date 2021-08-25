@@ -66,8 +66,8 @@ namespace RoyaleTrackerAPI.Controllers
 
         [Authorize(Policy = "AdminOnly")]
         // GET api/Decks/id
-        [HttpGet]
-        public string Get([FromHeader]int id)
+        [HttpGet("{id}")]
+        public string Get(int id)
         {
             //gets deck by Id
             Deck deck = repo.GetDeckByID(id);
@@ -83,8 +83,8 @@ namespace RoyaleTrackerAPI.Controllers
 
         [Authorize(Policy = "AdminOnly")]
         // DELETE: api/Decks/id
-        [HttpDelete]
-        public void Delete([FromHeader] int id)
+        [HttpDelete("{id}")]
+        public void Delete(int id)
         {
             //deletes deck at given Id
             repo.DeleteDeck(id);

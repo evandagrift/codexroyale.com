@@ -71,8 +71,11 @@ namespace RoyaleTrackerAPI.Repos
         //create
         public void AddUser(User user)
         {
-            context.Add(user);
-            context.SaveChanges();
+            if (!context.Users.Any(u => u.Username == user.Username))
+                {
+                context.Add(user);
+                context.SaveChanges();
+            }
         }
 
         //read by Username
