@@ -38,7 +38,7 @@ namespace RoyaleTrackerAPI.Controllers
             client = c;
             //init the repo with DB context
             playersRepo = new PlayersRepo(client, context);
-            chestsRepo = new ChestsRepo(context);
+            chestsRepo = new ChestsRepo(client, context);
         }
 
         // POST api/Players
@@ -65,8 +65,8 @@ namespace RoyaleTrackerAPI.Controllers
 
         [Authorize(Policy = "AdminOnly")]
         // GET api/Players/id
-        [HttpGet]
-        public string Get([FromHeader] int id)
+        [HttpGet("{id}")]
+        public string Get(int id)
         {
             Player player = playersRepo.GetPlayerById(id);
             return JsonConvert.SerializeObject(player, Formatting.Indented, new JsonSerializerSettings
@@ -91,7 +91,7 @@ namespace RoyaleTrackerAPI.Controllers
 
         [Authorize(Policy = "AdminOnly")]
         // DELETE: api/Players/id
-        [HttpDelete]
+        [HttpDelete("{id}")]
         public void Delete([FromHeader]int id)
         {
             playersRepo.DeletePlayer(id);

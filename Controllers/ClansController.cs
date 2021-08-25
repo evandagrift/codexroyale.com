@@ -61,8 +61,8 @@ namespace RoyaleTrackerAPI.Controllers
 
         [Authorize(Policy = "AdminOnly")]
         // GET api/Clans/id
-        [HttpGet]
-        public string Get([FromHeader] int id)
+        [HttpGet("{id}")]
+        public string Get(int id)
         {
             Clan clan = repo.GetClanById(id);
             return JsonConvert.SerializeObject(clan, Formatting.Indented, new JsonSerializerSettings
@@ -74,8 +74,8 @@ namespace RoyaleTrackerAPI.Controllers
 
         [Authorize(Policy = "AdminOnly")]
         // DELETE: api/Clans/id
-        [HttpDelete]
-        public void Delete([FromHeader] int id)
+        [HttpDelete("{id}")]
+        public void Delete(int id)
         {
             repo.DeleteClan(id);
         }

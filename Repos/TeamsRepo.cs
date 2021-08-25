@@ -133,8 +133,11 @@ namespace RoyaleTrackerAPI.Repos
         public void DeleteTeam(int teamId)
         {
             Team team = GetTeamById(teamId);
-            context.Teams.Remove(team);
-            context.SaveChanges();
+            if(team!= null)
+            {
+                context.Teams.Remove(team);
+                context.SaveChanges();  
+            }
         }
 
     }

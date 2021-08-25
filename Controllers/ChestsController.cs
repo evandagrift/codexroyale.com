@@ -24,17 +24,18 @@ namespace RoyaleTrackerAPI.Controllers
 
         //context to DB and Repo for handling
         private TRContext context;
-        private ChestsRepo repo;
+        private PlayersRepo playersRepo;
+        private ChestsRepo chestsRepo;
+        private Client client;
 
         //loading in injected dependancies
-        public ChestsController(CustomAuthenticationManager m, TRContext c)
+        public ChestsController(CustomAuthenticationManager m, Client c, TRContext ct)
         {
             customAuthenticationManager = m;
             // commented out while testing 
-            context = c;
-
-            //init the repo with DB context
-            repo = new ChestsRepo(context);
+            context = ct;
+            client = c;
+            chestsRepo = new ChestsRepo(client, context);
         }
 
         // POST api/Chests
@@ -42,8 +43,12 @@ namespace RoyaleTrackerAPI.Controllers
         [HttpPost]
         public void Post([FromBody] Chest chest)
         {
-            context.Chests.Add(chest);
-            context.SaveChanges();
+            //makes sure this chest doesn't already exist in the database
+            if(!context.Chests.Any(c => c.Name == chest.Name))
+            {
+                context.Chests.Add(chest);
+                context.SaveChanges();
+            }
         }
 
         [Authorize(Policy = "AdminOnly")]
@@ -51,7 +56,7 @@ namespace RoyaleTrackerAPI.Controllers
         [HttpGet]
         public string Get()
         {
-            List<Chest> Chests = repo.GetAllChests();
+            List<Chest> Chests = chestsRepo.GetAllChests();
 
             return JsonConvert.SerializeObject(Chests, Formatting.Indented, new JsonSerializerSettings
             {
@@ -62,10 +67,10 @@ namespace RoyaleTrackerAPI.Controllers
 
         [Authorize(Policy = "AdminOnly")]
         // GET api/Chests/chest-name
-        [HttpGet]
-        public string Get([FromHeader] string chestName)
+        [HttpGet("{chestName}")]
+        public string Get(string chestName)
         {
-            Chest chest = repo.GetChestByName(chestName);
+            Chest chest = chestsRepo.GetChestByName(chestName);
             return JsonConvert.SerializeObject(chest, Formatting.Indented, new JsonSerializerSettings
             {
                 NullValueHandling = NullValueHandling.Ignore
@@ -75,10 +80,10 @@ namespace RoyaleTrackerAPI.Controllers
 
         [Authorize(Policy = "AdminOnly")]
         // DELETE: api/Chests/{ChestName}
-        [HttpDelete]
-        public void Delete([FromHeader] string chestName)
+        [HttpDelete("{chestName}")]
+        public void Delete(string chestName)
         {
-            repo.DeleteChest(chestName);
+            chestsRepo.DeleteChest(chestName);
         }
 
         [Authorize(Policy = "AdminOnly")]
@@ -86,7 +91,7 @@ namespace RoyaleTrackerAPI.Controllers
         [HttpPut]
         public void Update([FromBody] Chest chest)
         {
-            repo.UpdateChest(chest);
+            chestsRepo.UpdateChest(chest);
         }
 
     }

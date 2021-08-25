@@ -63,8 +63,8 @@ namespace RoyaleTrackerAPI.Controllers
         // GET api/Cards/
         [Authorize(Policy = "AdminOnly")]
 
-        [HttpGet]
-        public string Get([FromHeader] int id)
+        [HttpGet("{id}")]
+        public string Get(int id)
         {
             Card card = repo.GetCardByID(id);
             return JsonConvert.SerializeObject(card, Formatting.Indented, new JsonSerializerSettings
@@ -76,8 +76,8 @@ namespace RoyaleTrackerAPI.Controllers
 
         [Authorize(Policy = "AdminOnly")]
         // DELETE: api/Cards/{cardID}
-        [HttpDelete]
-        public void Delete([FromHeader] int id)
+        [HttpDelete("{id}")]
+        public void Delete(int id)
         {
             repo.DeleteCard(id);
         }

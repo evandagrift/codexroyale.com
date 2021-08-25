@@ -21,6 +21,8 @@ namespace RoyaleTrackerAPI.Repos
         //Adds given Player
         public void AddPlayer(Player player)
         {
+            // removes Id in case posted with an Id
+            player.Id = 0;
             context.Players.Add(player);
             context.SaveChanges();
         }
@@ -172,10 +174,9 @@ namespace RoyaleTrackerAPI.Repos
         }
         public async Task<List<Chest>> GetPlayerChestsAsync(string tag)
         {
-            ChestsRepo chestsRepo = new ChestsRepo(context);
 
             string connectionString = "/v1/players/%23" + tag.Substring(1) + "/upcomingchests";
-
+            ChestsRepo chestsRepo = new ChestsRepo(client, context);
             //try in case we get connection errors`
             try
             {
@@ -201,7 +202,7 @@ namespace RoyaleTrackerAPI.Repos
         {
 
             BattlesRepo battlesRepo = new BattlesRepo(client, context);
-            ChestsRepo chestsRepo = new ChestsRepo(context);
+            ChestsRepo chestsRepo = new ChestsRepo(client, context);
 
             //player fetched from official API
             //still needs to be packaged for front end

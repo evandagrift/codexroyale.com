@@ -39,6 +39,7 @@ namespace RoyaleTrackerAPI.Repos
             //if this deck isn't in the DB
             if (deckToReturn == null)
             {
+                deck.Id = 0;
                 //this deck is added and will be assigned an Id
                 context.Decks.Add(deck);
                 //saves that deck to the DB

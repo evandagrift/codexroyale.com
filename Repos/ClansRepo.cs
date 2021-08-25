@@ -19,7 +19,9 @@ namespace RoyaleTrackerAPI.Repos
 
         //adds given clan to context
         public Clan AddClan(Clan clan) 
-        { 
+        {
+            //sanitizes the Id incase it was entered with one
+            clan.Id = 0;
             context.Clans.Add(clan);
             context.SaveChanges();
             return clan;
@@ -110,7 +112,7 @@ namespace RoyaleTrackerAPI.Repos
         public void UpdateClan(Clan clan)
         {
             //fetches clan at given Tag
-            Clan clanToUpdate = GetClanById(clan.Id);
+            Clan clanToUpdate = context.Clans.Find(clan.Id);
 
             //if a valid clan is fetched it updates the fields to those of the argumented clan
             if(clanToUpdate != null)
