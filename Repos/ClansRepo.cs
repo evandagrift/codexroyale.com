@@ -63,7 +63,7 @@ namespace RoyaleTrackerAPI.Repos
             }
             return null;
         }
-        public async Task<Clan> SaveClansNewest(string clanTag)
+        public async Task<Clan> SaveClanIfNew(string clanTag)
         {
             Clan clan = await GetOfficialClan(clanTag);
             //gets the last saved line in the Clan DB for this particuar Clan

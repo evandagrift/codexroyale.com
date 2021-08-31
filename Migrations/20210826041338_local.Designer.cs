@@ -9,8 +9,8 @@ using RoyaleTrackerAPI.Models;
 namespace RoyaleTrackerAPI.Migrations
 {
     [DbContext(typeof(TRContext))]
-    [Migration("20210824121335_Local")]
-    partial class Local
+    [Migration("20210826041338_local")]
+    partial class local
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {

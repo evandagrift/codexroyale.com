@@ -35,6 +35,7 @@ namespace RoyaleTrackerAPI.Controllers
 
             //init the repo with DB context
             repo = new CardsRepo(client, context);
+            repo.UpdateCards().Wait();
         }
 
         [Authorize(Policy = "AdminOnly")]
@@ -46,7 +47,8 @@ namespace RoyaleTrackerAPI.Controllers
             repo.AddCardIfNew(card);
         }
 
-        [Authorize(Policy = "All")]
+        //[Authorize(Policy = "All")]
+        [AllowAnonymous]
         // GET: api/Cards
         [HttpGet]
         public string Get()

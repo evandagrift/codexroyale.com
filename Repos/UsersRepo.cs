@@ -170,9 +170,9 @@ namespace RoyaleTrackerAPI.Repos
 
                             //saves clan data to DB
                             context.Clans.Add(clan);
+                            context.SaveChanges();
                             user.ClanTag = player.ClanTag;
                         }
-                        context.SaveChanges();
                     }
                     else
                     {

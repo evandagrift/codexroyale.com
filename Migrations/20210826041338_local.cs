@@ -2,7 +2,7 @@
 
 namespace RoyaleTrackerAPI.Migrations
 {
-    public partial class Local : Migration
+    public partial class local : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {

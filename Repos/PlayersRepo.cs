@@ -112,6 +112,8 @@ namespace RoyaleTrackerAPI.Repos
 
             //Needs client so it can autofill new cards if they're missing
             CardsRepo cardsRepo = new CardsRepo(client,context);
+            //updates missing cards
+            cardsRepo.UpdateCards().Wait();
 
             ClansRepo clansRepo = new ClansRepo(client, context);
 
@@ -147,7 +149,6 @@ namespace RoyaleTrackerAPI.Repos
                         {
                             player.ClanTag = player.Clan.Tag;
                             player.LastSeen = await GetLastSeen(player.Tag, player.ClanTag);
-                            player.Clan = await clansRepo.SaveClansNewest(player.ClanTag);
                         }
 
 
@@ -198,11 +199,12 @@ namespace RoyaleTrackerAPI.Repos
 
         }
 
-        public async Task<Player> UpdateGetPlayerWithChestsBattles(User user)
+        public async Task<Player> GetSavePlayerFull(User user)
         {
 
             BattlesRepo battlesRepo = new BattlesRepo(client, context);
             ChestsRepo chestsRepo = new ChestsRepo(client, context);
+            ClansRepo clansRepo = new ClansRepo(client, context);
 
             //player fetched from official API
             //still needs to be packaged for front end
@@ -223,15 +225,13 @@ namespace RoyaleTrackerAPI.Repos
             //makes sure new player data is recieved from the offical API
             if (fetchedPlayer != null)
             {
-                //fetches the current player battles from the official DB
-                List<Battle> pBattles = await battlesRepo.GetOfficialPlayerBattles(fetchedPlayer.Tag); ;
-
 
                 //if there are no instances of this player saved or
                 if (lastSavedPlayer == null || fetchedPlayer.Wins != lastSavedPlayer.Wins || fetchedPlayer.Losses != lastSavedPlayer.Losses ||
-                    fetchedPlayer.ClanTag != lastSavedPlayer.ClanTag)
+                    fetchedPlayer.ClanTag != lastSavedPlayer.ClanTag || fetchedPlayer.TotalDonations != lastSavedPlayer.TotalDonations)
                 {
 
+                    //if the player has a new clan it will update the user
                     if (user.ClanTag != fetchedPlayer.ClanTag || user.Tag != fetchedPlayer.Tag)
                     {
                         //if the user's Player's Clan has changed it will Automatically
@@ -240,22 +240,36 @@ namespace RoyaleTrackerAPI.Repos
                         context.SaveChanges();
                     }
 
+                    //fetches the current player battles from the official DB
+                    List<Battle> pBattles = await battlesRepo.GetOfficialPlayerBattles(fetchedPlayer.Tag);
+
                     //adds new fetched battles to the DB and gets a count of added lines
                     battlesRepo.AddBattles(pBattles);
 
                     context.Players.Add(fetchedPlayer);
                     context.SaveChanges();
                 }
-                else { fetchedPlayer = lastSavedPlayer; }
 
                 //gets players Chests r
                 List<Chest> playerChests = await GetPlayerChestsAsync(user.Tag);
+                if (playerChests.Count > 0)
+                {
+                    fetchedPlayer.Chests = playerChests;
+                }
 
-                fetchedPlayer.Chests = playerChests;
-
+                //returns a limited number of battles to reduce lag
                 fetchedPlayer.Battles = battlesRepo.GetRecentBattles(user);
-            }//if 
+
+
+
+            }//else if fetched player returned null
             else { return null;  }
+
+            if(fetchedPlayer.ClanTag != null)
+            {
+
+                fetchedPlayer.Clan = await clansRepo.SaveClanIfNew(fetchedPlayer.ClanTag);
+            }
 
             return fetchedPlayer;
         }
