@@ -81,7 +81,7 @@ namespace RoyaleTrackerAPI.Controllers
         public async Task<string> GetUpdatePlayer([FromBody] User user)
         {
             //get the users's player data w/ their chests in rotation as well as battles
-            Player returnPlayer = await playersRepo.UpdateGetPlayerWithChestsBattles(user);
+            Player returnPlayer = await playersRepo.GetSavePlayerFull(user);
             //
             return JsonConvert.SerializeObject(returnPlayer, Formatting.Indented, new JsonSerializerSettings
             {

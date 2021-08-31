@@ -13,20 +13,16 @@ namespace RoyaleTrackerAPI.Repos
         //Access to DB
         private TRContext context;
         private Client client;
-        private List<Card> cardsWthUrl;
         //Constructor assigning argumented context
         public CardsRepo(Client c, TRContext ct)
         {
             context = ct;
             client = c;
-            cardsWthUrl = context.Cards.ToList();
         }
         //Constructor assigning argumented context
         public CardsRepo(TRContext ct)
         {
             context = ct;
-            cardsWthUrl = new List<Card>();
-            cardsWthUrl = context.Cards.ToList();
         }
         //Constructor assigning argumented context
         public CardsRepo(Client cl)
@@ -84,7 +80,7 @@ namespace RoyaleTrackerAPI.Repos
         }
 
 
-        public async Task UpdateCards()
+        public async Task<List<Card>> UpdateCards()
         {
             //test against official
             //add any that aren't in DB
@@ -98,27 +94,10 @@ namespace RoyaleTrackerAPI.Repos
             }
             else if (codexCards.Count != officialCards.Count && officialCards != null && codexCards != null)
             {
-                if (officialCards.Count > codexCards.Count)
-                {
-                    //cycles through all cards in the codex
-                    officialCards.ForEach(card =>
-                    {
-                        if (!codexCards.Contains(card)) { cardsToAdd.Add(card); }
-                    });
-
-
-                }
-
+                AddCardsIfNew(officialCards);
 
             }
-            if (cardsToAdd != null)
-            {
-                if (cardsToAdd.Count > 0)
-                {
-                    context.AddRange(cardsToAdd);
-                    context.SaveChanges();
-                }
-            }
+            return context.Cards.ToList(); ;
         }
 
         public async Task<List<Card>> UpdateGetCards()
@@ -130,46 +109,27 @@ namespace RoyaleTrackerAPI.Repos
         //adds given card to context
         public void AddCardIfNew(Card card)
         {
-            //makes sure the card doesn't exists before trying to add
+            //adds card to db if currently unsaved
             if (!context.Cards.Any(c => c.Id == card.Id))
             {
                 context.Cards.Add(card);
                 context.SaveChanges();
             }
-        }
+        }      
 
-
-        /*
-        public List<Card> FillCardUrls(List<Card> cardsToBeFilled)
+        //checks a list of cards to see if any are not included in the database and adds them
+        public void AddCardsIfNew(List<Card> card)
         {
-            for(int i = 0; i<cardsToBeFilled;i++)
+            card.ForEach(c =>
             {
-                cardsToBeFilled[i] = cardsWthUrl
-            }
-
-            return cardsToBeFilled;
+                if (!context.Cards.Any(c2 => c2.Id == c.Id))
+                {
+                    context.Cards.Add(c);
+                    context.SaveChanges();
+                }
+            });
+    
         }
-        public Card FillCardUrl(Card cardToBeFilled)
-        {
-            return cardsWthUrl.Where(c => c.Id == cardToBeFilled.Id).FirstOrDefault();
-        }
-
-
-
-        public Deck FillDeckUrls(Deck deckToBeFilled)
-        {
-            deckToBeFilled.Card1 = FillCardUrl(deckToBeFilled.Card1);
-            deckToBeFilled.Card2 = FillCardUrl(deckToBeFilled.Card2);
-            deckToBeFilled.Card3 = FillCardUrl(deckToBeFilled.Card3);
-            deckToBeFilled.Card4 = FillCardUrl(deckToBeFilled.Card4);
-            deckToBeFilled.Card5 = FillCardUrl(deckToBeFilled.Card5);
-            deckToBeFilled.Card6 = FillCardUrl(deckToBeFilled.Card6);
-            deckToBeFilled.Card7 = FillCardUrl(deckToBeFilled.Card7);
-            deckToBeFilled.Card8 = FillCardUrl(deckToBeFilled.Card8);
-
-            return deckToBeFilled;
-        }
-        */
 
 
 
@@ -189,10 +149,10 @@ namespace RoyaleTrackerAPI.Repos
         }
 
         //returns a list of all cards in DB
-        public List<Card> GetAllCards() { return cardsWthUrl; }
+        public List<Card> GetAllCards() { return context.Cards.ToList(); }
 
         //returns Card from Db with given Card ID
-        public Card GetCardByID(int cardId) { return cardsWthUrl.Where(c => c.Id == cardId).FirstOrDefault(); }
+        public Card GetCardByID(int cardId) { return context.Cards.Where(c => c.Id == cardId).FirstOrDefault(); }
 
         //updates card at given ID
         public void UpdateCard(Card card)
@@ -250,4 +210,37 @@ namespace RoyaleTrackerAPI.Repos
             }
             return null;
         }
+*/
+
+
+/*
+public List<Card> FillCardUrls(List<Card> cardsToBeFilled)
+{
+    for(int i = 0; i<cardsToBeFilled;i++)
+    {
+        cardsToBeFilled[i] = cardsWthUrl
+    }
+
+    return cardsToBeFilled;
+}
+public Card FillCardUrl(Card cardToBeFilled)
+{
+    return cardsWthUrl.Where(c => c.Id == cardToBeFilled.Id).FirstOrDefault();
+}
+
+
+
+public Deck FillDeckUrls(Deck deckToBeFilled)
+{
+    deckToBeFilled.Card1 = FillCardUrl(deckToBeFilled.Card1);
+    deckToBeFilled.Card2 = FillCardUrl(deckToBeFilled.Card2);
+    deckToBeFilled.Card3 = FillCardUrl(deckToBeFilled.Card3);
+    deckToBeFilled.Card4 = FillCardUrl(deckToBeFilled.Card4);
+    deckToBeFilled.Card5 = FillCardUrl(deckToBeFilled.Card5);
+    deckToBeFilled.Card6 = FillCardUrl(deckToBeFilled.Card6);
+    deckToBeFilled.Card7 = FillCardUrl(deckToBeFilled.Card7);
+    deckToBeFilled.Card8 = FillCardUrl(deckToBeFilled.Card8);
+
+    return deckToBeFilled;
+}
 */
