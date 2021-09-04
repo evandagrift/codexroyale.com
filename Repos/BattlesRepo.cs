@@ -186,7 +186,7 @@ namespace RoyaleTrackerAPI.Repos
 
                 if (fetchThisMany > numPlayerBattles) fetchThisMany = numPlayerBattles;
 
-                List<Battle> battlesToReturn = context.Battles.Where(b => b.Team1Id == player.TeamId || b.Team2Id == player.TeamId).OrderByDescending(b => b.BattleId).Take(fetchThisMany).ToList();
+                List<Battle> battlesToReturn = context.Battles.Where(b => b.Team1Id == player.TeamId || b.Team2Id == player.TeamId).OrderByDescending(b => b.BattleTime).Take(fetchThisMany).ToList();
 
                 Console.WriteLine("Player has played" + numPlayerBattles + "battles");
 
