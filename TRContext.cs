@@ -48,7 +48,7 @@ namespace RoyaleTrackerAPI.Models
             //all available chests are seeded in with a url to their image
             //this list is used to assign URLs to fetched player chests
             modelBuilder.Entity<Chest>().HasData(
-                new Chest { Name = "Epic Chest", Url = "https://https://static.wikia.nocookie.net/clashroyale/images/f/f5/EpicChest.png.wikia.nocookie.net/clashroyale/images/f/f5/EpicChest.png" },
+                new Chest { Name = "Epic Chest", Url = "https://static.wikia.nocookie.net/clashroyale/images/f/f5/EpicChest.png" },
                 new Chest { Name = "Crown Chest", Url = "https://static.wikia.nocookie.net/clashroyale/images/7/75/CrownChest.png" },
                 new Chest { Name = "Fortune Chest", Url = "https://static.wikia.nocookie.net/clashroyale/images/d/de/Fortune_Chest.png" },
                 new Chest { Name = "Giant Chest", Url = "https://static.wikia.nocookie.net/clashroyale/images/d/da/Giant_chest.png" },

@@ -63,8 +63,7 @@ namespace RoyaleTrackerAPI.Controllers
             });
 
         }
-
-        [Authorize(Policy = "AdminOnly")]
+        [AllowAnonymous]
         // GET api/Decks/id
         [HttpGet("{id}")]
         public string Get(int id)
