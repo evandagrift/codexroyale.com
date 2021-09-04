@@ -11,6 +11,7 @@ namespace RoyaleTrackerAPI.Repos
     {
         //DB Access
         private TRContext context;
+        private CardsRepo cardsRepo;
 
         //constructor assigning argumented context
         public DecksRepo(TRContext c) { context = c; }
@@ -104,7 +105,20 @@ namespace RoyaleTrackerAPI.Repos
         public List<Deck> GetAllDecks() { return context.Decks.ToList(); }
 
         //returns Deck with given ID from DB
-        public Deck GetDeckByID(int deckID) { return context.Decks.Find(deckID); }
+        public Deck GetDeckByID(int deckID)
+        {
+            cardsRepo = new CardsRepo(context);
+            Deck returnDeck = context.Decks.Find(deckID);
+            returnDeck.Card1 = cardsRepo.GetCardByID(returnDeck.Card1Id);
+            returnDeck.Card2 = cardsRepo.GetCardByID(returnDeck.Card2Id);
+            returnDeck.Card3 = cardsRepo.GetCardByID(returnDeck.Card3Id);
+            returnDeck.Card4 = cardsRepo.GetCardByID(returnDeck.Card4Id);
+            returnDeck.Card5 = cardsRepo.GetCardByID(returnDeck.Card5Id);
+            returnDeck.Card6 = cardsRepo.GetCardByID(returnDeck.Card6Id);
+            returnDeck.Card7 = cardsRepo.GetCardByID(returnDeck.Card7Id);
+            returnDeck.Card8 = cardsRepo.GetCardByID(returnDeck.Card8Id);
+            return returnDeck;
+        }
 
         //updates deck at given ID with argumented Deck Fields
         public void UpdateDeck(Deck deck)

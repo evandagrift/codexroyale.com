@@ -26,7 +26,12 @@ namespace RoyaleTrackerClasses
 
         //FK to the Deck Id
         public int Team1DeckAId { get; set; }
+        [NotMapped]
+        public Deck Team1DeckA { get; set; }
         public int Team1DeckBId { get; set; }
+        [NotMapped]
+        public Deck Team1DeckB { get; set; }
+
         public int Team1Crowns { get; set; }
 
         //-1 will flag full health, 0 is dead
@@ -46,8 +51,12 @@ namespace RoyaleTrackerClasses
 
         //FK to the Deck Id
         public int Team2DeckAId { get; set; }
+        [NotMapped]
+        public Deck Team2DeckA { get; set; }
 
         public int Team2DeckBId { get; set; }
+        [NotMapped]
+        public Deck Team2DeckB { get; set; }
 
 
         public int Team2Crowns { get; set; }

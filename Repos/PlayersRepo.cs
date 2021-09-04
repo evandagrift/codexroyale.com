@@ -205,6 +205,7 @@ namespace RoyaleTrackerAPI.Repos
             BattlesRepo battlesRepo = new BattlesRepo(client, context);
             ChestsRepo chestsRepo = new ChestsRepo(client, context);
             ClansRepo clansRepo = new ClansRepo(client, context);
+            DecksRepo decksRepo = new DecksRepo(context);
 
             //player fetched from official API
             //still needs to be packaged for front end
@@ -270,7 +271,17 @@ namespace RoyaleTrackerAPI.Repos
 
                 fetchedPlayer.Clan = await clansRepo.SaveClanIfNew(fetchedPlayer.ClanTag);
             }
+            fetchedPlayer.Battles.ForEach(b =>
+            {
+                b.Team1DeckA = decksRepo.GetDeckByID(b.Team1DeckAId);
+                b.Team2DeckA = decksRepo.GetDeckByID(b.Team2DeckAId);
+                if (b.Team1DeckBId != 0)
+                {
+                    b.Team1DeckB = decksRepo.GetDeckByID(b.Team1DeckBId);
+                    b.Team2DeckB = decksRepo.GetDeckByID(b.Team2DeckBId);
 
+                }
+            });
             return fetchedPlayer;
         }
     }
