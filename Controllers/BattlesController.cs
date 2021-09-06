@@ -71,12 +71,12 @@ namespace RoyaleTrackerAPI.Controllers
         }
 
 
-        [Authorize(Policy = "AdminOnly")]
+        [AllowAnonymous]
         // GET: api/Battles
         [HttpGet]
         public string Get()
         {
-            List<Battle> battles = repo.GetAllBattles();
+            List<Battle> battles = repo.GetRecentBattles();
 
             //returns list of battles
             return JsonConvert.SerializeObject(battles, Formatting.Indented, new JsonSerializerSettings

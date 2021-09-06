@@ -61,10 +61,21 @@ namespace RoyaleTrackerAPI.Controllers
 
         [Authorize(Policy = "AdminOnly")]
         // GET api/Clans/id
-        [HttpGet("{id}")]
+        [HttpGet("id/{id}")]
         public string Get(int id)
         {
             Clan clan = repo.GetClanById(id);
+            return JsonConvert.SerializeObject(clan, Formatting.Indented, new JsonSerializerSettings
+            {
+                NullValueHandling = NullValueHandling.Ignore
+            });
+        }
+        [AllowAnonymous]
+        // GET api/Clans/id
+        [HttpGet("{tag}")]
+        public string Get(string tag)
+        {
+            Clan clan = repo.GetSiteClan(tag).Result;
             return JsonConvert.SerializeObject(clan, Formatting.Indented, new JsonSerializerSettings
             {
                 NullValueHandling = NullValueHandling.Ignore

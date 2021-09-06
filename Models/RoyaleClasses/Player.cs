@@ -47,6 +47,10 @@ namespace RoyaleTrackerClasses
 
         public int Wins { get; set; }
         public int Losses { get; set; }
+        public int ThreeCrownWins { get; set; }
+        public int BattleCount { get; set; }
+        public int WarDayWins { get; set; }
+        
 
         public int Donations { get; set; }
         public int DonationsReceived { get; set; }
