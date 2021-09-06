@@ -77,16 +77,21 @@ namespace RoyaleTrackerAPI.Controllers
 
         [Authorize(Policy = "All")]
         //[AllowAnonymous]
-        [HttpPost("update")]
-        public async Task<string> GetUpdatePlayer([FromBody] User user)
+        [HttpGet("update/{playerTag}")]
+        public async Task<string> GetUpdatePlayer(string playerTag)
         {
-            //get the users's player data w/ their chests in rotation as well as battles
-            Player returnPlayer = await playersRepo.GetSavePlayerFull(user);
-            //
-            return JsonConvert.SerializeObject(returnPlayer, Formatting.Indented, new JsonSerializerSettings
+            try
             {
-                NullValueHandling = NullValueHandling.Ignore
-            });
+
+                //get the users's player data w/ their chests in rotation as well as battles
+                Player returnPlayer = await playersRepo.GetSavePlayerFull(playerTag);
+                //
+                return JsonConvert.SerializeObject(returnPlayer, Formatting.Indented, new JsonSerializerSettings
+                {
+                    NullValueHandling = NullValueHandling.Ignore
+                });
+            }
+            catch { return "Failed To Find User"; }
         }
 
         [Authorize(Policy = "AdminOnly")]

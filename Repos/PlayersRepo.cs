@@ -199,7 +199,7 @@ namespace RoyaleTrackerAPI.Repos
 
         }
 
-        public async Task<Player> GetSavePlayerFull(User user)
+        public async Task<Player> GetSavePlayerFull(string playerTag)
         {
 
             BattlesRepo battlesRepo = new BattlesRepo(client, context);
@@ -209,7 +209,7 @@ namespace RoyaleTrackerAPI.Repos
 
             //player fetched from official API
             //still needs to be packaged for front end
-            Player fetchedPlayer = await GetOfficialPlayer(user.Tag);
+            Player fetchedPlayer = await GetOfficialPlayer(playerTag);
 
 
             //creating the variable outside try so the function has access
@@ -217,7 +217,7 @@ namespace RoyaleTrackerAPI.Repos
 
             try
             {
-                lastSavedPlayer = context.Players.Where(p => p.Tag == user.Tag).FirstOrDefault();
+                lastSavedPlayer = context.Players.Where(p => p.Tag == playerTag).FirstOrDefault();
             }
             catch { lastSavedPlayer = null; }
 
@@ -232,14 +232,17 @@ namespace RoyaleTrackerAPI.Repos
                     fetchedPlayer.ClanTag != lastSavedPlayer.ClanTag || fetchedPlayer.TotalDonations != lastSavedPlayer.TotalDonations)
                 {
 
-                    //if the player has a new clan it will update the user
-                    if (user.ClanTag != fetchedPlayer.ClanTag || user.Tag != fetchedPlayer.Tag)
-                    {
                         //if the user's Player's Clan has changed it will Automatically
-                        user = context.Users.Find(user.Username);
-                        user.ClanTag = fetchedPlayer.ClanTag;
-                        context.SaveChanges();
-                    }
+                        var users = context.Users.Where(u => u.Tag == playerTag).ToList();
+                        if (users.Count() > 0)
+                        {
+                            users.ForEach(u =>
+                            {
+                                if (u.ClanTag != fetchedPlayer.ClanTag)
+                                    u.ClanTag = fetchedPlayer.ClanTag;
+                            });
+                            context.SaveChanges();
+                        }
 
                     //fetches the current player battles from the official DB
                     List<Battle> pBattles = await battlesRepo.GetOfficialPlayerBattles(fetchedPlayer.Tag);
@@ -252,19 +255,19 @@ namespace RoyaleTrackerAPI.Repos
                 }
 
                 //gets players Chests r
-                List<Chest> playerChests = await GetPlayerChestsAsync(user.Tag);
+                List<Chest> playerChests = await GetPlayerChestsAsync(playerTag);
                 if (playerChests.Count > 0)
                 {
                     fetchedPlayer.Chests = playerChests;
                 }
 
                 //returns a limited number of battles to reduce lag
-                fetchedPlayer.Battles = battlesRepo.GetRecentBattles(user);
+                fetchedPlayer.Battles = battlesRepo.GetRecentBattles(playerTag);
 
 
 
             }//else if fetched player returned null
-            else { return null;  }
+            else { return lastSavedPlayer;  }
 
             if(fetchedPlayer.ClanTag != null)
             {

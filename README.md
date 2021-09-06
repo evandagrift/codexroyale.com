@@ -201,7 +201,7 @@ Updates the battle in the database with the given data
 
 
 * ### POST://api/Cards 
-###### [Admin Only] (POST w/ user JSON in Body)
+###### [Admin Only] (POST w/ card JSON in Body)
 Adds the card to the database if it is not currently in the database
 
 * ### GET://api/Cards 
@@ -407,8 +407,8 @@ Gets all saved player data in the Database
 ###### [Admin Only] (GET)
 Gets player data with given id
 
-* ### POST://api/Players/update
-###### [Admin Only] (POST with User JSON in body)
+* ### GET://api/Players/update/playerTag
+###### [Admin Only] (GET)
 Packages all player data and saves it to the database if new, then returns current filled player data, upcoming chests in rotation, and recent battles.
 
 * ### DELETE://api/Players/id

@@ -77,7 +77,7 @@ namespace RoyaleTrackerAPI.Repos
             //battles that weren't already saved will be prepped then added to the DB
             battlesToSave.ForEach(b =>
             {
-                if (b.BattleId != null) b.BattleId = 0;
+                if (b.BattleId != 0) b.BattleId = 0;
 
                 if (b.GameMode != null)
                 {
@@ -175,11 +175,11 @@ namespace RoyaleTrackerAPI.Repos
             else { return null; }
         }
         //returns a list of all battles from DB with specific tag
-        public List<Battle> GetRecentBattles(User user)
+        public List<Battle> GetRecentBattles(string playerTag)
         {
-            if (user.Tag != null)
+            if (playerTag != null)
             {
-                Player player = context.Players.Where(u => u.Tag == user.Tag).FirstOrDefault();
+                Player player = context.Players.Where(u => u.Tag == playerTag).FirstOrDefault();
                 int numPlayerBattles = context.Battles.Where(b => b.Team1Id == player.TeamId || b.Team2Id == player.TeamId).Count();
 
                 int fetchThisMany = 30;
@@ -188,11 +188,32 @@ namespace RoyaleTrackerAPI.Repos
 
                 List<Battle> battlesToReturn = context.Battles.Where(b => b.Team1Id == player.TeamId || b.Team2Id == player.TeamId).OrderByDescending(b => b.BattleTime).Take(fetchThisMany).ToList();
 
-                Console.WriteLine("Player has played" + numPlayerBattles + "battles");
 
                 return battlesToReturn;
             }
             else { return null; }
+        }
+        public List<Battle> GetRecentBattles()
+        {
+            DecksRepo decksRepo = new DecksRepo(context);
+                int fetchThisMany = 30;
+
+                if (fetchThisMany > context.Battles.Count()) fetchThisMany = context.Battles.Count();
+
+                List<Battle> battlesToReturn = context.Battles.OrderByDescending(b => b.BattleTime).Take(fetchThisMany).ToList();
+            battlesToReturn.ForEach(b =>
+            {
+                b.Team1DeckA = decksRepo.GetDeckByID(b.Team1DeckAId);
+                b.Team2DeckA = decksRepo.GetDeckByID(b.Team2DeckAId);
+                if (b.Team1DeckBId != 0)
+                {
+                    b.Team1DeckB = decksRepo.GetDeckByID(b.Team1DeckBId);
+                    b.Team2DeckB = decksRepo.GetDeckByID(b.Team2DeckBId);
+
+                }
+            });
+
+            return battlesToReturn;
         }
 
         //gets battle with given battleID

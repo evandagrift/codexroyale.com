@@ -63,11 +63,18 @@ namespace RoyaleTrackerAPI.Repos
             }
             return null;
         }
-        public async Task<Clan> SaveClanIfNew(string clanTag)
+        public async Task<Clan> GetSiteClan(string clanTag)
         {
-            Clan clan = await GetOfficialClan(clanTag);
+            Clan returnClan = await SaveClanIfNew(clanTag);
+            returnClan.MemberList = await GetClanPlayers(clanTag);
+
+            return returnClan;
+        }
+            public async Task<Clan> SaveClanIfNew(string clanTag)
+            {
+                Clan clan = await GetOfficialClan(clanTag);
             //gets the last saved line in the Clan DB for this particuar Clan
-            Clan lastLoggedClan = context.Clans.Where(c => c.Tag == clan.Tag).OrderByDescending(c => c.Id).FirstOrDefault();
+            Clan lastLoggedClan = context.Clans.Where(c => c.Tag == clanTag).OrderByDescending(c => c.UpdateTime).FirstOrDefault();
 
             //if this clan has been saved before it makes sure the data is new
             //otherwise it will save it by default
@@ -87,6 +94,32 @@ namespace RoyaleTrackerAPI.Repos
             return lastLoggedClan;
         }
 
+        public async Task<List<Player>> GetClanPlayers(string clanTag)
+        {
+            string officialConnectionString = "/v1/clans/%23";
+
+            try
+            {
+                //connection string for clan in offical API
+                string connectionString = officialConnectionString + clanTag.Substring(1) + "/members";
+
+                //fetches clan data
+                var result = await client.officialAPI.GetAsync(connectionString);
+
+
+                if (result.IsSuccessStatusCode)
+                {
+                    var content = await result.Content.ReadAsStringAsync();
+                    //deseriealizes json into Clan object
+                    List<Player> players = JsonConvert.DeserializeObject<List<Player>>(content.Substring(9, content.Length - 34));
+
+                    return players;
+                }
+            }
+            catch { return null; }
+
+            return null;
+        }
 
         //Deletes clan with given clanTag
         public void DeleteClan(int id)
