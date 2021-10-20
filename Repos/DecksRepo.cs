@@ -10,16 +10,21 @@ namespace RoyaleTrackerAPI.Repos
     public class DecksRepo
     {
         //DB Access
-        private TRContext context;
-        private CardsRepo cardsRepo;
+        private TRContext _context;
+        private Client _client;
+        private CardsRepo _cardsRepo;
 
         //constructor assigning argumented context
-        public DecksRepo(TRContext c) { context = c; }
+        public DecksRepo(Client client, TRContext context) 
+        { 
+            _context = context;
+            _client = client;
+        }
 
 
         public Deck GetDeckWithId(Deck deck)
         {
-            CardsRepo cardsRepo = new CardsRepo(context);
+            CardsRepo cardsRepo = new CardsRepo(_client, _context);
 
 
             //sorts cards in deck highest to lowest so any combo will register the same
@@ -29,10 +34,10 @@ namespace RoyaleTrackerAPI.Repos
             Deck deckToReturn = null;
 
             //if there are decks in the DB
-            if (context.Decks.Count() > 0)
+            if (_context.Decks.Count() > 0)
             {
                 //finds deck with given cards and sets the returnDeck to the deck from the DB w/ Id
-                deckToReturn = context.Decks.Where(d => d.Card1Id == deck.Card1Id && d.Card2Id == deck.Card2Id &&
+                deckToReturn = _context.Decks.Where(d => d.Card1Id == deck.Card1Id && d.Card2Id == deck.Card2Id &&
             d.Card3Id == deck.Card3Id && d.Card4Id == deck.Card4Id && d.Card5Id == deck.Card5Id &&
             d.Card6Id == deck.Card6Id && d.Card7Id == deck.Card7Id && d.Card8Id == deck.Card8Id).FirstOrDefault();
             }
@@ -40,11 +45,30 @@ namespace RoyaleTrackerAPI.Repos
             //if this deck isn't in the DB
             if (deckToReturn == null)
             {
+                //sets id to 0 so EF Core will auto assign Id
                 deck.Id = 0;
+
+                //check if all the cards in the deck are saved in DB
+                //if not gets all cards and sends them to add new one via decksRepo
+
+                //gets a list of all the cards that are both in the deck and saved in the database
+                //if this list isn't 8 cards then at least one card in the deck is not saved in the cards section of the database
+
+                List<Card> cardsInDeckAndSaved = _context.Cards.Where(c => c.Id == deck.Card1Id || c.Id == deck.Card2Id || c.Id == deck.Card3Id || c.Id == deck.Card4Id || c.Id == deck.Card5Id || c.Id == deck.Card6Id || c.Id == deck.Card7Id || c.Id == deck.Card8Id).ToList();
+                
+
+                //TODO make this more efficient... it's bad
+                if(cardsInDeckAndSaved.Count != 8)
+                {
+                    List<Card> allCards = cardsRepo.GetAllOfficialCards().Result;
+                    cardsRepo.AddCardsIfNew(allCards);
+                }
+
+
                 //this deck is added and will be assigned an Id
-                context.Decks.Add(deck);
+                _context.Decks.Add(deck);
                 //saves that deck to the DB
-                context.SaveChanges();
+                _context.SaveChanges();
 
                 deckToReturn = deck;
 
@@ -59,7 +83,7 @@ namespace RoyaleTrackerAPI.Repos
 
         public Deck FillDeckUrls(Deck deck)
         {
-            CardsRepo carsdRepo = new CardsRepo(context);
+            CardsRepo carsdRepo = new CardsRepo(_client, _context);
 
             deck.Card1 = carsdRepo.GetCardByID(deck.Card1Id);
             deck.Card2 = carsdRepo.GetCardByID(deck.Card2Id);
@@ -96,28 +120,32 @@ namespace RoyaleTrackerAPI.Repos
             //if a valid deck is fetched from DB it removes it from context
             if (deckToRemove != null)
             {
-                context.Decks.Remove(deckToRemove);
-                context.SaveChanges();
+                _context.Decks.Remove(deckToRemove);
+                _context.SaveChanges();
             }
         }
 
         //returns all decks in the DB
-        public List<Deck> GetAllDecks() { return context.Decks.ToList(); }
+        public List<Deck> GetAllDecks() { return _context.Decks.ToList(); }
 
         //returns Deck with given ID from DB
-        public Deck GetDeckByID(int deckID)
+        public Deck GetDeckByID(int deckId)
         {
-            cardsRepo = new CardsRepo(context);
-            Deck returnDeck = context.Decks.Find(deckID);
-            returnDeck.Card1 = cardsRepo.GetCardByID(returnDeck.Card1Id);
-            returnDeck.Card2 = cardsRepo.GetCardByID(returnDeck.Card2Id);
-            returnDeck.Card3 = cardsRepo.GetCardByID(returnDeck.Card3Id);
-            returnDeck.Card4 = cardsRepo.GetCardByID(returnDeck.Card4Id);
-            returnDeck.Card5 = cardsRepo.GetCardByID(returnDeck.Card5Id);
-            returnDeck.Card6 = cardsRepo.GetCardByID(returnDeck.Card6Id);
-            returnDeck.Card7 = cardsRepo.GetCardByID(returnDeck.Card7Id);
-            returnDeck.Card8 = cardsRepo.GetCardByID(returnDeck.Card8Id);
-            return returnDeck;
+            _cardsRepo = new CardsRepo(_client, _context);
+            if (_context.Decks.Any(d => d.Id == deckId))
+            {
+                Deck returnDeck = _context.Decks.Find(deckId);
+                returnDeck.Card1 = _cardsRepo.GetCardByID(returnDeck.Card1Id);
+                returnDeck.Card2 = _cardsRepo.GetCardByID(returnDeck.Card2Id);
+                returnDeck.Card3 = _cardsRepo.GetCardByID(returnDeck.Card3Id);
+                returnDeck.Card4 = _cardsRepo.GetCardByID(returnDeck.Card4Id);
+                returnDeck.Card5 = _cardsRepo.GetCardByID(returnDeck.Card5Id);
+                returnDeck.Card6 = _cardsRepo.GetCardByID(returnDeck.Card6Id);
+                returnDeck.Card7 = _cardsRepo.GetCardByID(returnDeck.Card7Id);
+                returnDeck.Card8 = _cardsRepo.GetCardByID(returnDeck.Card8Id);
+                return returnDeck;
+            }
+            else return null;
         }
 
         //updates deck at given ID with argumented Deck Fields
@@ -139,7 +167,7 @@ namespace RoyaleTrackerAPI.Repos
                 deckToUpdate.Card8Id = deck.Card8Id;
 
                 //because the deck is a reference to one in the db, changes can just be saved after being made
-                context.SaveChanges();
+                _context.SaveChanges();
             }
         }
 

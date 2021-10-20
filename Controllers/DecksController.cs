@@ -18,22 +18,20 @@ namespace RoyaleTrackerAPI.Controllers
     [ApiController]
     public class DecksController : ControllerBase
     {
-        //Authentication Manager for handling Bearer Token
-        private readonly CustomAuthenticationManager customAuthenticationManager;
 
         //context to DB and Repo for handling
-        private TRContext context;
+        private TRContext _context;
+        private Client _client;
         private DecksRepo repo;
 
         //loading in injected dependancies
-        public DecksController(CustomAuthenticationManager m, TRContext c)
+        public DecksController(TRContext context, Client client)
         {
-            customAuthenticationManager = m;
-            // commented out while testing 
-            context = c;
+            _context = context;
+            _client = client;
 
             //init the repo with DB context
-            repo = new DecksRepo(context);
+            repo = new DecksRepo(client, context);
         }
 
         [Authorize(Policy = "AdminOnly")]

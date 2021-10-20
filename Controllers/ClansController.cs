@@ -18,18 +18,15 @@ namespace RoyaleTrackerAPI.Controllers
     [ApiController]
     public class ClansController : ControllerBase
     {
-        //Authentication Manager for handling Bearer Token
-        private readonly CustomAuthenticationManager customAuthenticationManager;
-
+        
         //context to DB and Repo for handling
         private TRContext context;
         private Client client;
         private ClansRepo repo;
 
         //loading in injected dependancies
-        public ClansController(CustomAuthenticationManager m, Client c, TRContext ct)
+        public ClansController(Client c, TRContext ct)
         {
-            customAuthenticationManager = m;
             // commented out while testing 
             context = ct;
             client = c;

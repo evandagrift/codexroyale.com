@@ -11,15 +11,15 @@ namespace RoyaleTrackerAPI.Models
 {
     public class TRContext : DbContext
     {
-
-        private Client client;
+        
 
         //DB Context using EF Core
-        public TRContext(DbContextOptions<TRContext> options, Client c) : base(options) { client = c; }
+        public TRContext(DbContextOptions<TRContext> options, Client c) : base(options) { }
 
 
         //Each Table is Generated off the Classes in DBSets
-        public DbSet<Player> Players { get; set; }
+        public DbSet<PlayerSnapshot> PlayersSnapshots { get; set; }
+        public DbSet<TrackedPlayer> TrackedPlayers { get; set; }
         public DbSet<Clan> Clans { get; set; }
         public DbSet<Card> Cards { get; set; }
         public DbSet<Deck> Decks { get; set; }
@@ -33,17 +33,6 @@ namespace RoyaleTrackerAPI.Models
         //seeds in needed data
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            CardsRepo cardsRepo = new CardsRepo(client);
-            List<Card> allCards = cardsRepo.GetAllOfficialCards().Result;
-
-            //this.Cards.AddRange(allCards);
-
-            //if there are no cards in the database all current cards in the game are seeded in
-            allCards.ForEach(c =>
-            {
-                modelBuilder.Entity<Card>().HasData(c);
-            });
-
 
             //all available chests are seeded in with a url to their image
             //this list is used to assign URLs to fetched player chests
@@ -64,7 +53,7 @@ namespace RoyaleTrackerAPI.Models
                 new Chest { Name = "Plentiful Gold Crate", Url = "https://static.wikia.nocookie.net/clashroyale/images/0/03/PlentifulGoldCrate.png" },
                 new Chest { Name = "Silver Chest", Url = "https://static.wikia.nocookie.net/clashroyale/images/0/07/SilverChest.png" },
                 new Chest { Name = "Wooden Chest", Url = "https://static.wikia.nocookie.net/clashroyale/images/3/30/WoodenChest.png" });
-            Console.WriteLine();
+
 
         }
 

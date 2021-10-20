@@ -11,8 +11,8 @@ namespace RoyaleTrackerAPI.Repos
     public class BattlesRepo
     {
         //DB Access
-        private TRContext context;
-        private Client client;
+        private TRContext _context;
+        private Client _client;
         //constructor, connects Connect argumented context
 
 
@@ -24,8 +24,8 @@ namespace RoyaleTrackerAPI.Repos
 
         public BattlesRepo(Client c, TRContext ct)
         {
-            context = ct;
-            client = c;
+            _context = ct;
+            _client = c;
         }
 
         public void AddBattle(Battle battle)
@@ -40,9 +40,9 @@ namespace RoyaleTrackerAPI.Repos
         public void AddBattles(List<Battle> battles)
         {
             //creates repos to handle deck and team intake/finding
-            DecksRepo decksRepo = new DecksRepo(context);
-            TeamsRepo teamsRepo = new TeamsRepo(context);
-            GameModesRepo gameModesRepo = new GameModesRepo(context);
+            DecksRepo decksRepo = new DecksRepo(_client, _context);
+            TeamsRepo teamsRepo = new TeamsRepo(_context);
+            GameModesRepo gameModesRepo = new GameModesRepo(_context);
 
             //sorts newest first 
             battles.OrderByDescending(b => b.BattleTime);
@@ -63,7 +63,7 @@ namespace RoyaleTrackerAPI.Repos
                     b.Team1Id = teamsRepo.GetSetTeamId(b.Team).TeamId;
                     b.Team2Id = teamsRepo.GetSetTeamId(b.Opponent).TeamId;
                     //fetches any battles at this time with these players in any combination
-                    savedBattle = context.Battles.Where(t => t.Team1Id == b.Team1Id && t.BattleTime == b.BattleTime ||
+                    savedBattle = _context.Battles.Where(t => t.Team1Id == b.Team1Id && t.BattleTime == b.BattleTime ||
                     t.Team2Id == b.Team1Id && t.BattleTime == b.BattleTime).FirstOrDefault();
 
                 }
@@ -154,53 +154,57 @@ namespace RoyaleTrackerAPI.Repos
 
                 }
                 //adds this battle to context to be saved
-                context.Battles.Add(b);
+                _context.Battles.Add(b);
             });
 
             //after all new battles are added to context changes are saved
-            context.SaveChanges();
+            _context.SaveChanges();
         }
 
         //returns a list of all battles from DB
-        public List<Battle> GetAllBattles() { return context.Battles.ToList(); }
+        public List<Battle> GetAllBattles() { return FillDeckImages(_context.Battles.ToList()); }
 
         //returns a list of all battles from DB with specific tag
         public List<Battle> GetAllBattles(string playerTag)
         {
             if (playerTag != null)
             {
-                Player player = context.Players.Where(u => u.Tag == playerTag).FirstOrDefault();
-                return context.Battles.Where(b => b.Team1Id == player.TeamId || b.Team2Id == player.TeamId).ToList();
+                Team playerTeam = _context.Teams.Where(t => t.Tag == playerTag && t.Tag2 == null).FirstOrDefault();
+                if(playerTeam != null)
+                return FillDeckImages(_context.Battles.Where(b => b.Team1Id == playerTeam.TeamId || b.Team2Id == playerTeam.TeamId).OrderByDescending(b => b.BattleTime).ToList());
             }
-            else { return null; }
+            
+            return null; 
         }
         //returns a list of all battles from DB with specific tag
         public List<Battle> GetRecentBattles(string playerTag)
         {
-            if (playerTag != null)
+
+                if (playerTag != null && _context.Battles.Count() > 0 && _context.PlayersSnapshots.Any(p => p.Tag == playerTag))
             {
-                Player player = context.Players.Where(u => u.Tag == playerTag).FirstOrDefault();
-                int numPlayerBattles = context.Battles.Where(b => b.Team1Id == player.TeamId || b.Team2Id == player.TeamId).Count();
+                Team playerTeam = _context.Teams.Where(t => t.Tag == playerTag && t.Tag2 == null).FirstOrDefault();
+                int numPlayerBattles = _context.Battles.Where(b => b.Team1Id == playerTeam.TeamId || b.Team2Id == playerTeam.TeamId).Count();
 
                 int fetchThisMany = 30;
 
                 if (fetchThisMany > numPlayerBattles) fetchThisMany = numPlayerBattles;
 
-                List<Battle> battlesToReturn = context.Battles.Where(b => b.Team1Id == player.TeamId || b.Team2Id == player.TeamId).OrderByDescending(b => b.BattleTime).Take(fetchThisMany).ToList();
+                //filtering out all non PvP battles
+                List<Battle> battlesToReturn = _context.Battles.Where(b => b.Team1Id == playerTeam.TeamId || b.Team2Id == playerTeam.TeamId).OrderByDescending(b => b.BattleTime).TakeLast(fetchThisMany).ToList();
+                
 
-
-                return battlesToReturn;
+                return FillDeckImages(battlesToReturn);
             }
             else { return null; }
         }
         public List<Battle> GetRecentBattles()
         {
-            DecksRepo decksRepo = new DecksRepo(context);
+            DecksRepo decksRepo = new DecksRepo(_client, _context);
                 int fetchThisMany = 30;
 
-                if (fetchThisMany > context.Battles.Count()) fetchThisMany = context.Battles.Count();
+                if (fetchThisMany > _context.Battles.Count()) fetchThisMany = _context.Battles.Count();
 
-                List<Battle> battlesToReturn = context.Battles.OrderByDescending(b => b.BattleTime).Take(fetchThisMany).ToList();
+                List<Battle> battlesToReturn = _context.Battles.OrderByDescending(b => b.BattleTime).Take(fetchThisMany).ToList();
             battlesToReturn.ForEach(b =>
             {
                 b.Team1DeckA = decksRepo.GetDeckByID(b.Team1DeckAId);
@@ -213,15 +217,15 @@ namespace RoyaleTrackerAPI.Repos
                 }
             });
 
-            return battlesToReturn;
+            return FillDeckImages(battlesToReturn);
         }
 
         //gets battle with given battleID
-        public Battle GetBattleByID(int battleID) { return context.Battles.Find(battleID); }
+        public Battle GetBattleByID(int battleID) { return _context.Battles.Find(battleID); }
 
         public Battle GetBattleWithId(Battle battle)
         {
-            TeamsRepo teamsRepo = new TeamsRepo(context);
+            TeamsRepo teamsRepo = new TeamsRepo(_context);
 
             //gets/creates teams for Team and Opponent
             battle.Team1Id = teamsRepo.GetSetTeamId(battle.Team).TeamId;
@@ -229,7 +233,7 @@ namespace RoyaleTrackerAPI.Repos
 
 
             //finds battle in DB
-            var battleToReturn = context.Battles.Where(t => t.Team1Id == battle.Team1Id && t.BattleTime == battle.BattleTime ||
+            var battleToReturn = _context.Battles.Where(t => t.Team1Id == battle.Team1Id && t.BattleTime == battle.BattleTime ||
             t.Team2Id == battle.Team1Id && t.BattleTime == battle.BattleTime).FirstOrDefault();
 
             //if no battle is found it adds it
@@ -239,7 +243,7 @@ namespace RoyaleTrackerAPI.Repos
                 AddBattle(battle);
 
                 //searches for the added battle
-                battleToReturn = context.Battles.Where(t => t.Team1Id == battle.Team1Id && t.BattleTime == battle.BattleTime ||
+                battleToReturn = _context.Battles.Where(t => t.Team1Id == battle.Team1Id && t.BattleTime == battle.BattleTime ||
              t.Team2Id == battle.Team1Id && t.BattleTime == battle.BattleTime).FirstOrDefault();
             }
 
@@ -251,14 +255,14 @@ namespace RoyaleTrackerAPI.Repos
         public void DeleteBattle(int battleID)
         {
             //checks if this battles exists before trying to delete
-            if (context.Battles.Any(b => b.BattleId == battleID))
+            if (_context.Battles.Any(b => b.BattleId == battleID))
             {
                 //fetches the battle at given ID
                 Battle battleToDelete = GetBattleByID(battleID);
 
                 //removes it from the database and saves chages
-                context.Battles.Remove(battleToDelete);
-                context.SaveChanges();
+                _context.Battles.Remove(battleToDelete);
+                _context.SaveChanges();
 
             }
         }
@@ -269,7 +273,7 @@ namespace RoyaleTrackerAPI.Repos
         public void UpdateBattle(Battle battle)
         {
             //checks if this battles exists before trying to Update it
-            if (context.Battles.Any(b => b.BattleId == battle.BattleId))
+            if (_context.Battles.Any(b => b.BattleId == battle.BattleId))
             {
                 //fetches battle with given ID
                 Battle battleToUpdate = GetBattleByID(battle.BattleId);
@@ -307,18 +311,47 @@ namespace RoyaleTrackerAPI.Repos
                 battleToUpdate.GameModeId = battle.GameModeId;
 
                 //saves the changes to the database
-                context.SaveChanges();
+                _context.SaveChanges();
             }
         }
 
+        public async Task AddOfficialBattles(string tag)
+        {
 
-        public async Task<List<Battle>> GetOfficialPlayerBattles(string tag)
+            List<Battle> fetchedBattles = await GetOfficialPlayerBattles(tag);
+            AddBattles(fetchedBattles);
+        }
+
+
+        public List<Battle> FillDeckImages(List<Battle> battles)
+        {
+            DecksRepo decksRepo = new DecksRepo(_client, _context);
+
+            if (battles != null)
+            {
+                battles.ForEach(b =>
+                {
+                    b.Team1DeckA = decksRepo.GetDeckByID(b.Team1DeckAId);
+                    b.Team2DeckA = decksRepo.GetDeckByID(b.Team2DeckAId);
+                    if (b.Team1DeckBId != 0)
+                    {
+                        b.Team1DeckB = decksRepo.GetDeckByID(b.Team1DeckBId);
+                        b.Team2DeckB = decksRepo.GetDeckByID(b.Team2DeckBId);
+
+                    }
+                });
+                return battles;
+            }
+            else return null;
+        }
+
+            public async Task<List<Battle>> GetOfficialPlayerBattles(string tag)
         {
             //connection string to fetch player battles with given Tag
             string connectionString = officialConnectionString + tag.Substring(1) + "/battlelog/";
 
             //calls the official API
-            var result = await client.officialAPI.GetAsync(connectionString);
+            var result = await _client.officialAPI.GetAsync(connectionString);
 
             //if the call is a success it returns the List of Battles
             if (result.IsSuccessStatusCode)
