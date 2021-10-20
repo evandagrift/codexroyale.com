@@ -16,6 +16,9 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using RoyaleTrackerAPI.Models;
 using Microsoft.Net.Http.Headers;
+using RoyaleTrackerAPI.Models.Authentication;
+using RoyaleTrackerAPI.Models.Email;
+using RoyaleTrackerAPI.Controllers;
 
 namespace RoyaleTrackerAPI
 {
@@ -32,10 +35,9 @@ namespace RoyaleTrackerAPI
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddControllers().AddNewtonsoftJson();
 
-            services.AddControllers();
-
-            services.AddDbContext<TRContext>(options => options.UseSqlServer(Configuration["ConnectionStrings:LocalConnectionString"]));
+            services.AddDbContext<TRContext>(options => options.UseMySQL(Configuration["ConnectionStrings:LocalConnectionString"]),ServiceLifetime.Transient);
 
             services.AddCors(options => {
                 options.AddPolicy("local", builder => builder
@@ -52,7 +54,18 @@ namespace RoyaleTrackerAPI
                 options.AddPolicy("AdminOnly", policy => policy.RequireRole("Admin"));
                 options.AddPolicy("All", policy => policy.RequireRole("Admin", "User"));
             });
+
             services.AddSingleton<CustomAuthenticationManager>();
+
+
+            var emailConfig = Configuration
+    .GetSection("EmailConfiguration")
+    .Get<AuthMessageSenderOptions>();
+
+
+
+            services.AddSingleton<AuthMessageSenderOptions>(emailConfig);
+            services.AddSingleton<EmailSender>();
             services.AddSingleton<Client>(new Client(Configuration["ConnectionStrings:BearerToken"]));
             //allow connection between origins
 

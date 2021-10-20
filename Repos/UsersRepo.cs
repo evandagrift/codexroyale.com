@@ -109,13 +109,13 @@ namespace RoyaleTrackerAPI.Repos
             if (user != null)
             {
                 //if the user exists but doesn't have a token it creates a new token and save the new token to DB
-                if (user.Token == null)
+                if (user.BearerToken == null)
                 {
-                    user.Token = Guid.NewGuid().ToString();
+                    user.BearerToken = Guid.NewGuid().ToString();
                     context.SaveChanges();
                 }
             }
-            return user.Token;
+            return user.BearerToken;
         }
 
         //Updates the user at given username based off submitted User
@@ -138,45 +138,26 @@ namespace RoyaleTrackerAPI.Repos
         }
 
 
-        public User SaveAllByUser(User user)
+        public User GetPlayerDetails(User user)
         {
             //check if the inserted tag is correct, and if so. get clan tag as well
             ClansRepo clansRepo = new ClansRepo(client, context);
-            BattlesRepo battleRepo = new BattlesRepo(client, context);
             PlayersRepo playerRepo = new PlayersRepo(client, context);
             if (user.Tag != null)
             {
                 try
                 {
-                    Player player = playerRepo.GetOfficialPlayer(user.Tag).Result;
+                    PlayerSnapshot player = playerRepo.GetOfficialPlayer(user.Tag).Result;
+
                     if (player != null)
                     {
-                        context.Players.Add(player);
-
-                        List<Battle> pBattles;
-                        //TODO:get save user and their battles to DB
-                        //fetches the current player battles from the official DB
-                        pBattles = battleRepo.GetOfficialPlayerBattles(player.Tag).Result;
-
-
-                        //adds new fetched battles to the DB and gets a count of added lines
-                        battleRepo.AddBattles(pBattles);
-
                         if (player.ClanTag != "")
                         {
-                            //TODO:Save Clan to DB
-                            //gets current clan with Tag
-                            Clan clan = clansRepo.GetOfficialClan(player.ClanTag).Result;
-
-                            //saves clan data to DB
-                            context.Clans.Add(clan);
-                            context.SaveChanges();
                             user.ClanTag = player.ClanTag;
                         }
                     }
                     else
                     {
-
                         user.Tag = null;
                         user.ClanTag = null;
                     }
@@ -185,9 +166,6 @@ namespace RoyaleTrackerAPI.Repos
             }
             return user;
         }
-
-
-
 
     }
 }

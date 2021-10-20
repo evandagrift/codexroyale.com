@@ -19,8 +19,6 @@ namespace RoyaleTrackerAPI.Controllers
     [ApiController]
     public class ChestsController : ControllerBase
     {
-        //Authentication Manager for handling Bearer Token
-        private readonly CustomAuthenticationManager customAuthenticationManager;
 
         //context to DB and Repo for handling
         private TRContext context;
@@ -29,9 +27,8 @@ namespace RoyaleTrackerAPI.Controllers
         private Client client;
 
         //loading in injected dependancies
-        public ChestsController(CustomAuthenticationManager m, Client c, TRContext ct)
+        public ChestsController(Client c, TRContext ct)
         {
-            customAuthenticationManager = m;
             // commented out while testing 
             context = ct;
             client = c;

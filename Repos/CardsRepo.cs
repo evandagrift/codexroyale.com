@@ -19,16 +19,6 @@ namespace RoyaleTrackerAPI.Repos
             context = ct;
             client = c;
         }
-        //Constructor assigning argumented context
-        public CardsRepo(TRContext ct)
-        {
-            context = ct;
-        }
-        //Constructor assigning argumented context
-        public CardsRepo(Client cl)
-        {
-            client = cl;
-        }
 
         //I recieve card URL as Card.IconUrls["medium"] from the official API
         //Must Convert to a string for saving in DB
@@ -87,7 +77,7 @@ namespace RoyaleTrackerAPI.Repos
             List<Card> officialCards = await GetAllOfficialCards();
             List<Card> codexCards = context.Cards.ToList();
             List<Card> cardsToAdd = new List<Card>();
-
+            if(officialCards != null){ 
             if (codexCards.Count == 0)
             {
                 cardsToAdd = officialCards;
@@ -96,6 +86,7 @@ namespace RoyaleTrackerAPI.Repos
             {
                 AddCardsIfNew(officialCards);
 
+            }
             }
             return context.Cards.ToList(); ;
         }
@@ -152,7 +143,13 @@ namespace RoyaleTrackerAPI.Repos
         public List<Card> GetAllCards() { return context.Cards.ToList(); }
 
         //returns Card from Db with given Card ID
-        public Card GetCardByID(int cardId) { return context.Cards.Where(c => c.Id == cardId).FirstOrDefault(); }
+        public Card GetCardByID(int cardId) {
+            if (context.Cards.Any(c => c.Id == cardId))
+            {
+                return context.Cards.Where(c => c.Id == cardId).FirstOrDefault();
+            }
+            else return null;
+        }
 
         //updates card at given ID
         public void UpdateCard(Card card)

@@ -18,8 +18,6 @@ namespace RoyaleTrackerAPI.Controllers
     [Authorize]
     public class BattlesController : ControllerBase
     {
-        //Authentication Manager for handling Bearer Token
-        private readonly CustomAuthenticationManager customAuthenticationManager;
 
         //context to DB and Repo for handling
         private TRContext context;
@@ -27,9 +25,8 @@ namespace RoyaleTrackerAPI.Controllers
         private BattlesRepo repo;
 
         //loading in injected dependancies
-        public BattlesController(CustomAuthenticationManager m, Client c, TRContext ct)
+        public BattlesController(Client c, TRContext ct)
         {
-            customAuthenticationManager = m;
             context = ct;
             client = c;
             repo = new BattlesRepo(client, context);
@@ -57,7 +54,7 @@ namespace RoyaleTrackerAPI.Controllers
             return Ok();
         }
 
-        [Authorize(Policy = "All")]
+        [AllowAnonymous]
         [HttpGet("player/{playerTag}")]
         // GET: api/Battles/{user}
         public string GetBattles(string playerTag)

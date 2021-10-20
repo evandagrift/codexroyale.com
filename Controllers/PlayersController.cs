@@ -20,33 +20,29 @@ namespace RoyaleTrackerAPI.Controllers
     [ApiController]
     public class PlayersController : ControllerBase
     {
-        //Authentication Manager for handling Bearer Token
-        private readonly CustomAuthenticationManager customAuthenticationManager;
 
         //context to DB and Repo for handling
-        private TRContext context;
-        private PlayersRepo playersRepo;
-        private ChestsRepo chestsRepo;
-        private Client client;
+        private TRContext _context;
+        private PlayersRepo _playersRepo;
+        private ChestsRepo _chestsRepo;
+        private Client _client;
 
         //loading in injected dependancies
-        public PlayersController(CustomAuthenticationManager m, Client c, TRContext ct)
+        public PlayersController(Client c, TRContext ct)
         {
-            customAuthenticationManager = m;
-            // commented out while testing 
-            context = ct;
-            client = c;
+            _context = ct;
+            _client = c;
             //init the repo with DB context
-            playersRepo = new PlayersRepo(client, context);
-            chestsRepo = new ChestsRepo(client, context);
+            _playersRepo = new PlayersRepo(_client, _context);
+            _chestsRepo = new ChestsRepo(_client, _context);
         }
 
         // POST api/Players
         [Authorize(Policy = "AdminOnly")]
         [HttpPost]
-        public void Post([FromBody] Player player)
+        public void Post([FromBody] PlayerSnapshot player)
         {
-            playersRepo.AddPlayer(player);
+            _playersRepo.AddPlayer(player);
         }
 
         [Authorize(Policy = "AdminOnly")]
@@ -54,7 +50,7 @@ namespace RoyaleTrackerAPI.Controllers
         [HttpGet]
         public string Get()
         {
-            List<Player> players = playersRepo.GetAllPlayers();
+            List<PlayerSnapshot> players = _playersRepo.GetAllPlayers();
 
             return JsonConvert.SerializeObject(players, Formatting.Indented, new JsonSerializerSettings
             {
@@ -68,30 +64,62 @@ namespace RoyaleTrackerAPI.Controllers
         [HttpGet("{id}")]
         public string Get(int id)
         {
-            Player player = playersRepo.GetPlayerById(id);
+            PlayerSnapshot player = _playersRepo.GetPlayerById(id);
             return JsonConvert.SerializeObject(player, Formatting.Indented, new JsonSerializerSettings
             {
                 NullValueHandling = NullValueHandling.Ignore
             });
         }
 
-        [Authorize(Policy = "All")]
-        //[AllowAnonymous]
-        [HttpGet("update/{playerTag}")]
+        //[Authorize(Policy = "All")]
+        [AllowAnonymous]
+        [HttpPost("full/{playerTag}")]
         public async Task<string> GetUpdatePlayer(string playerTag)
         {
-            try
+            //get the users's player data w/ their chests in rotation as well as battles
+            PlayerSnapshot returnPlayer = await _playersRepo.GetFullPlayer(playerTag);
+            //
+            return JsonConvert.SerializeObject(returnPlayer, Formatting.Indented, new JsonSerializerSettings
             {
+                NullValueHandling = NullValueHandling.Ignore
+            });
+        }
 
-                //get the users's player data w/ their chests in rotation as well as battles
-                Player returnPlayer = await playersRepo.GetSavePlayerFull(playerTag);
-                //
-                return JsonConvert.SerializeObject(returnPlayer, Formatting.Indented, new JsonSerializerSettings
-                {
-                    NullValueHandling = NullValueHandling.Ignore
-                });
+        //[Authorize(Policy = "All")]
+        [AllowAnonymous]
+        [HttpPost("official/{playerTag}")]
+        public async Task<string> GetOfficialPlayer(string playerTag)
+        {
+            //get the users's player data w/ their chests in rotation as well as battles
+            PlayerSnapshot returnPlayer = await _playersRepo.GetOfficialPlayer(playerTag);
+
+            //gets players Chests r
+            List<Chest> playerChests = await _playersRepo.GetPlayerChestsAsync(playerTag);
+
+            if (playerChests.Count > 0)
+            {
+                returnPlayer.Chests = playerChests;
             }
-            catch { return "Failed To Find User"; }
+
+            return JsonConvert.SerializeObject(returnPlayer, Formatting.Indented, new JsonSerializerSettings
+            {
+                NullValueHandling = NullValueHandling.Ignore
+            });
+        }
+
+        //[Authorize(Policy = "All")]
+        [AllowAnonymous]
+        [HttpPost("Chests/{playerTag}")]
+        public async Task<string> GetPlayerChests(string playerTag)
+        {
+            //gets players upcoming Chests
+            List<Chest> playerChests = await _playersRepo.GetPlayerChestsAsync(playerTag);
+
+
+            return JsonConvert.SerializeObject(playerChests, Formatting.Indented, new JsonSerializerSettings
+            {
+                NullValueHandling = NullValueHandling.Ignore
+            });
         }
 
         [Authorize(Policy = "AdminOnly")]
@@ -99,15 +127,15 @@ namespace RoyaleTrackerAPI.Controllers
         [HttpDelete("{id}")]
         public void Delete([FromHeader]int id)
         {
-            playersRepo.DeletePlayer(id);
+            _playersRepo.DeletePlayer(id);
         }
 
         [Authorize(Policy = "AdminOnly")]
         // DELETE: api/Players/id
         [HttpPut]
-        public void Update([FromBody] Player Player)
+        public void Update([FromBody] PlayerSnapshot Player)
         {
-            playersRepo.UpdatePlayer(Player);
+            _playersRepo.UpdatePlayer(Player);
         }
 
 

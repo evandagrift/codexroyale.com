@@ -73,28 +73,32 @@ namespace RoyaleTrackerAPI.Repos
             public async Task<Clan> SaveClanIfNew(string clanTag)
             {
                 Clan clan = await GetOfficialClan(clanTag);
-            //gets the last saved line in the Clan DB for this particuar Clan
-            Clan lastLoggedClan = context.Clans.Where(c => c.Tag == clanTag).OrderByDescending(c => c.UpdateTime).FirstOrDefault();
-
-            //if this clan has been saved before it makes sure the data is new
-            //otherwise it will save it by default
-            if(lastLoggedClan != null)
+            if (clan != null)
             {
-                if (clan.BadgeId != lastLoggedClan.BadgeId || clan.ClanChestLevel != lastLoggedClan.ClanChestLevel || clan.ClanChestStatus != lastLoggedClan.ClanChestStatus || clan.ClanScore != lastLoggedClan.ClanScore ||
-                    clan.ClanWarTrophies != lastLoggedClan.ClanWarTrophies || clan.Description != lastLoggedClan.Description || clan.DonationsPerWeek != lastLoggedClan.DonationsPerWeek || clan.LocationCode != lastLoggedClan.LocationCode || 
-                    clan.Members != lastLoggedClan.Members || clan.Name != lastLoggedClan.Name || clan.RequiredTrophies != lastLoggedClan.RequiredTrophies || clan.Type != lastLoggedClan.Type)
+                //gets the last saved line in the Clan DB for this particuar Clan
+                Clan lastLoggedClan = context.Clans.Where(c => c.Tag == clanTag).OrderByDescending(c => c.UpdateTime).FirstOrDefault();
+
+                //if this clan has been saved before it makes sure the data is new
+                //otherwise it will save it by default
+                if (lastLoggedClan != null)
                 {
-                    //if the clan has changed it adds it to DB and returns the new
-                    lastLoggedClan = AddClan(clan);
-                }
+                    if (clan.BadgeId != lastLoggedClan.BadgeId || clan.ClanChestLevel != lastLoggedClan.ClanChestLevel || clan.ClanChestStatus != lastLoggedClan.ClanChestStatus || clan.ClanScore != lastLoggedClan.ClanScore ||
+                        clan.ClanWarTrophies != lastLoggedClan.ClanWarTrophies || clan.Description != lastLoggedClan.Description || clan.DonationsPerWeek != lastLoggedClan.DonationsPerWeek || clan.LocationCode != lastLoggedClan.LocationCode ||
+                        clan.Members != lastLoggedClan.Members || clan.Name != lastLoggedClan.Name || clan.RequiredTrophies != lastLoggedClan.RequiredTrophies || clan.Type != lastLoggedClan.Type)
+                    {
+                        //if the clan has changed it adds it to DB and returns the new
+                        lastLoggedClan = AddClan(clan);
+                    }
 
-            }//if there are no instances of this clan saved it goes ahead and saves it then assigns to return variable
-            else { lastLoggedClan = AddClan(clan); }
+                }//if there are no instances of this clan saved it goes ahead and saves it then assigns to return variable
+                else { lastLoggedClan = AddClan(clan); }
 
-            return lastLoggedClan;
+                return lastLoggedClan;
+            }
+            else return null;
         }
 
-        public async Task<List<Player>> GetClanPlayers(string clanTag)
+        public async Task<List<PlayerSnapshot>> GetClanPlayers(string clanTag)
         {
             string officialConnectionString = "/v1/clans/%23";
 
@@ -111,7 +115,7 @@ namespace RoyaleTrackerAPI.Repos
                 {
                     var content = await result.Content.ReadAsStringAsync();
                     //deseriealizes json into Clan object
-                    List<Player> players = JsonConvert.DeserializeObject<List<Player>>(content.Substring(9, content.Length - 34));
+                    List<PlayerSnapshot> players = JsonConvert.DeserializeObject<List<PlayerSnapshot>>(content.Substring(9, content.Length - 34));
 
                     return players;
                 }

@@ -32,7 +32,7 @@ namespace RoyaleTrackerClasses
         public int Members { get; set; }
 
         [NotMapped]
-        public List<Player> MemberList { get; set; }
+        public List<PlayerSnapshot> MemberList { get; set; }
     }
 }
 

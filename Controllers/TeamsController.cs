@@ -18,22 +18,17 @@ namespace RoyaleTrackerAPI.Controllers
     [ApiController]
     public class TeamsController : ControllerBase
     {
-        //Authentication Manager for handling Bearer Token
-        private readonly CustomAuthenticationManager customAuthenticationManager;
-
         //context to DB and Repo for handling
-        private TRContext context;
-        private TeamsRepo repo;
+        private TRContext _context;
+        private TeamsRepo _repo;
 
         //loading in injected dependancies
-        public TeamsController(CustomAuthenticationManager m, TRContext c)
+        public TeamsController(TRContext context)
         {
-            customAuthenticationManager = m;
-            // commented out while testing 
-            context = c;
+            _context = context;
 
             //init the repo with DB context
-            repo = new TeamsRepo(context);
+            _repo = new TeamsRepo(context);
         }
 
         [Authorize(Policy = "AdminOnly")]
@@ -41,7 +36,7 @@ namespace RoyaleTrackerAPI.Controllers
         // POST: api/Teams
         public Team GetSetTeamId([FromBody] Team team)
         {
-            Team returnTeam = repo.GetSetTeamId(team);
+            Team returnTeam = _repo.GetSetTeamId(team);
             return returnTeam;
         }
 
@@ -51,7 +46,7 @@ namespace RoyaleTrackerAPI.Controllers
         [HttpGet]
         public string Get()
         {
-            List<Team> teams = repo.GetAllTeams();
+            List<Team> teams = _repo.GetAllTeams();
 
             return JsonConvert.SerializeObject(teams, Formatting.Indented, new JsonSerializerSettings
             {
@@ -65,7 +60,7 @@ namespace RoyaleTrackerAPI.Controllers
         [HttpGet("{id}")]
         public string Get(int id)
         {
-            Team team = repo.GetTeamById(id);
+            Team team = _repo.GetTeamById(id);
             return JsonConvert.SerializeObject(team, Formatting.Indented, new JsonSerializerSettings
             {
                 NullValueHandling = NullValueHandling.Ignore
@@ -78,7 +73,7 @@ namespace RoyaleTrackerAPI.Controllers
         [HttpDelete("{teamid}")]
         public void Delete(int teamid)
         {
-            repo.DeleteTeam(teamid);
+            _repo.DeleteTeam(teamid);
         }
 
         [Authorize(Policy = "AdminOnly")]
@@ -86,7 +81,7 @@ namespace RoyaleTrackerAPI.Controllers
         [HttpPut]
         public void Update([FromBody] Team team)
         {
-            repo.UpdateTeam(team);
+            _repo.UpdateTeam(team);
         }
     }
 }

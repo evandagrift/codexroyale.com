@@ -81,7 +81,7 @@ namespace RoyaleTrackerAPI.Repos
         }
 
         // any unique team of players, a, b, a+b... is saved and given a team Id by the database
-        public Team GetSetTeamId(Player player)
+        public Team GetSetTeamId(PlayerSnapshot player)
         {
             List<TeamMember> t = new List<TeamMember>();
             TeamMember p = new TeamMember();
@@ -97,6 +97,7 @@ namespace RoyaleTrackerAPI.Repos
 
             t.Add(new TeamMember() { Tag = team.Tag, Name = team.Name });
             t.Add(new TeamMember() { Tag = team.Tag2, Name = team.Name2 });
+
             return GetSetTeamId(t);
         }
 
