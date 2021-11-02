@@ -191,8 +191,27 @@ namespace RoyaleTrackerAPI.Repos
         }
         public async Task<List<Chest>> GetPlayerChestsAsync(string tag)
         {
+            if (tag != "" && tag.Length > 3)
+            {
 
-            string connectionString = "/v1/players/%23" + tag.Substring(1) + "/upcomingchests";
+                if (tag[0] == '#')
+                {
+                    tag = "%23" + tag.Substring(1);
+                }
+                else 
+                    if(tag.Substring(0,3) == "%23")
+                    {
+
+                    }
+                else
+                {
+                    return null;
+                }
+
+
+
+            }
+            string connectionString = "/v1/players/" + tag + "/upcomingchests";
             ChestsRepo chestsRepo = new ChestsRepo(_client, _context);
             //try in case we get connection errors`
             try
@@ -237,26 +256,26 @@ namespace RoyaleTrackerAPI.Repos
 
             if (fetchedPlayer != null)
             {
-                    fetchedPlayer.Battles = battlesRepo.GetRecentBattles(playerTag);
+                fetchedPlayer.Battles = battlesRepo.GetRecentBattles(playerTag);
 
-                    if (fetchedPlayer.Battles != null)
+                if (fetchedPlayer.Battles != null)
+                {
+                    fetchedPlayer.Battles.ForEach(b =>
                     {
-                        fetchedPlayer.Battles.ForEach(b =>
+                        b.Team1DeckA = decksRepo.GetDeckByID(b.Team1DeckAId);
+                        b.Team2DeckA = decksRepo.GetDeckByID(b.Team2DeckAId);
+                        if (b.Team1DeckBId != 0)
                         {
-                            b.Team1DeckA = decksRepo.GetDeckByID(b.Team1DeckAId);
-                            b.Team2DeckA = decksRepo.GetDeckByID(b.Team2DeckAId);
-                            if (b.Team1DeckBId != 0)
-                            {
-                                b.Team1DeckB = decksRepo.GetDeckByID(b.Team1DeckBId);
-                                b.Team2DeckB = decksRepo.GetDeckByID(b.Team2DeckBId);
+                            b.Team1DeckB = decksRepo.GetDeckByID(b.Team1DeckBId);
+                            b.Team2DeckB = decksRepo.GetDeckByID(b.Team2DeckBId);
 
-                            }
-                        });
-                    }
-                
+                        }
+                    });
+                }
+
 
                 //gets players Chests r
-                List<Chest> playerChests = await GetPlayerChestsAsync(playerTag);
+                List<Chest> playerChests = await GetPlayerChestsAsync("%23" + playerTag.Substring(1));
                 if (playerChests.Count > 0)
                 {
                     fetchedPlayer.Chests = playerChests;

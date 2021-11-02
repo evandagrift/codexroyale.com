@@ -61,7 +61,7 @@ namespace RoyaleTrackerAPI.Controllers
 
         [Authorize(Policy = "AdminOnly")]
         // GET api/Players/id
-        [HttpGet("{id}")]
+        [HttpGet("id/{id}")]
         public string Get(int id)
         {
             PlayerSnapshot player = _playersRepo.GetPlayerById(id);
@@ -71,6 +71,18 @@ namespace RoyaleTrackerAPI.Controllers
             });
         }
 
+        [AllowAnonymous]
+        // GET api/Players/id
+        [HttpGet("{playerTag}")]
+        public async Task<string> Get(string playerTag)
+        {
+            PlayerSnapshot player = await _playersRepo.GetOfficialPlayer(playerTag);
+            return JsonConvert.SerializeObject(player, Formatting.Indented, new JsonSerializerSettings
+            {
+                NullValueHandling = NullValueHandling.Ignore
+            });
+        }
+        /*
         //[Authorize(Policy = "All")]
         [AllowAnonymous]
         [HttpPost("full/{playerTag}")]
@@ -84,6 +96,7 @@ namespace RoyaleTrackerAPI.Controllers
                 NullValueHandling = NullValueHandling.Ignore
             });
         }
+        */
 
         //[Authorize(Policy = "All")]
         [AllowAnonymous]
@@ -109,7 +122,7 @@ namespace RoyaleTrackerAPI.Controllers
 
         //[Authorize(Policy = "All")]
         [AllowAnonymous]
-        [HttpPost("Chests/{playerTag}")]
+        [HttpPost("chests/{playerTag}")]
         public async Task<string> GetPlayerChests(string playerTag)
         {
             //gets players upcoming Chests
