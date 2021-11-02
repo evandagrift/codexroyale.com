@@ -9,7 +9,7 @@ namespace RoyaleTrackerAPI.Models.Email
     public class EmailSender
     {
         private AuthMessageSenderOptions options;
-        private string FrontEndAddress = "http://localhost:3000";
+        private string FrontEndAddress = "https://codexroyale.com/";
 
                     
         public EmailSender(AuthMessageSenderOptions _options)
@@ -27,7 +27,7 @@ namespace RoyaleTrackerAPI.Models.Email
         public Task SendEmailVerificationAsync(string recipientEmail, string emailVerificationCode)
         {
             string welcomeSubject = "Authenticate account";
-            string emailBody = "Follow the link to verify your Clash Codex account " + FrontEndAddress + "/register/authenticate/" + emailVerificationCode;
+            string emailBody = "Follow the link to verify your Clash Codex account " + FrontEndAddress + "register/authenticate/" + emailVerificationCode;
 
             return Execute(options.SendGridKey, welcomeSubject, emailBody, recipientEmail);
         }

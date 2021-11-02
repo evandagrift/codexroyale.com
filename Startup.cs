@@ -35,18 +35,25 @@ namespace RoyaleTrackerAPI
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+
+            services.AddCors(options =>
+            {
+                options.AddPolicy(name: "hosted",
+                                  builder =>
+                                  {
+                                      builder.WithOrigins("https://codexroyale.com")
+                                      .AllowAnyHeader().AllowAnyMethod().AllowCredentials();
+                                  });
+            });
+
+
             services.AddControllers().AddNewtonsoftJson();
 
-            services.AddDbContext<TRContext>(options => options.UseMySQL(Configuration["ConnectionStrings:LocalConnectionString"]),ServiceLifetime.Transient);
+            services.AddDbContext<TRContext>(options => options.UseMySQL(Configuration["ConnectionStrings:DBConnectionString"]), ServiceLifetime.Transient);
 
-            services.AddCors(options => {
-                options.AddPolicy("local", builder => builder
-                 .WithOrigins("http://localhost:3000/")
-                 .SetIsOriginAllowed((host) => true)
-                 .AllowAnyMethod()
-                 .AllowAnyHeader());
-            });
+
             services.AddAuthentication("Basic").AddScheme<AuthenticationSchemeOptions, CustomAuthenticationHandler>("Basic", null);
+
 
 
             services.AddAuthorizationCore(options =>
@@ -75,9 +82,11 @@ namespace RoyaleTrackerAPI
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
 
-            app.UseRouting();
-            app.UseCors("local");
             app.UseHttpsRedirection();
+            app.UseRouting();
+
+            app.UseCors("hosted");
+
             app.UseAuthentication();
             app.UseAuthorization();
 
