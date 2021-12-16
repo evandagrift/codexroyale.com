@@ -1,4 +1,4 @@
-<h1 display="flex" align="center"> Codex Royale REST API </h1>
+ <h1 display="flex" align="center"> Codex Royale REST API </h1>
 
 <p display="flex" align="center"><img src="images/clash-logo.png"  alt="Clash Banner" width='60%' height="auto" /></p>
 
@@ -22,7 +22,7 @@
 
 
 # Overview
-#### Codex Royale API is a REST API built in Asp.Net Core 3.1. This program calls the [Clash Royale API](https://developer.clashroyale.com) and repackages the recieved data into [more practical classes](https://github.com/evandagrift/clash-royale-classes) using [Newtonsoft](https://www.newtonsoft.com/json). Consumed data is saved to a Database using [EF Core](https://docs.microsoft.com/en-us/ef/core/). This API also services [codexroyale.com](www.codexroyale.com) \**still in development\**
+#### Codex Royale API is a REST API built in Asp.Net Core 3.1. This program calls the [Clash Royale API](https://developer.clashroyale.com) and repackages the recieved data into [more practical classes](https://github.com/evandagrift/clash-royale-classes) using [Newtonsoft](https://www.newtonsoft.com/json). Consumed data is saved to a Database using [EF Core](https://docs.microsoft.com/en-us/ef/core/). This API services [codexroyale.com](www.codexroyale.com) as well as automatically saves all new battles from users that have been previously searched
 
 
 
@@ -45,9 +45,7 @@
 
 
 # Build Dependancies 
-You will need to install all the below packages to be able to build the project<br />
-<br />
-[Newtonsoft.Json (12.0.3)](https://www.newtonsoft.com/json)<br />
+You will need to install all the below packages to be able to build the project
 <br />
 [Microsoft.EntityFrameworkCore (3.1.9)](https://docs.microsoft.com/en-us/ef/core/)
 <br />
@@ -55,19 +53,26 @@ You will need to install all the below packages to be able to build the project<
 <br />
 [Microsoft.EntityFrameworkCore.Tools (3.1.9)](https://docs.microsoft.com/en-us/ef/core/)<br />
 <br />
-the two dependancies below this are for using SqlServer, this can be connected to any DB though with the correct dependancies installed<br />
-<br />
-[Microsoft.EntityFrameworkCore.SqlServer (3.1.9)](https://docs.microsoft.com/en-us/ef/core/)
-<br />
-[Microsoft.EntityFrameworkCore.SqlServer.Design (3.1.9)](https://docs.microsoft.com/en-us/ef/core/)<br />
-<br />
 [Microsoft.AspNetCore.Cors (2.2.0)](https://www.nuget.org/packages/Microsoft.AspNetCore.Cors/)<br />
 <br />
 [Microsoft.AspNetCore.Authentication (2.2.0)](https://docs.microsoft.com/en-us/aspnet/core/security/authentication/?view=aspnetcore-3.1)
 <br />
 [Microsoft.AspNetCore.Authentication.JwtBearer (3.1.9)](https://docs.microsoft.com/en-us/aspnet/core/security/authentication/?view=aspnetcore-3.1)<br />
 <br />
+[Newtonsoft.Json (12.0.3)](https://www.newtonsoft.com/json)<br />
+<br />
+[SendGrid (9.24.2)](https://www.nuget.org/packages/Sendgrid)
+<br />
+<br />
 [BCrypt.Net-Next (4.0.2)](https://github.com/BcryptNet/bcrypt.net/)
+<br />
+<br />
+the two dependancies below this are for using SqlServer, this can be connected to any DB though with the correct dependancies installed.
+<br />
+[Microsoft.EntityFrameworkCore.SqlServer (3.1.9)](https://docs.microsoft.com/en-us/ef/core/)
+<br />
+[Microsoft.EntityFrameworkCore.SqlServer.Design (3.1.9)](https://docs.microsoft.com/en-us/ef/core/)<br />
+<br />
 
 
 
@@ -167,7 +172,7 @@ Adds the battle to the database if it is new. **BattleId is automatically genera
 
 * ### POST://Battles/list
 ###### [AdminOnly] (POST w/ JSON List of battles in body)
-Adds all new battles to the database\
+Adds all new battles to the database
 
 * ### GET://Battles 
 ###### [AdminOnly] (GET)
