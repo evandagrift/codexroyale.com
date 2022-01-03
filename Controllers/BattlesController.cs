@@ -54,19 +54,6 @@ namespace RoyaleTrackerAPI.Controllers
             return Ok();
         }
 
-        [AllowAnonymous]
-        [HttpGet("player/{playerTag}")]
-        // GET: api/Battles/{user}
-        public string GetBattles(string playerTag)
-        {
-            //returns battle with Id based off given battle, if said battle doesn't exist it is created and returned after assigned Id
-            List<Battle> battles = repo.GetAllBattles(playerTag);
-            return JsonConvert.SerializeObject(battles, Formatting.Indented, new JsonSerializerSettings
-            {
-                NullValueHandling = NullValueHandling.Ignore
-            });
-        }
-
 
         [AllowAnonymous]
         // GET: api/Battles
@@ -81,6 +68,27 @@ namespace RoyaleTrackerAPI.Controllers
                 NullValueHandling = NullValueHandling.Ignore
             });
         }
+
+
+
+        [AllowAnonymous]
+        [HttpGet("player/{playerTag}")]
+        // GET: api/Battles/{user}
+        public IActionResult GetBattles(string playerTag)
+        {
+            //returns battle with Id based off given battle, if said battle doesn't exist it is created and returned after assigned Id
+            List<Battle> battles = repo.GetAllBattles(playerTag);
+
+            if(battles == null)
+            {
+                return NotFound();
+            }
+            return Ok(JsonConvert.SerializeObject(battles, Formatting.Indented, new JsonSerializerSettings
+            {
+                NullValueHandling = NullValueHandling.Ignore
+            }));
+        }
+
 
         [Authorize(Policy = "AdminOnly")]
         // GET api/Battles/{id}

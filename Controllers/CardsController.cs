@@ -44,8 +44,7 @@ namespace RoyaleTrackerAPI.Controllers
             repo.AddCardIfNew(card);
         }
 
-        //[Authorize(Policy = "All")]
-        [AllowAnonymous]
+        [Authorize(Policy = "All")]
         // GET: api/Cards
         [HttpGet]
         public string Get()
@@ -82,11 +81,12 @@ namespace RoyaleTrackerAPI.Controllers
         }
 
 
+
         [Authorize(Policy = "AdminOnly")]
         [HttpPost("UpdateCards")]
-        public void UpdateCards()
+        public IActionResult UpdateCards()
         {
-            repo.UpdateCards();
+           return Ok(repo.UpdateCards());
         }
 
 
