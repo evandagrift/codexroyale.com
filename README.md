@@ -22,26 +22,28 @@
 
 
 # Overview
-#### Codex Royale API is a REST API built in Asp.Net Core 3.1. This program calls the [Clash Royale API](https://developer.clashroyale.com) and repackages the recieved data into [more practical classes](https://github.com/evandagrift/clash-royale-classes) using [Newtonsoft](https://www.newtonsoft.com/json). Consumed data is saved to a Database using [EF Core](https://docs.microsoft.com/en-us/ef/core/). This API services [codexroyale.com](www.codexroyale.com) as well as automatically saves all new battles from users that have been previously searched
+#### Codex Royale API is a REST API built in Asp.Net Core 3.1. This program calls the [Clash Royale API](https://developer.clashroyale.com) and repackages the recieved data into [more practical classes](https://github.com/evandagrift/clash-royale-classes) using [Newtonsoft](https://www.newtonsoft.com/json). Consumed data is saved to a Database using [EF Core](https://docs.microsoft.com/en-us/ef/core/). This API services [codexroyale.com](www.codexroyale.com) as well as automatically saves all new battles from users that have been previously searched. Registeration emails and password reset are sent through [Send Grid](https://sendgrid.com).
 
 
 
 # Setup
 1. Get a bearer token for the [Clash Royale API](https://developer.clashroyale.com) connected to the IP you will be using
-2. Clone this repository
-3. <a href="#dependancies">Install the dependancies in Visual Studio Package Manager</a>
-4. Edit [appsettings.json](appsettings.json)
+2. Get a Send Grid account and key
+3. Clone this repository
+4. <a href="#dependancies">Install the dependancies in Visual Studio Package Manager</a>
+5. Edit [appsettings.json](appsettings.json)
 * Change the BearerToken to the token given to you by Clash Royale API
+* Change the SendGridUser and SendGridKey to your credentials
 * _Change the ConnectionString to your connection string if you are using a different database system_
-5. Setup EF Tools
+6. Setup EF Tools
 * Open Terminal/Cli routed to the project file
 * run `dotnet tool install --global dotnet-ef` in the terminal to install ef core tools
 * close the terminal
-6. Build the database
+7. Build the database
 * Reopen the terminal as you did previously
 * Create a migration for the database (Local SqlServer is chosen be default). Run `dotnet ef migrations add migration-name` in the terminal
 * Build the database for the project `dotnet ef database update`
-7. Run the program, neccesary data will automatically be seeded if your Clash Royale bearer token is valid
+8. Run the program, neccesary data will automatically be seeded if your Clash Royale bearer token is valid
 
 
 # Build Dependancies 
@@ -130,6 +132,21 @@ Deletes user with given Username
 ###### [AdminOnly] (PUT with User JSON in Body)
 Updates user with given username
 
+* ### POST://Users/VerifyAccount/{verificationCode}
+###### [AdminOnly] (POST with User verification code in url)
+Verifies the email at the given verification code
+
+* ### POST://Users/ResetPassword/{email}
+###### [AdminOnly] (POST with User email in url)
+sends an email to reset user password
+
+* ### POST://Users/ResetPassword/Authenticate
+###### [AdminOnly] (POST with User in body)
+saves new password of user with given password reset code
+
+* ### POST://Users/Update
+###### [AdminOnly] (POST with User in body)
+updates given User's basic information as well as password if given a valid password and two matching new ones
 
 
 ## Battles 
@@ -175,18 +192,18 @@ Adds the battle to the database if it is new. **BattleId is automatically genera
 Adds all new battles to the database
 
 * ### GET://Battles 
-###### [AdminOnly] (GET)
-Returns all battles saved within the Database
+###### [Allow Anonymous] (GET)
+Returns recently saved battles from the Database
 
 * ### GET://Battles/player/{playerTag} 
-###### [All] (GET)
+###### [Allow Anonymous] (GET)
 Returns a list of all saved battles played by the given user. Note To send a user tag over the browser you will need to replace the # with the UTF-8 code %23. I.E. #player-tag would become %23player-tag
 
-* ### GET://Battles/id/battle-id
+* ### GET://Battles/id/{battle-id}
 ###### [AdminOnly] (GET)
 Returns the battle with given id
 
-* ### DELETE://Battles/id 
+* ### DELETE://Battles/{id} 
 ###### [AdminOnly] (DELETE)
 Deletes battle with given id
 
@@ -213,11 +230,11 @@ Adds the card to the database if it is not currently in the database
 ###### [All] (GET)
 Returns all cards in the database
 
-* ### GET://api/Cards/id 
+* ### GET://api/Cards/{id}
 ###### [All] (GET)
 Returns card with given id
 
-* ### DELETE://api/Cards/id 
+* ### DELETE://api/Cards/{id} 
 ###### [Admin Only] (DELETE)
 Deletes card with given id
 
@@ -248,11 +265,11 @@ Adds given Chest to the database
 ###### [Admin Only] (GET)
 Gets all chests saved in the Database
 
-* ### GET://api/Chests/chest-name
+* ### GET://api/Chests/{chestName}
 ###### [Admin Only] (GET with chest name in header)
 Gets chest details on the chest saved in the database with that name
 
-* ### DELETE://api/Chests/chest-name
+* ### DELETE://api/Chests/{chestName}
 ###### [Admin Only] (DELETE with chest name in header)
 Deletes the chest with the given name from the database
 
@@ -291,11 +308,15 @@ Adds given clan instance to the database **POST without Id, the database will au
 Gets all clan data saved in the Database
 
 
-* ### GET://api/Clans/id
-###### [Admin Only] (GET with id in header)
+* ### GET://api/Clans/id/{id}
+###### [Admin Only] (GET with id in url)
 Gets clan data at given id
 
-* ### DELETE://api/Clans/id
+* ### GET://api/Clans/{tag}
+###### [Allow Anonymous] (GET with id in url)
+Gets clan data with given tag
+
+* ### DELETE://api/Clans/{id}
 ###### [Admin Only] (DELETE with id in header)
 Deletes the clan at given id from the database
 
@@ -360,11 +381,11 @@ Adds given gamemode if it is not already saved
 ###### [Admin Only] (GET)
 Gets all game modes saved in the Database
 
-* ### GET://api/GameModes/id
+* ### GET://api/GameModes/{id}
 ###### [Admin Only] (GET)
 Gets game mode with given id
 
-* ### DELETE://api/GameModes/id
+* ### DELETE://api/GameModes/{id}
 ###### [Admin Only] (DELETE)
 Deletes the game mode at given id from the database
 
@@ -408,15 +429,19 @@ saves given player data
 ###### [Admin Only] (GET)
 Gets all saved player data in the Database
 
-* ### GET://api/Players/id
+* ### GET://api/Players/id/{id}
 ###### [Admin Only] (GET)
 Gets player data with given id
 
-* ### GET://api/Players/update/playerTag
-###### [Admin Only] (GET)
-Packages all player data and saves it to the database if new, then returns current filled player data, upcoming chests in rotation, and recent battles.
+* ### GET://api/Players/{playerTag}
+###### [Allow Anonymous] (GET)
+Packages all player data and saves it to the database if new, then returns current filled player data
 
-* ### DELETE://api/Players/id
+* ### GET://api/Players/chests/{playerTag}
+###### [Allow Anonymous] (GET)
+gets the upcoming chests for the player with provided tag 
+
+* ### DELETE://api/Players/{id}
 ###### [Admin Only] (DELETE with id in header)
 Deletes the player data at given id from the database
 
@@ -446,7 +471,7 @@ Creates a team with the player combination if nonexistent, then returns the team
 ###### [Admin Only] (GET)
 Gets all teams in the database
 
-* ### GET://api/Teams/id
+* ### GET://api/Teams/{id}
 ###### [Admin Only] (GET)
 Gets team with given id
 
