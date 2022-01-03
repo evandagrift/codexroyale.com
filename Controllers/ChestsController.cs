@@ -83,6 +83,8 @@ namespace RoyaleTrackerAPI.Controllers
             chestsRepo.DeleteChest(chestName);
         }
 
+
+
         [Authorize(Policy = "AdminOnly")]
         // Update: api/Chests
         [HttpPut]

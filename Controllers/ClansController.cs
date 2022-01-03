@@ -34,6 +34,8 @@ namespace RoyaleTrackerAPI.Controllers
             //init the repo with DB context
             repo = new ClansRepo(client, context);
         }
+
+
         // POST api/Clans
         [Authorize(Policy = "AdminOnly")]
         [HttpPost]
@@ -41,6 +43,8 @@ namespace RoyaleTrackerAPI.Controllers
         {
             repo.AddClan(clan);
         }
+
+
 
         [Authorize(Policy = "AdminOnly")]
         // GET: api/Clans
@@ -67,6 +71,9 @@ namespace RoyaleTrackerAPI.Controllers
                 NullValueHandling = NullValueHandling.Ignore
             });
         }
+
+
+
         [AllowAnonymous]
         // GET api/Clans/id
         [HttpGet("{tag}")]

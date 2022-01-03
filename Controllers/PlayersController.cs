@@ -71,68 +71,36 @@ namespace RoyaleTrackerAPI.Controllers
             });
         }
 
-        [AllowAnonymous]
-        // GET api/Players/id
-        [HttpGet("{playerTag}")]
-        public async Task<string> Get(string playerTag)
-        {
-            PlayerSnapshot player = await _playersRepo.GetOfficialPlayer(playerTag);
-            return JsonConvert.SerializeObject(player, Formatting.Indented, new JsonSerializerSettings
-            {
-                NullValueHandling = NullValueHandling.Ignore
-            });
-        }
-        /*
-        //[Authorize(Policy = "All")]
-        [AllowAnonymous]
-        [HttpPost("full/{playerTag}")]
-        public async Task<string> GetUpdatePlayer(string playerTag)
-        {
-            //get the users's player data w/ their chests in rotation as well as battles
-            PlayerSnapshot returnPlayer = await _playersRepo.GetFullPlayer(playerTag);
-            //
-            return JsonConvert.SerializeObject(returnPlayer, Formatting.Indented, new JsonSerializerSettings
-            {
-                NullValueHandling = NullValueHandling.Ignore
-            });
-        }
-        */
 
         //[Authorize(Policy = "All")]
         [AllowAnonymous]
-        [HttpPost("official/{playerTag}")]
-        public async Task<string> GetOfficialPlayer(string playerTag)
+        [HttpGet("{playerTag}")]
+        public async Task<IActionResult> GetOfficialPlayer(string playerTag)
         {
-            //get the users's player data w/ their chests in rotation as well as battles
+            //get the users's player data
             PlayerSnapshot returnPlayer = await _playersRepo.GetOfficialPlayer(playerTag);
 
-            //gets players Chests r
-            List<Chest> playerChests = await _playersRepo.GetPlayerChestsAsync(playerTag);
 
-            if (playerChests.Count > 0)
-            {
-                returnPlayer.Chests = playerChests;
-            }
-
-            return JsonConvert.SerializeObject(returnPlayer, Formatting.Indented, new JsonSerializerSettings
+            return Ok(JsonConvert.SerializeObject(returnPlayer, Formatting.Indented, new JsonSerializerSettings
             {
                 NullValueHandling = NullValueHandling.Ignore
-            });
+            }));
         }
 
         //[Authorize(Policy = "All")]
         [AllowAnonymous]
-        [HttpPost("chests/{playerTag}")]
-        public async Task<string> GetPlayerChests(string playerTag)
+        [HttpGet("chests/{playerTag}")]
+        public async Task<IActionResult> GetPlayerChests(string playerTag)
         {
             //gets players upcoming Chests
             List<Chest> playerChests = await _playersRepo.GetPlayerChestsAsync(playerTag);
 
-
-            return JsonConvert.SerializeObject(playerChests, Formatting.Indented, new JsonSerializerSettings
+            if (playerChests == null) return NotFound();
+            else 
+                return Ok(JsonConvert.SerializeObject(playerChests, Formatting.Indented, new JsonSerializerSettings
             {
                 NullValueHandling = NullValueHandling.Ignore
-            });
+            }));
         }
 
         [Authorize(Policy = "AdminOnly")]
@@ -154,3 +122,19 @@ namespace RoyaleTrackerAPI.Controllers
 
     }
 }
+
+/*
+//[Authorize(Policy = "All")]
+[AllowAnonymous]
+[HttpPost("full/{playerTag}")]
+public async Task<string> GetUpdatePlayer(string playerTag)
+{
+    //get the users's player data w/ their chests in rotation as well as battles
+    PlayerSnapshot returnPlayer = await _playersRepo.GetFullPlayer(playerTag);
+    //
+    return JsonConvert.SerializeObject(returnPlayer, Formatting.Indented, new JsonSerializerSettings
+    {
+        NullValueHandling = NullValueHandling.Ignore
+    });
+}
+*/

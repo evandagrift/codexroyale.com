@@ -38,18 +38,18 @@ namespace RoyaleTrackerAPI
 
             services.AddCors(options =>
             {
-                options.AddPolicy(name: "hosted",
+                options.AddPolicy("hosted",
                                   builder =>
                                   {
-                                      builder.WithOrigins("https://codexroyale.com")
+                                      builder.WithOrigins("http://localhost:3000")
                                       .AllowAnyHeader().AllowAnyMethod().AllowCredentials();
                                   });
             });
 
 
-            services.AddControllers().AddNewtonsoftJson();
+            services.AddControllers();
 
-            services.AddDbContext<TRContext>(options => options.UseMySQL(Configuration["ConnectionStrings:DBConnectionString"]), ServiceLifetime.Transient);
+            services.AddDbContext<TRContext>(options => options.UseSqlServer(Configuration["ConnectionStrings:LocalConnectionString"]), ServiceLifetime.Transient);
 
 
             services.AddAuthentication("Basic").AddScheme<AuthenticationSchemeOptions, CustomAuthenticationHandler>("Basic", null);

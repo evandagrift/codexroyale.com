@@ -42,15 +42,6 @@ namespace RoyaleTrackerAPI.Controllers
             _playersRepo = new PlayersRepo(_client, _context);
         }
 
-        [Authorize(Policy = "All")]
-        [HttpPost("Update")]
-        public IActionResult UpdatePlayerSetting([FromBody] JObject recievedJson)
-        {
-            Console.WriteLine();
-           User user = recievedJson["user"].ToObject<User>();
-           string newPassword = recievedJson["newPassword"].ToString();
-            return Ok(_customAuthenticationManager.UpdateUserSetting(user, newPassword, _context,_client));
-        }
 
 
         [AllowAnonymous]
@@ -62,6 +53,85 @@ namespace RoyaleTrackerAPI.Controllers
 
             return Ok(signupResult);
         }
+
+
+
+
+        [AllowAnonymous]
+        [HttpPost("Login")]
+        public IActionResult Login([FromBody] User user)
+        {
+
+            User fetchedUser = _customAuthenticationManager.Login(user, _context);
+
+            if (fetchedUser != null)
+            {
+                return Ok(fetchedUser);
+            }
+            else return Unauthorized();
+        }
+
+
+
+
+        [Authorize(Policy = "AdminOnly")]
+        // GET: api/Users
+        [HttpGet]
+        public string GetUsers()
+        {
+            List<User> users = _usersRepo.GetAllUsers();
+
+            return JsonConvert.SerializeObject(users, Formatting.Indented, new JsonSerializerSettings
+            {
+                NullValueHandling = NullValueHandling.Ignore
+            });
+
+        }
+
+        // POST api/Users
+        [Authorize(Policy = "AdminOnly")]
+        [HttpPost]
+        public void PostUser([FromBody] User user)
+        {
+            _usersRepo.AddUser(user);
+        }
+
+
+
+
+
+        [Authorize(Policy = "AdminOnly")]
+        // GET api/Users/username
+        [HttpGet("{username}")]
+        public string GetUser(string username)
+        {
+            User user = _usersRepo.GetUserByUsername(username);
+            return JsonConvert.SerializeObject(user, Formatting.Indented, new JsonSerializerSettings
+            {
+                NullValueHandling = NullValueHandling.Ignore
+            });
+        }
+
+
+
+        [Authorize(Policy = "AdminOnly")]
+        // DELETE: api/Users/username
+        [HttpDelete("{username}")]
+        public void DeleteUser(string username)
+        {
+            _usersRepo.DeleteUser(username);
+        }
+
+
+        [Authorize(Policy = "AdminOnly")]
+        [HttpPut]
+        public IActionResult UpdateUser([FromBody] User user)
+        {
+            _usersRepo.UpdateUser(user);
+            return Ok();
+        }
+
+
 
 
 
@@ -100,81 +170,20 @@ namespace RoyaleTrackerAPI.Controllers
         }
 
 
-
-        [AllowAnonymous]
-        [HttpPost("Login")]
-        public IActionResult Login([FromBody] User user)
+        [Authorize(Policy = "All")]
+        [HttpPost("Update")]
+        public IActionResult UpdatePlayerSetting([FromBody] JObject recievedJson)
         {
-
-            User fetchedUser = _customAuthenticationManager.Login(user, _context);
-
-            if (fetchedUser != null)
-            {
-                return Ok(fetchedUser);
-            }
-            else return Unauthorized();
-        }
-
-
-
-        // POST api/Users
-        [Authorize(Policy = "AdminOnly")]
-        [HttpPost]
-        public void PostUser([FromBody] User user)
-        {
-            _usersRepo.AddUser(user);
-        }
-
-
-
-        [Authorize(Policy = "AdminOnly")]
-        // GET: api/Users
-        [HttpGet]
-        public string GetUsers()
-        {
-            List<User> users = _usersRepo.GetAllUsers();
-
-            return JsonConvert.SerializeObject(users, Formatting.Indented, new JsonSerializerSettings
-            {
-                NullValueHandling = NullValueHandling.Ignore
-            });
-
-        }
-
-
-
-        [Authorize(Policy = "AdminOnly")]
-        // GET api/Users/username
-        [HttpGet("{username}")]
-        public string GetUser(string username)
-        {
-            User user = _usersRepo.GetUserByUsername(username);
-            return JsonConvert.SerializeObject(user, Formatting.Indented, new JsonSerializerSettings
-            {
-                NullValueHandling = NullValueHandling.Ignore
-            });
-        }
-
-
-
-        [Authorize(Policy = "AdminOnly")]
-        // DELETE: api/Users/username
-        [HttpDelete("{username}")]
-        public void DeleteUser(string username)
-        {
-            _usersRepo.DeleteUser(username);
+            User user = recievedJson["user"].ToObject<User>();
+            string newPassword = recievedJson["newPassword"].ToString();
+            return Ok(_customAuthenticationManager.UpdateUserSetting(user, newPassword, _context, _client));
         }
 
 
 
 
-        [Authorize(Policy = "AdminOnly")]
-        [HttpPut]
-        public IActionResult UpdateUser([FromBody] User user)
-        {
-            _usersRepo.UpdateUser(user);
-            return Ok();
-        }
+
+
 
     }
 
