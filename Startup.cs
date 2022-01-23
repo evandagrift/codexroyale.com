@@ -19,6 +19,8 @@ using Microsoft.Net.Http.Headers;
 using RoyaleTrackerAPI.Models.Authentication;
 using RoyaleTrackerAPI.Models.Email;
 using RoyaleTrackerAPI.Controllers;
+using System.IO;
+using NLog;
 
 namespace RoyaleTrackerAPI
 {
@@ -26,6 +28,7 @@ namespace RoyaleTrackerAPI
     {
         public Startup(IConfiguration configuration)
         {
+            LogManager.LoadConfiguration(String.Concat(Directory.GetCurrentDirectory(), "/nlog.config"));
             Configuration = configuration;
         }
 
@@ -35,6 +38,8 @@ namespace RoyaleTrackerAPI
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+
+            services.AddSingleton<ILoggerManager, LoggerManager>();
 
             services.AddCors(options =>
             {
@@ -46,13 +51,11 @@ namespace RoyaleTrackerAPI
                                   });
             });
 
+            services.AddLogging();
 
             services.AddControllers();
 
-            services.AddDbContext<TRContext>(options => options.UseSqlServer(Configuration["ConnectionStrings:LocalConnectionString"]), ServiceLifetime.Transient);
-
-
-            services.AddAuthentication("Basic").AddScheme<AuthenticationSchemeOptions, CustomAuthenticationHandler>("Basic", null);
+            services.AddDbContext<TRContext>(options => options.UseSqlServer(Configuration["ConnectionStrings:DBConnectionString"]), ServiceLifetime.Transient);
 
 
 
@@ -60,6 +63,7 @@ namespace RoyaleTrackerAPI
             {
                 options.AddPolicy("AdminOnly", policy => policy.RequireRole("Admin"));
                 options.AddPolicy("All", policy => policy.RequireRole("Admin", "User"));
+                options.AddPolicy("Public", policy => policy.RequireRole("Admin", "User","Public"));
             });
 
             services.AddSingleton<CustomAuthenticationManager>();

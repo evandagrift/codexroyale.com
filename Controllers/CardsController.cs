@@ -3,11 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
+using NLog;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using RoyaleTrackerAPI.Models;
 using RoyaleTrackerAPI.Repos;
 using RoyaleTrackerClasses;
+using Microsoft.Extensions.Logging;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -20,19 +22,21 @@ namespace RoyaleTrackerAPI.Controllers
     {
 
         //context to DB and Repo for handling
-        private TRContext context;
-        private Client client;
-        private CardsRepo repo;
+        private TRContext _context;
+        private Client _client;
+        private CardsRepo _repo;
+        private readonly ILogger<CardsController> _logger;
 
         //loading in injected dependancies
-        public CardsController(Client c, TRContext ct)
+        public CardsController(Client client, TRContext context, ILogger<CardsController> logger)
         {
-            client = c;
-            context = ct;
+            _client = client;
+            _context = context;
+            _logger = logger;
 
             //init the repo with DB context
-            repo = new CardsRepo(client, context);
-            repo.UpdateCards().Wait();
+            _repo = new CardsRepo(client, context);
+            _repo.UpdateCards().Wait();
         }
 
         [Authorize(Policy = "AdminOnly")]
@@ -41,16 +45,17 @@ namespace RoyaleTrackerAPI.Controllers
         public void Post([FromBody] Card card)
         {
             //adds the recieved card
-            repo.AddCardIfNew(card);
+            _repo.AddCardIfNew(card);
         }
 
-        [Authorize(Policy = "All")]
+        //[Authorize(Policy = "All")]
+        [AllowAnonymous]
         // GET: api/Cards
         [HttpGet]
         public string Get()
         {
-            List<Card> cards = repo.GetAllCards();
-
+            List<Card> cards = _repo.GetAllCards();
+            _logger.LogDebug("First Log here!");
             return JsonConvert.SerializeObject(cards, Formatting.Indented, new JsonSerializerSettings
             {
                 NullValueHandling = NullValueHandling.Ignore
@@ -64,7 +69,7 @@ namespace RoyaleTrackerAPI.Controllers
         [HttpGet("{id}")]
         public string Get(int id)
         {
-            Card card = repo.GetCardByID(id);
+            Card card = _repo.GetCardByID(id);
             return JsonConvert.SerializeObject(card, Formatting.Indented, new JsonSerializerSettings
             {
                 NullValueHandling = NullValueHandling.Ignore
@@ -77,7 +82,7 @@ namespace RoyaleTrackerAPI.Controllers
         [HttpDelete("{id}")]
         public void Delete(int id)
         {
-            repo.DeleteCard(id);
+            _repo.DeleteCard(id);
         }
 
 
@@ -86,7 +91,7 @@ namespace RoyaleTrackerAPI.Controllers
         [HttpPost("UpdateCards")]
         public IActionResult UpdateCards()
         {
-           return Ok(repo.UpdateCards());
+           return Ok(_repo.UpdateCards());
         }
 
 
@@ -96,7 +101,7 @@ namespace RoyaleTrackerAPI.Controllers
         [HttpPut]
         public void Update([FromBody] Card card)
         {
-            repo.UpdateCard(card);
+            _repo.UpdateCard(card);
         }
 
     }

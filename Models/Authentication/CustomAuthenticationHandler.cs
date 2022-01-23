@@ -42,7 +42,7 @@ namespace RoyaleTrackerAPI
             string token = authorizationHeader.Substring("bearer".Length).Trim();
 
             if (string.IsNullOrEmpty(token))
-                return AuthenticateResult.Fail("Unauthorize");
+                return ValidateToken("");
 
             try
             {
@@ -59,6 +59,7 @@ namespace RoyaleTrackerAPI
         {
             //retrieve Token from DB
             User validatedUser = customAuthenticationManager.GetUserByToken(token, context);
+
             if (validatedUser != null)
             {
                 if (validatedUser.Username == null || validatedUser.Role == null)
@@ -83,7 +84,24 @@ namespace RoyaleTrackerAPI
                 return AuthenticateResult.Success(ticket);
 
             }
-            else return AuthenticateResult.Fail("Unauthorize");
+            else
+            {
+                var claims = new List<Claim>
+                {
+                    //item1 is name
+                    new Claim(ClaimTypes.Name, "public-user"),
+                    new Claim(ClaimTypes.Role, "Public")
+                };
+
+                var identity = new ClaimsIdentity(claims, Scheme.Name);
+
+                //item2 is Role
+                var principal = new GenericPrincipal(identity, new[] { "Public" });
+
+                var ticket = new AuthenticationTicket(principal, Scheme.Name);
+
+                return AuthenticateResult.Success(ticket);
+            }
         }
     }
     
