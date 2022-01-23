@@ -29,7 +29,7 @@ namespace RoyaleTrackerAPI
 
             //db options builder
             var optionsBuilder = new DbContextOptionsBuilder<TRContext>();
-            optionsBuilder.UseSqlServer(config["ConnectionStrings:LocalConnectionString"]);
+            optionsBuilder.UseSqlServer(config["ConnectionStrings:DBConnectionString"]);
 
             _client = cl;
             //client = new Client(config["ConnectionStrings:BearerToken"]);
