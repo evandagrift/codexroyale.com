@@ -41,15 +41,6 @@ namespace RoyaleTrackerAPI
 
             services.AddSingleton<ILoggerManager, LoggerManager>();
 
-            services.AddCors(options =>
-            {
-                options.AddPolicy("hosted",
-                                  builder =>
-                                  {
-                                      builder.WithOrigins("http://localhost:3000")
-                                      .AllowAnyHeader().AllowAnyMethod().AllowCredentials();
-                                  });
-            });
 
             services.AddLogging();
 
@@ -86,10 +77,8 @@ namespace RoyaleTrackerAPI
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
 
-            app.UseHttpsRedirection();
             app.UseRouting();
 
-            app.UseCors("hosted");
 
             app.UseAuthentication();
             app.UseAuthorization();
