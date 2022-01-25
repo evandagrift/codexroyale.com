@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
-using NLog;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using RoyaleTrackerAPI.Models;
@@ -44,6 +41,8 @@ namespace RoyaleTrackerAPI.Controllers
         [HttpPost]
         public void Post([FromBody] Card card)
         {
+            _logger.LogWarning($"Posting card {card}");
+
             //adds the recieved card
             _repo.AddCardIfNew(card);
         }
@@ -55,7 +54,11 @@ namespace RoyaleTrackerAPI.Controllers
         public string Get()
         {
             List<Card> cards = _repo.GetAllCards();
-            _logger.LogDebug("First Log here!");
+
+
+            _logger.LogInformation("Getting all Cards");
+
+
             return JsonConvert.SerializeObject(cards, Formatting.Indented, new JsonSerializerSettings
             {
                 NullValueHandling = NullValueHandling.Ignore
@@ -70,6 +73,9 @@ namespace RoyaleTrackerAPI.Controllers
         public string Get(int id)
         {
             Card card = _repo.GetCardByID(id);
+
+            _logger.LogInformation($"Getting card {id}");
+
             return JsonConvert.SerializeObject(card, Formatting.Indented, new JsonSerializerSettings
             {
                 NullValueHandling = NullValueHandling.Ignore
@@ -82,6 +88,8 @@ namespace RoyaleTrackerAPI.Controllers
         [HttpDelete("{id}")]
         public void Delete(int id)
         {
+            _logger.LogWarning($"Deleting Card {id}");
+
             _repo.DeleteCard(id);
         }
 
@@ -91,6 +99,8 @@ namespace RoyaleTrackerAPI.Controllers
         [HttpPost("UpdateCards")]
         public IActionResult UpdateCards()
         {
+            _logger.LogInformation("Updating cards");
+
            return Ok(_repo.UpdateCards());
         }
 
@@ -101,6 +111,9 @@ namespace RoyaleTrackerAPI.Controllers
         [HttpPut]
         public void Update([FromBody] Card card)
         {
+
+            _logger.LogWarning($"Updating Card {card}");
+
             _repo.UpdateCard(card);
         }
 

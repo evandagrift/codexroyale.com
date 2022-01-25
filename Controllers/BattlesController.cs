@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using RoyaleTrackerAPI.Models;
 using RoyaleTrackerAPI.Repos;
@@ -23,13 +24,15 @@ namespace RoyaleTrackerAPI.Controllers
         private TRContext context;
         private Client client;
         private BattlesRepo repo;
+        private  ILogger<BattlesController> _logger;
 
         //loading in injected dependancies
-        public BattlesController(Client c, TRContext ct)
+        public BattlesController(Client c, TRContext ct, ILogger<BattlesController> logger)
         {
             context = ct;
             client = c;
             repo = new BattlesRepo(client, context);
+            _logger = logger;
         }
 
 
@@ -39,6 +42,8 @@ namespace RoyaleTrackerAPI.Controllers
         // POST: api/Battles/addbattle
         public IActionResult Post([FromBody] Battle battle)
         {
+            _logger.LogWarning($"Posting battle {battle}");
+
             //adds the Posted battle to DB if it's new
             repo.AddBattle(battle);
             return Ok();
@@ -49,6 +54,9 @@ namespace RoyaleTrackerAPI.Controllers
         [HttpPost("list")]
         public IActionResult Post([FromBody] List<Battle> battles)
         {
+
+            _logger.LogWarning($"Posting battles {battles}");
+
             //adds the list of battles to DB if they are new
             repo.AddBattles(battles);
             return Ok();
@@ -61,6 +69,9 @@ namespace RoyaleTrackerAPI.Controllers
         public string Get()
         {
             List<Battle> battles = repo.GetRecentBattles();
+
+
+            _logger.LogInformation("Getting Recent Battles");
 
             //returns list of battles
             return JsonConvert.SerializeObject(battles, Formatting.Indented, new JsonSerializerSettings
@@ -79,7 +90,7 @@ namespace RoyaleTrackerAPI.Controllers
             //returns battle with Id based off given battle, if said battle doesn't exist it is created and returned after assigned Id
             List<Battle> battles = repo.GetAllBattles(playerTag);
 
-            if(battles == null)
+            if(battles == null) 
             {
                 return NotFound();
             }
