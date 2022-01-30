@@ -58,7 +58,7 @@ namespace RoyaleTrackerAPI
         }
 
 
-        public bool SendPasswordReset(string userEmail, UsersRepo usersRepo, TRContext context, EmailSender emailSender)
+        public string SendPasswordReset(string userEmail, UsersRepo usersRepo, TRContext context, EmailSender emailSender)
         {
             //gets the user with the recieved email
             User fetchedUser = context.Users.Where(u => u.Email == userEmail).FirstOrDefault();
@@ -66,24 +66,24 @@ namespace RoyaleTrackerAPI
             //if such a user exists
             if (fetchedUser != null)
             {
-                if(fetchedUser.PasswordResetCode == null)
+                if (fetchedUser.PasswordResetCode == null)
                 {
 
-                //assigns a password reset code and expiration time on said code
-                fetchedUser.PasswordResetCode = Guid.NewGuid().ToString() + Guid.NewGuid()
-                        + Guid.NewGuid().ToString();
-                fetchedUser.PasswordResetCodeExpirationDate = DateTime.UtcNow.AddDays(7).ToString();
-                context.SaveChanges();
+                    //assigns a password reset code and expiration time on said code
+                    fetchedUser.PasswordResetCode = Guid.NewGuid().ToString() + Guid.NewGuid()
+                            + Guid.NewGuid().ToString();
+                    fetchedUser.PasswordResetCodeExpirationDate = DateTime.UtcNow.AddDays(7).ToString();
+                    context.SaveChanges();
                 }
 
                 emailSender.SendPasswordResetAsync(userEmail, fetchedUser.Username, fetchedUser.PasswordResetCode);
 
 
 
-                return true;
+                return fetchedUser.Username;
 
             }
-            else return false;
+            else return "";
         }
 
 
@@ -155,7 +155,7 @@ namespace RoyaleTrackerAPI
                         user.EmailVerificationTokenExpirationDate = DateTime.UtcNow.AddDays(1).ToString();
 
                         //adds this new user to the database
-                        context.Users.Add(user); 
+                        context.Users.Add(user);
 
                         TrackedPlayer trackedPlayer = context.TrackedPlayers.Where(t => t.Tag == user.Tag).FirstOrDefault();
 
@@ -165,7 +165,7 @@ namespace RoyaleTrackerAPI
                         if (trackedPlayer == null)
                         {
                             context.TrackedPlayers.Add(new TrackedPlayer { Tag = user.Tag, Priority = "high" });
-                          
+
                         }
                         context.SaveChanges();
                     }
@@ -228,7 +228,7 @@ namespace RoyaleTrackerAPI
                 context.SaveChanges();
                 return SanitizeUser(fetchedUser);
             }
-           
+
             else return null;
 
 
@@ -258,17 +258,17 @@ namespace RoyaleTrackerAPI
             return null;
         }
 
-            //removes all sensitive fields except email
-            private User SanitizeUser(User user)
-            {
-                user.Password = null;
-                user.PasswordResetCode = null;
-                user.PasswordResetCodeExpirationDate = null;
-                user.EmailVerificationCode = null;
-                user.EmailVerificationTokenExpirationDate = null;
+        //removes all sensitive fields except email
+        private User SanitizeUser(User user)
+        {
+            user.Password = null;
+            user.PasswordResetCode = null;
+            user.PasswordResetCodeExpirationDate = null;
+            user.EmailVerificationCode = null;
+            user.EmailVerificationTokenExpirationDate = null;
 
-                return user;
-            }
-
+            return user;
         }
+
     }
+}

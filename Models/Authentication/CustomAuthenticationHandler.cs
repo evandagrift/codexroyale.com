@@ -48,7 +48,7 @@ namespace RoyaleTrackerAPI
             {
                 return ValidateToken(token);
             }
-          catch
+            catch
             {
                 return AuthenticateResult.Fail("Unauthorize");
             }
@@ -86,5 +86,5 @@ namespace RoyaleTrackerAPI
             else return AuthenticateResult.Fail("Unauthorize");
         }
     }
-    
+
 }
