@@ -1,0 +1,26 @@
+.battle{
+    display: inline-flex;
+    padding: 8px;
+    border-bottom: 1px #3a3737 solid;
+    width: 100%;
+    max-width: ;
+
+}
+.leftPanel{
+    flex-basis: 40%;
+    padding-right: 16px;
+}
+
+
+.centerPanel{
+    flex-basis: 20%;
+}
+.centerPanel h1{
+    margin-top: 50%;
+    margin-bottom: 20%;
+}
+
+.rightPanel{
+    flex-basis: 40%;
+    padding-left: 16px;
+}

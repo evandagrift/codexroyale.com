@@ -1,0 +1,16 @@
+
+.clickableRow:hover 
+{
+  cursor:pointer;
+}  
+.clickableRow:hover td { color:blue; }
+.clickableRow:hover th { color:blue; }
+
+td {
+    word-wrap:break-word;
+    word-break:keep-all;
+}
+th {
+  word-wrap:break-word;
+  word-break:keep-all;
+}
