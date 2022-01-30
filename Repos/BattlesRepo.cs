@@ -153,6 +153,8 @@ namespace RoyaleTrackerAPI.Repos
 
 
                 }
+               
+                
                 //adds this battle to context to be saved
                 _context.Battles.Add(b);
             });
@@ -180,20 +182,20 @@ namespace RoyaleTrackerAPI.Repos
         public List<Battle> GetRecentBattles(string playerTag)
         {
 
-                if (playerTag != null && _context.Battles.Count() > 0 && _context.PlayersSnapshots.Any(p => p.Tag == playerTag))
+                if (playerTag != null && _context.Battles.Count() > 0)
             {
-                Team playerTeam = _context.Teams.Where(t => t.Tag == playerTag && t.Tag2 == null).FirstOrDefault();
+                Team playerTeam = _context.Teams.Where(t => t.Tag == playerTag && t.TwoVTwo == false).FirstOrDefault();
                 int numPlayerBattles = _context.Battles.Where(b => b.Team1Id == playerTeam.TeamId || b.Team2Id == playerTeam.TeamId).Count();
 
                 int fetchThisMany = 30;
 
                 if (fetchThisMany > numPlayerBattles) fetchThisMany = numPlayerBattles;
 
-                //filtering out all non PvP battles
-                List<Battle> battlesToReturn = _context.Battles.Where(b => b.Team1Id == playerTeam.TeamId || b.Team2Id == playerTeam.TeamId).OrderByDescending(b => b.BattleTime).TakeLast(fetchThisMany).ToList();
-                
-
-                return FillDeckImages(battlesToReturn);
+                if (fetchThisMany != 0)
+                {
+                    return FillDeckImages(_context.Battles.OrderByDescending(b => b.BattleTime).Take(fetchThisMany).ToList());
+                }
+                else return null;
             }
             else { return null; }
         }

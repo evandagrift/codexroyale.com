@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using RoyaleTrackerAPI.Models;
 using RoyaleTrackerAPI.Repos;
@@ -18,81 +20,69 @@ namespace RoyaleTrackerAPI.Controllers
     [ApiController]
     public class DecksController : ControllerBase
     {
-
         //context to DB and Repo for handling
         private TRContext _context;
         private Client _client;
         private DecksRepo repo;
+        private ILogger<DecksController> _logger;
+        
 
         //loading in injected dependancies
-        public DecksController(TRContext context, Client client)
+        public DecksController(TRContext context, Client client, ILogger<DecksController> logger)
         {
             _context = context;
             _client = client;
+            _logger = logger;
 
             //init the repo with DB context
             repo = new DecksRepo(client, context);
         }
 
+        //gets deck with the given deck id
         [Authorize(Policy = "AdminOnly")]
         [HttpPost]
-        // POST api/Decks
         public Deck GetDeckWithId([FromBody] Deck deck)
         {
-            //gets deck with the given deck id
-            Deck returnDeck = repo.GetDeckWithId(deck);
-
-            //returns the deck to the end user
-            return returnDeck;
+            _logger.LogInformation($"{Request.HttpContext.Connection.RemoteIpAddress} getting deck {deck.Id}");
+            return repo.GetDeckWithId(deck);
         }
 
+        //fetches all decks in the DB
         [Authorize(Policy = "AdminOnly")]
-        // GET: api/Decks
         [HttpGet]
         public string Get()
         {
-            //fetches all decks in the DB
+            _logger.LogInformation($"{Request.HttpContext.Connection.RemoteIpAddress} Getting all decks");
             List<Deck> decks = repo.GetAllDecks();
-
-            //returns the list to the end user
-            return JsonConvert.SerializeObject(decks, Formatting.Indented, new JsonSerializerSettings
-            {
-                NullValueHandling = NullValueHandling.Ignore
-            });
-
+            return JsonConvert.SerializeObject(decks, Formatting.Indented, new JsonSerializerSettings {NullValueHandling = NullValueHandling.Ignore});
         }
+
+        //gets deck with given id
         [AllowAnonymous]
-        // GET api/Decks/id
         [HttpGet("{id}")]
         public string Get(int id)
         {
-            //gets deck by Id
+            _logger.LogInformation($"{Request.HttpContext.Connection.RemoteIpAddress} getting deck {id}");
             Deck deck = repo.GetDeckByID(id);
-
-            //returns fetched deck
-            return JsonConvert.SerializeObject(deck, Formatting.Indented, new JsonSerializerSettings
-            {
-                NullValueHandling = NullValueHandling.Ignore
-            });
+            return JsonConvert.SerializeObject(deck, Formatting.Indented, new JsonSerializerSettings {NullValueHandling = NullValueHandling.Ignore});
         }
 
 
-
+        //deletes deck with given Id
         [Authorize(Policy = "AdminOnly")]
-        // DELETE: api/Decks/id
         [HttpDelete("{id}")]
         public void Delete(int id)
         {
-            //deletes deck at given Id
+            _logger.LogWarning($"{Request.HttpContext.Connection.RemoteIpAddress} DELETING DECK {id}");
             repo.DeleteDeck(id);
         }
 
+        //updates the deck with Id provided by Deck argument
         [Authorize(Policy = "AdminOnly")]
-        // Update: api/Decks
         [HttpPut]
         public void Update([FromBody] Deck deck)
         {
-            //updates the deck with given Id
+            _logger.LogWarning($"{Request.HttpContext.Connection.RemoteIpAddress} UPDATING DECK {deck.Id}!"); ;
             repo.UpdateDeck(deck);
         }
 

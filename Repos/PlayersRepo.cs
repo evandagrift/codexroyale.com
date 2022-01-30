@@ -1,4 +1,6 @@
 ﻿using Newtonsoft.Json;
+using NLog;
+using NLog.Web;
 using RoyaleTrackerAPI.Models;
 using RoyaleTrackerAPI.Models.RoyaleClasses;
 using RoyaleTrackerClasses;
@@ -14,9 +16,12 @@ namespace RoyaleTrackerAPI.Repos
         //DB access
         private TRContext _context;
         private Client _client;
+        private readonly ILogger _logger;
 
         //constructor loads in DB Context
-        public PlayersRepo(Client c, TRContext ct) { _context = ct; _client = c; }
+        public PlayersRepo(Client c, TRContext ct) { _context = ct; _client = c;
+            _logger = NLog.LogManager.Setup().LoadConfigurationFromAppSettings().GetCurrentClassLogger();
+        }
 
         //Adds given Player
         public void AddPlayer(PlayerSnapshot player)
@@ -292,6 +297,8 @@ namespace RoyaleTrackerAPI.Repos
         public void SavePlayerFull(string playerTag)
         {
 
+            _logger.Debug($"Saving full player {playerTag}");
+
             BattlesRepo battlesRepo = new BattlesRepo(_client, _context);
             ChestsRepo chestsRepo = new ChestsRepo(_client, _context);
             ClansRepo clansRepo = new ClansRepo(_client, _context);
@@ -301,6 +308,7 @@ namespace RoyaleTrackerAPI.Repos
             //still needs to be packaged for front end
             PlayerSnapshot fetchedPlayer = GetOfficialPlayer(playerTag).Result;
 
+            _logger.Debug($"fetched player {fetchedPlayer}");
 
             //creating the variable outside try so the function has access
             PlayerSnapshot lastSavedPlayer;
@@ -334,10 +342,17 @@ namespace RoyaleTrackerAPI.Repos
                         _context.SaveChanges();
                     }
 
+                    _logger.Debug($"last saved player");
+
                     //fetches the current player battles from the official DB
                     List<Battle> pBattles = battlesRepo.GetOfficialPlayerBattles(fetchedPlayer.Tag).Result;
+                    
+                    
+                    
+                    _logger.Debug($"got battles");
 
 
+                    _logger.Debug($"Getting battles in save player:{pBattles}");
                     //adds new fetched battles to the DB and gets a count of added lines
                     battlesRepo.AddBattles(pBattles);
 
@@ -347,6 +362,9 @@ namespace RoyaleTrackerAPI.Repos
 
                 //gets players Chests r
                 List<Chest> playerChests = GetPlayerChestsAsync(playerTag).Result;
+
+                _logger.Debug($"fetched player chests {playerChests}");
+
                 if (playerChests.Count > 0)
                 {
                     fetchedPlayer.Chests = playerChests;
