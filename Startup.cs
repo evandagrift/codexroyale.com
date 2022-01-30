@@ -23,27 +23,23 @@ namespace RoyaleTrackerAPI
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+
             services.Configure<ForwardedHeadersOptions>(options =>
             {
                 options.ForwardedHeaders =
                     ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
                 options.KnownProxies.Add(IPAddress.Parse("127.0.10.1"));
             });
-
-            services.AddCors(options =>
+           /* services.Configure<ForwardedHeadersOptions>(options =>
             {
-                options.AddPolicy("hosted",
-                                  builder =>
-                                  {
-                                      builder.WithOrigins("http://localhost:3000")
-                                      .AllowAnyHeader().AllowAnyMethod().AllowCredentials();
-                                  });
-
+                options.ForwardedHeaders =
+                    ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
             });
+*/
 
             services.AddControllers();
 
-            services.AddDbContext<TRContext>(options => options.UseSqlServer(Configuration["ConnectionStrings:DBConnectionString"]), ServiceLifetime.Transient);
+            services.AddDbContext<TRContext>(options => options.UseMySQL(Configuration["ConnectionStrings:DBConnectionString"]), ServiceLifetime.Transient);
 
 
             
@@ -65,7 +61,6 @@ namespace RoyaleTrackerAPI
             services.AddSingleton<AuthMessageSenderOptions>(emailConfig);
             services.AddSingleton<EmailSender>();
             services.AddSingleton<Client>(new Client(Configuration["ConnectionStrings:BearerToken"]));
-            //allow connection between origins
 
         }
 
@@ -75,9 +70,6 @@ namespace RoyaleTrackerAPI
             app.UseForwardedHeaders();
 
             app.UseRouting();
-
-            app.UseCors("hosted");
-
 
             app.UseAuthorization();
 
