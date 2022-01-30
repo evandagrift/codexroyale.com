@@ -1,24 +1,12 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore.Design;
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using RoyaleTrackerAPI.Models;
-using Microsoft.Net.Http.Headers;
-using RoyaleTrackerAPI.Models.Authentication;
 using RoyaleTrackerAPI.Models.Email;
-using RoyaleTrackerAPI.Controllers;
+using System.Net;
 
 namespace RoyaleTrackerAPI
 {
@@ -36,26 +24,25 @@ namespace RoyaleTrackerAPI
         public void ConfigureServices(IServiceCollection services)
         {
 
-            services.AddCors(options =>
+            services.Configure<ForwardedHeadersOptions>(options =>
             {
-                options.AddPolicy("hosted",
-                                  builder =>
-                                  {
-                                      builder.WithOrigins("http://localhost:3000")
-                                      .AllowAnyHeader().AllowAnyMethod().AllowCredentials();
-                                  });
+                options.ForwardedHeaders =
+                    ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
+                options.KnownProxies.Add(IPAddress.Parse("127.0.10.1"));
             });
-
+           /* services.Configure<ForwardedHeadersOptions>(options =>
+            {
+                options.ForwardedHeaders =
+                    ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
+            });
+*/
 
             services.AddControllers();
 
-            services.AddDbContext<TRContext>(options => options.UseSqlServer(Configuration["ConnectionStrings:LocalConnectionString"]), ServiceLifetime.Transient);
+            services.AddDbContext<TRContext>(options => options.UseMySQL(Configuration["ConnectionStrings:DBConnectionString"]), ServiceLifetime.Transient);
 
 
-            services.AddAuthentication("Basic").AddScheme<AuthenticationSchemeOptions, CustomAuthenticationHandler>("Basic", null);
-
-
-
+            
             services.AddAuthorizationCore(options =>
             {
                 options.AddPolicy("AdminOnly", policy => policy.RequireRole("Admin"));
@@ -74,20 +61,16 @@ namespace RoyaleTrackerAPI
             services.AddSingleton<AuthMessageSenderOptions>(emailConfig);
             services.AddSingleton<EmailSender>();
             services.AddSingleton<Client>(new Client(Configuration["ConnectionStrings:BearerToken"]));
-            //allow connection between origins
 
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            app.UseForwardedHeaders();
 
-            app.UseHttpsRedirection();
             app.UseRouting();
 
-            app.UseCors("hosted");
-
-            app.UseAuthentication();
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>

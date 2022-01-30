@@ -1,14 +1,13 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using NLog;
+using NLog.Web;
 using RoyaleTrackerAPI.Models;
 using RoyaleTrackerAPI.Repos;
 using RoyaleTrackerClasses;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace RoyaleTrackerAPI
 {
@@ -19,6 +18,7 @@ namespace RoyaleTrackerAPI
         private PlayersRepo repo;
         private List<TrackedPlayer> _trackedPlayers;
 
+        private readonly ILogger _logger;
 
         public AutoUpdater(Client cl)
         {
@@ -29,7 +29,7 @@ namespace RoyaleTrackerAPI
 
             //db options builder
             var optionsBuilder = new DbContextOptionsBuilder<TRContext>();
-            optionsBuilder.UseSqlServer(config["ConnectionStrings:LocalConnectionString"]);
+            optionsBuilder.UseSqlServer(config["ConnectionStrings:DBConnectionString"]);
 
             _client = cl;
             //client = new Client(config["ConnectionStrings:BearerToken"]);
@@ -37,7 +37,14 @@ namespace RoyaleTrackerAPI
             //context
             _context = new TRContext(optionsBuilder.Options, _client);
 
+
+            _logger = NLog.LogManager.Setup().LoadConfigurationFromAppSettings().GetCurrentClassLogger();
+
+            //  _logger = NLog.LogManager.Setup().LoadConfigurationFromAppSettings().GetCurrentClassLogger();
+
+            _logger.Debug("starting auto updater");
         }
+
         private void RemoveDuplicates()
         {
             _trackedPlayers = _context.TrackedPlayers.ToList();
@@ -76,6 +83,7 @@ namespace RoyaleTrackerAPI
                     priorityPlayers.ForEach(pp =>
                     {
                         repo.SavePlayerFull(pp.Tag);
+                        _logger.Debug($"Saving full player {pp.Tag}");
                         pp.Priority = "normal";
                         _context.SaveChanges();
                     });

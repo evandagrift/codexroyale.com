@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using RoyaleTrackerAPI.Models;
 using RoyaleTrackerAPI.Repos;
 using RoyaleTrackerClasses;
+using Microsoft.Extensions.Logging;
+using System.Net;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -18,66 +18,59 @@ namespace RoyaleTrackerAPI.Controllers
     [ApiController]
     public class CardsController : ControllerBase
     {
+        private TRContext _context;
+        private Client _client;
+        private CardsRepo _repo;
+        private ILogger<CardsController> _logger;
 
-        //context to DB and Repo for handling
-        private TRContext context;
-        private Client client;
-        private CardsRepo repo;
-
-        //loading in injected dependancies
-        public CardsController(Client c, TRContext ct)
+        public CardsController(Client client, TRContext context, ILogger<CardsController> logger)
         {
-            client = c;
-            context = ct;
+            _client = client;
+            _context = context;
+            _logger = logger;
 
             //init the repo with DB context
-            repo = new CardsRepo(client, context);
-            repo.UpdateCards().Wait();
+            _repo = new CardsRepo(client, context);
+            //adds any new cards that may have been added to the game/seed initial data
+            _repo.UpdateCards().Wait();
         }
 
+        //adds the recieved card
         [Authorize(Policy = "AdminOnly")]
-        // POST api/Cards
         [HttpPost]
         public void Post([FromBody] Card card)
         {
-            //adds the recieved card
-            repo.AddCardIfNew(card);
+            _logger.LogWarning($"{Request.HttpContext.Connection.RemoteIpAddress} POSTING CARD {card.Id}!");
+            _repo.AddCardIfNew(card);
         }
 
-        [Authorize(Policy = "All")]
-        // GET: api/Cards
+        //Gets all cards in DB
+        [AllowAnonymous]
         [HttpGet]
         public string Get()
         {
-            List<Card> cards = repo.GetAllCards();
-
-            return JsonConvert.SerializeObject(cards, Formatting.Indented, new JsonSerializerSettings
-            {
-                NullValueHandling = NullValueHandling.Ignore
-            });
-
+            _logger.LogInformation($"{Request.HttpContext.Connection.RemoteIpAddress} Getting all Cards");
+            List<Card> cards = _repo.GetAllCards();
+            return JsonConvert.SerializeObject(cards, Formatting.Indented, new JsonSerializerSettings {NullValueHandling = NullValueHandling.Ignore});
         }
 
-        // GET api/Cards/
+        //Gets card w/ provided Id
         [Authorize(Policy = "AdminOnly")]
-
         [HttpGet("{id}")]
         public string Get(int id)
         {
-            Card card = repo.GetCardByID(id);
-            return JsonConvert.SerializeObject(card, Formatting.Indented, new JsonSerializerSettings
-            {
-                NullValueHandling = NullValueHandling.Ignore
-            });
+            _logger.LogInformation($"{Request.HttpContext.Connection.RemoteIpAddress} Getting card {id}");
+            Card card = _repo.GetCardByID(id);
+            return JsonConvert.SerializeObject(card, Formatting.Indented, new JsonSerializerSettings {NullValueHandling = NullValueHandling.Ignore});
         }
 
-
+        //Delete card with given Id
         [Authorize(Policy = "AdminOnly")]
-        // DELETE: api/Cards/{cardID}
         [HttpDelete("{id}")]
         public void Delete(int id)
         {
-            repo.DeleteCard(id);
+            _logger.LogWarning($"{Request.HttpContext.Connection.RemoteIpAddress} DELETING CARD {id}!");
+            _repo.DeleteCard(id);
         }
 
 
@@ -86,17 +79,18 @@ namespace RoyaleTrackerAPI.Controllers
         [HttpPost("UpdateCards")]
         public IActionResult UpdateCards()
         {
-           return Ok(repo.UpdateCards());
+            _logger.LogWarning($"{Request.HttpContext.Connection.RemoteIpAddress} Auto updating cards");
+           return Ok(_repo.UpdateCards());
         }
 
-
-
+        //Updates card to given details at provided card id from the Card class
         [Authorize(Policy = "AdminOnly")]
-        // Update: api/Cards
         [HttpPut]
         public void Update([FromBody] Card card)
         {
-            repo.UpdateCard(card);
+
+            _logger.LogWarning($"{Request.HttpContext.Connection.RemoteIpAddress} UPDATING CARD {card.Id}!");
+            _repo.UpdateCard(card);
         }
 
     }
