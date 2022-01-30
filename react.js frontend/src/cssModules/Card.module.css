@@ -1,0 +1,17 @@
+.card {
+    
+  margin: 0px;
+  display: inline-flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  width: 25%;
+}
+
+.card img{
+
+    max-height: 64px;    
+    max-width:  64px;    
+      min-width: 32px;
+      min-height: 32px;
+      margin: 0px;
+}
