@@ -58,7 +58,7 @@ namespace RoyaleTrackerAPI
         }
 
 
-        public bool SendPasswordReset(string userEmail, UsersRepo usersRepo, TRContext context, EmailSender emailSender)
+        public string SendPasswordReset(string userEmail, UsersRepo usersRepo, TRContext context, EmailSender emailSender)
         {
             //gets the user with the recieved email
             User fetchedUser = context.Users.Where(u => u.Email == userEmail).FirstOrDefault();
@@ -80,10 +80,10 @@ namespace RoyaleTrackerAPI
 
 
 
-                return true;
+                return fetchedUser.Username;
 
             }
-            else return false;
+            else return "";
         }
 
 

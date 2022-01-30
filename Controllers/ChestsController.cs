@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using RoyaleTrackerAPI.Models;
 using RoyaleTrackerAPI.Models.RoyaleClasses;
@@ -19,20 +21,17 @@ namespace RoyaleTrackerAPI.Controllers
     [ApiController]
     public class ChestsController : ControllerBase
     {
-
-        //context to DB and Repo for handling
         private TRContext context;
-        private PlayersRepo playersRepo;
         private ChestsRepo chestsRepo;
         private Client client;
+        private ILogger<ChestsController> _logger;
 
-        //loading in injected dependancies
-        public ChestsController(Client c, TRContext ct)
+        public ChestsController(Client c, TRContext ct, ILogger<ChestsController> logger)
         {
-            // commented out while testing 
             context = ct;
             client = c;
             chestsRepo = new ChestsRepo(client, context);
+            _logger = logger;
         }
 
         // POST api/Chests
@@ -40,38 +39,33 @@ namespace RoyaleTrackerAPI.Controllers
         [HttpPost]
         public void Post([FromBody] Chest chest)
         {
+            _logger.LogWarning($"{Request.HttpContext.Connection.RemoteIpAddress} POSTING CHEST {chest.Name}!");
             //makes sure this chest doesn't already exist in the database
-            if(!context.Chests.Any(c => c.Name == chest.Name))
+            if (!context.Chests.Any(c => c.Name == chest.Name))
             {
                 context.Chests.Add(chest);
                 context.SaveChanges();
             }
         }
 
+        //retuns all saved chests in the DB
         [Authorize(Policy = "AdminOnly")]
-        // GET: api/Chests
         [HttpGet]
         public string Get()
         {
+            _logger.LogInformation($"{Request.HttpContext.Connection.RemoteIpAddress} Getting all Chests");
             List<Chest> Chests = chestsRepo.GetAllChests();
-
-            return JsonConvert.SerializeObject(Chests, Formatting.Indented, new JsonSerializerSettings
-            {
-                NullValueHandling = NullValueHandling.Ignore
-            });
-
+            return JsonConvert.SerializeObject(Chests, Formatting.Indented, new JsonSerializerSettings {NullValueHandling = NullValueHandling.Ignore});
         }
 
+        //Gets chest with provided name
         [Authorize(Policy = "AdminOnly")]
-        // GET api/Chests/chest-name
         [HttpGet("{chestName}")]
         public string Get(string chestName)
         {
+            _logger.LogInformation($"{Request.HttpContext.Connection.RemoteIpAddress} Getting chest {chestName}");
             Chest chest = chestsRepo.GetChestByName(chestName);
-            return JsonConvert.SerializeObject(chest, Formatting.Indented, new JsonSerializerSettings
-            {
-                NullValueHandling = NullValueHandling.Ignore
-            });
+            return JsonConvert.SerializeObject(chest, Formatting.Indented, new JsonSerializerSettings {NullValueHandling = NullValueHandling.Ignore});
         }
 
 
@@ -80,6 +74,7 @@ namespace RoyaleTrackerAPI.Controllers
         [HttpDelete("{chestName}")]
         public void Delete(string chestName)
         {
+            _logger.LogWarning($"{Request.HttpContext.Connection.RemoteIpAddress} DELETING CHEST {chestName}!");
             chestsRepo.DeleteChest(chestName);
         }
 
@@ -90,6 +85,7 @@ namespace RoyaleTrackerAPI.Controllers
         [HttpPut]
         public void Update([FromBody] Chest chest)
         {
+            _logger.LogWarning($"{Request.HttpContext.Connection.RemoteIpAddress} UPDATING CHEST {chest.Name}!");
             chestsRepo.UpdateChest(chest);
         }
 

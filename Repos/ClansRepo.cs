@@ -18,7 +18,7 @@ namespace RoyaleTrackerAPI.Repos
         public ClansRepo(Client c, TRContext ct) { context = ct; client = c; }
 
         //adds given clan to context
-        public Clan AddClan(Clan clan) 
+        public Clan AddClan(Clan clan)
         {
             //sanitizes the Id incase it was entered with one
             clan.Id = 0;
@@ -70,9 +70,9 @@ namespace RoyaleTrackerAPI.Repos
 
             return returnClan;
         }
-            public async Task<Clan> SaveClanIfNew(string clanTag)
-            {
-                Clan clan = await GetOfficialClan(clanTag);
+        public async Task<Clan> SaveClanIfNew(string clanTag)
+        {
+            Clan clan = await GetOfficialClan(clanTag);
             if (clan != null)
             {
                 //gets the last saved line in the Clan DB for this particuar Clan
@@ -132,7 +132,7 @@ namespace RoyaleTrackerAPI.Repos
             Clan clanToDelete = context.Clans.Find(id);
 
             //if a valid clan is fetched from the database it removes it from the context
-            if(clanToDelete != null)
+            if (clanToDelete != null)
             {
                 context.Clans.Remove(clanToDelete);
                 context.SaveChanges();
@@ -152,7 +152,7 @@ namespace RoyaleTrackerAPI.Repos
             Clan clanToUpdate = context.Clans.Find(clan.Id);
 
             //if a valid clan is fetched it updates the fields to those of the argumented clan
-            if(clanToUpdate != null)
+            if (clanToUpdate != null)
             {
                 clanToUpdate.Name = clan.Name;
                 clanToUpdate.Type = clan.Type;

@@ -1,26 +1,12 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore.Design;
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using RoyaleTrackerAPI.Models;
-using Microsoft.Net.Http.Headers;
-using RoyaleTrackerAPI.Models.Authentication;
 using RoyaleTrackerAPI.Models.Email;
-using RoyaleTrackerAPI.Controllers;
-using System.IO;
-using NLog;
+using System.Net;
 
 namespace RoyaleTrackerAPI
 {
@@ -28,7 +14,6 @@ namespace RoyaleTrackerAPI
     {
         public Startup(IConfiguration configuration)
         {
-            LogManager.LoadConfiguration(String.Concat(Directory.GetCurrentDirectory(), "/nlog.config"));
             Configuration = configuration;
         }
 
@@ -38,23 +23,34 @@ namespace RoyaleTrackerAPI
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.Configure<ForwardedHeadersOptions>(options =>
+            {
+                options.ForwardedHeaders =
+                    ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
+                options.KnownProxies.Add(IPAddress.Parse("127.0.10.1"));
+            });
 
-            services.AddSingleton<ILoggerManager, LoggerManager>();
+            services.AddCors(options =>
+            {
+                options.AddPolicy("hosted",
+                                  builder =>
+                                  {
+                                      builder.WithOrigins("http://localhost:3000")
+                                      .AllowAnyHeader().AllowAnyMethod().AllowCredentials();
+                                  });
 
-
-            services.AddLogging();
+            });
 
             services.AddControllers();
 
             services.AddDbContext<TRContext>(options => options.UseSqlServer(Configuration["ConnectionStrings:DBConnectionString"]), ServiceLifetime.Transient);
 
 
-
+            
             services.AddAuthorizationCore(options =>
             {
                 options.AddPolicy("AdminOnly", policy => policy.RequireRole("Admin"));
                 options.AddPolicy("All", policy => policy.RequireRole("Admin", "User"));
-                options.AddPolicy("Public", policy => policy.RequireRole("Admin", "User","Public"));
             });
 
             services.AddSingleton<CustomAuthenticationManager>();
@@ -76,11 +72,13 @@ namespace RoyaleTrackerAPI
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            app.UseForwardedHeaders();
 
             app.UseRouting();
 
+            app.UseCors("hosted");
 
-            app.UseAuthentication();
+
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
