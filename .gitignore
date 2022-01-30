@@ -10,6 +10,11 @@
 *.cache
 *.suo
 *.json
+*.config
+Startup.cs
+packages-microsoft-prod.deb
+RoyaleTrackerAPI.sln
+
 # Include dlls if they’re in the NuGet packages directory
 !/packages/*/lib/*.dll
 !/packages/*/lib/*/*.dll
@@ -26,6 +31,7 @@ _UpgradeReport_Files/
 bin/
 obj/
 TestResults/
+vs/
 ###################
 # Web publish log #
 ###################
