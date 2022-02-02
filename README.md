@@ -17,16 +17,20 @@
     *   [Game Modes](#game-modes)
     *   [Players](#players)
     *   [Teams](#teams)
-*   [Contact](#Contact)
-
-
+*   [Contact](#contact)
 
 # Overview
-#### Codex Royale API is a REST API built in Asp.Net Core 3.1. This program calls the [Clash Royale API](https://developer.clashroyale.com) and repackages the recieved data into [more practical classes](https://github.com/evandagrift/clash-royale-classes) using [Newtonsoft](https://www.newtonsoft.com/json). Consumed data is saved to a Database using [EF Core](https://docs.microsoft.com/en-us/ef/core/). This API services [codexroyale.com](www.codexroyale.com) as well as automatically saves all new battles from users that have been previously searched. Registeration emails and password reset are sent through [Send Grid](https://sendgrid.com).
+#### [Codexroyale.com](https://codexroyale.com/) tracks searched Clash Royale player's game results and other game data. This data is then presented to end users on the site. The Clash Royale API only provides a player's past ~30 battles, so searched players are continuously tracked in a seperate thread to ensure all future battles are saved. When players are searched for the first time, they are added to a high priority list so new player battles will be retreivable asap. 
 
+The Front End is built in [React](https://reactjs.org/), and makes calls to the Back End using [Axios](https://axios-http.com/). Users can sign-up to immediately get their player stats as soon as they access the site. User account authentication and password reset is handled via emailing URL token links using [Send Grid](https://sendgrid.com). All user passwords are hashed using [BCrypt](https://www.nuget.org/packages/BCrypt.Net-Next/). Account authentication is handled using bearer tokens with [Microsoft.AspNetCore.Authentication](https://docs.microsoft.com/en-us/dotnet/api/microsoft.aspnetcore.authentication?view=aspnetcore-3.1). 
+
+Data is intaken with [HTTPClient](https://docs.microsoft.com/en-us/dotnet/api/system.net.http.httpclient?view=net-6.0) and [Newtonsoft](https://www.newtonsoft.com/json). Recieved JSON is deserialized into classes for [EFCore](https://docs.microsoft.com/en-us/ef/core/) to use as context classes as well as code first build the [MYSQL](https://www.mysql.com/) database. 
+
+Both programs are hosted on Linux using [NGINX](https://www.nginx.com/). All Back End calls are logged using [NLog](https://nlog-project.org/) and [Paper Trail](https://www.papertrail.com/). End user IP's are retrieved using [HTTPOverrides](https://docs.microsoft.com/en-us/dotnet/api/microsoft.aspnetcore.httpoverrides?view=aspnetcore-3.1) and included in logs.
 
 
 # Setup
+#### Backend Setup
 1. Get a bearer token for the [Clash Royale API](https://developer.clashroyale.com) connected to the IP you will be using
 2. Get a Send Grid account and key
 3. Clone this repository
@@ -490,3 +494,5 @@ Updates the given team
 <p>I'm currently looking for my first job as a software developer. Any feedback would be greatly appreciated 😃</p>
 
 [clash-logo]:https://uc09cdbb3b2643b7064228146b69.previews.dropboxusercontent.com/p/thumb/ABMP6UdWBTH37pdZewBaJ7FywNLGhdKXUOVOxOSen902cGr-b01gnUUbTc81ZwKb7CpNcL_T9sdP_jVPN0fsdajS0BPUefVjl7gZtVPBfNIDFa8zAj66Fh4ExDaNKQHk3J7KS0111Evph892MpySuhmigW0puuKuDGmPtT3fUqZGWfsJRDkoBOxQA8ZQiL2f4NC72a2oNwwuh21lFNxY9RpB4Yp0t3T6iVw0LbqLIlT383277nXxyrwb-FJVVFTH0gtq60Xk1CMmsW3Om5D-CFj6hIVhISqGdezPPJW1RAuljNr6Xu43_oilpnPJPTL9UgsUISk4jEva1Cl95ToUqZlWpS5rTF433YReGD7yoS9O3Exl1nL0fNrdpTumeLu6BZ5rmRCuYEHdim_oFNGxsnCZFhdLa8i3R4PCnp7y9UaU_WIERgLzheXfCRG4uk4ceoZNXGqzQhLqOqWCTVU_iAWs_x8PQ0tRI7uVX-bPdTLnHosQz1llf79YUQPyFhgT04GQeBzw1_Gf6wLn3pYRN21pr6kOW85mfpMhGWlTWx4g8A/p.png
+
+
