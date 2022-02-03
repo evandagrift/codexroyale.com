@@ -5,8 +5,9 @@
 
 
 *   [Overview](#overview)
-*   [Setup](#setup)
-*   [Dependancies](#build-dependancies)
+*   [Back End Setup](#back-end-setup)
+*   [Front End Setup](#front-end-setup)
+*   [Back End Dependancies](#back-end-build-dependancies)
 *   [EndPoints](#end-points)
     *   [Users](#users)
     *   [Battles](#battles)
@@ -29,28 +30,37 @@ Data is intaken with [HTTPClient](https://docs.microsoft.com/en-us/dotnet/api/sy
 Both programs are hosted on Linux using [NGINX](https://www.nginx.com/). All Back End calls are logged using [NLog](https://nlog-project.org/) and [Paper Trail](https://www.papertrail.com/). End user IP's are retrieved using [HTTPOverrides](https://docs.microsoft.com/en-us/dotnet/api/microsoft.aspnetcore.httpoverrides?view=aspnetcore-3.1) and included in logs.
 
 
-# Setup
-#### Backend Setup
+# Back End Setup
 1. Get a bearer token for the [Clash Royale API](https://developer.clashroyale.com) connected to the IP you will be using
 2. Get a Send Grid account and key
+2. Get a Paper Trail account
 3. Clone this repository
 4. <a href="#dependancies">Install the dependancies in Visual Studio Package Manager</a>
-5. Edit [appsettings.json](appsettings.json)
+5. Edit appsettings.json
 * Change the BearerToken to the token given to you by Clash Royale API
 * Change the SendGridUser and SendGridKey to your credentials
 * _Change the ConnectionString to your connection string if you are using a different database system_
-6. Setup EF Tools
-* Open Terminal/Cli routed to the project file
-* run `dotnet tool install --global dotnet-ef` in the terminal to install ef core tools
-* close the terminal
-7. Build the database
+6. Edit nlog.config
+* Set the server and port to the given Paper Trail credentials
+7. Setup EF Tools
+* Open Terminal/Cli routed to the Back End project file
+* Run `dotnet tool install --global dotnet-ef` in the terminal to install ef core tools
+* Close the terminal
+8. Build the database
 * Reopen the terminal as you did previously
 * Create a migration for the database (Local SqlServer is chosen be default). Run `dotnet ef migrations add migration-name` in the terminal
 * Build the database for the project `dotnet ef database update`
-8. Run the program, neccesary data will automatically be seeded if your Clash Royale bearer token is valid
+9. Run the program, neccesary data will automatically be seeded if your Clash Royale bearer token is valid
+
+# Front End Setup
+1. Clone this repoitory
+2. Make sure you have [Node.js](https://nodejs.org) installed
+3. Open the Front End folder in VS Code and in the terminal run `npm install`
+4. Run `npm start` in terminal
+5. Make sure the Back End is also running locally
 
 
-# Build Dependancies 
+# Back End Build Dependancies 
 You will need to install all the below packages to be able to build the project
 <br />
 [Microsoft.EntityFrameworkCore (3.1.9)](https://docs.microsoft.com/en-us/ef/core/)
@@ -61,16 +71,24 @@ You will need to install all the below packages to be able to build the project
 <br />
 [Microsoft.AspNetCore.Cors (2.2.0)](https://www.nuget.org/packages/Microsoft.AspNetCore.Cors/)<br />
 <br />
+[Microsoft.Extensions.Hosting.Systemd (3.1.1)](https://docs.microsoft.com/en-us/dotnet/api/microsoft.extensions.hosting.systemd?view=dotnet-plat-ext-3.1)
+<br />
+[Microsoft.AspNetCore.HttpOverrides (3.1.1)](https://docs.microsoft.com/en-us/dotnet/api/microsoft.aspnetcore.httpoverrides?view=aspnetcore-5.0)
+<br />
 [Microsoft.AspNetCore.Authentication (2.2.0)](https://docs.microsoft.com/en-us/aspnet/core/security/authentication/?view=aspnetcore-3.1)
 <br />
-[Microsoft.AspNetCore.Authentication.JwtBearer (3.1.9)](https://docs.microsoft.com/en-us/aspnet/core/security/authentication/?view=aspnetcore-3.1)<br />
+[Microsoft.AspNetCore.Authentication.JwtBearer (3.1.9)](https://docs.microsoft.com/enus/aspnet/core/security/authentication/?view=aspnetcore-3.1)<br />
 <br />
 [Newtonsoft.Json (12.0.3)](https://www.newtonsoft.com/json)<br />
 <br />
 [SendGrid (9.24.2)](https://www.nuget.org/packages/Sendgrid)
 <br />
-<br />
 [BCrypt.Net-Next (4.0.2)](https://github.com/BcryptNet/bcrypt.net/)
+<br />
+[NLog.Web.AspNetCore (4.14.0)](https://www.nuget.org/packages/NLog.Web.AspNetCore/)
+<br />
+[NLog.Targets.Syslog (6.0.3)](https://www.nuget.org/packages/NLog.Targets.Syslog)
+
 <br />
 <br />
 the two dependancies below this are for using SqlServer, this can be connected to any DB though with the correct dependancies installed.
@@ -83,7 +101,7 @@ the two dependancies below this are for using SqlServer, this can be connected t
 
 
 # End Points
-ASP.Net Core uses the [MVC Pattern](https://docs.microsoft.com/en-us/aspnet/core/mvc/overview?WT.mc_id=dotnet-35129-website&view=aspnetcore-3.1) so all the end points can be found in the /Controllers folder. These files can be identified by end-point-name-Controller.cs and can be called at `http://localhost:52003/api/EndPoint`. This API uses [AspNet Core Authorization](https://docs.microsoft.com/en-us/aspnet/core/security/authentication/?view=aspnetcore-5.0) to handle authentication. There are three level of authorization Anonymous [AllowAnonymous], Any user with a valid user token [All], and Admin users [Admin Only]. If there are no users within the database, the first user created will be given admin privledges. 
+ASP.Net Core Web API uses the [MVC Pattern](https://docs.microsoft.com/en-us/aspnet/core/mvc/overview?WT.mc_id=dotnet-35129-website&view=aspnetcore-3.1) so all the end points can be found in the /Controllers folder. These files can be identified by end-point-name-Controller.cs and can be called at `http://localhost:52003/api/EndPoint`. This API uses [AspNet Core Authorization](https://docs.microsoft.com/en-us/aspnet/core/security/authentication/?view=aspnetcore-5.0) to handle authentication. There are three levels of authorization, Anonymous [AllowAnonymous], Any user with a valid user token [All], and Admin users [Admin Only]. If there are no users within the database, the first user created will be given admin privledges. 
 
 
 
@@ -94,8 +112,8 @@ Account to access deeper API functions, and log into [codexroyale.com](www.codex
     "username": "username",
     "password": null,
     "email": "user-email",
-    "tag": "#null-if-given-invalid-tag",
-    "clanTag": "#clantag-if-user-have-valid-tag",
+    "tag": "#null-if-given-invalid-player-tag",
+    "clanTag": "#clantag-if-user-has-valid-player-tag",
     "role": "user-role",
     "token": "user-Token"
 }`
