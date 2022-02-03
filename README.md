@@ -6,8 +6,8 @@
 
 *   [Overview](#overview)
 *   [Back End Setup](#back-end-setup)
-*   [Front End Setup](#front-end-setup)
 *   [Back End Dependancies](#back-end-build-dependancies)
+*   [Front End Setup](#front-end-setup)
 *   [EndPoints](#end-points)
     *   [Users](#users)
     *   [Battles](#battles)
@@ -29,6 +29,7 @@ Data is intaken with [HTTPClient](https://docs.microsoft.com/en-us/dotnet/api/sy
 
 Both programs are hosted on Linux using [NGINX](https://www.nginx.com/). All Back End calls are logged using [NLog](https://nlog-project.org/) and [Paper Trail](https://www.papertrail.com/). End user IP's are retrieved using [HTTPOverrides](https://docs.microsoft.com/en-us/dotnet/api/microsoft.aspnetcore.httpoverrides?view=aspnetcore-3.1) and included in logs.
 
+<br />
 
 # Back End Setup
 1. Get a bearer token for the [Clash Royale API](https://developer.clashroyale.com) connected to the IP you will be using
@@ -51,14 +52,6 @@ Both programs are hosted on Linux using [NGINX](https://www.nginx.com/). All Bac
 * Create a migration for the database (Local SqlServer is chosen be default). Run `dotnet ef migrations add migration-name` in the terminal
 * Build the database for the project `dotnet ef database update`
 9. Run the program, neccesary data will automatically be seeded if your Clash Royale bearer token is valid
-
-# Front End Setup
-1. Clone this repoitory
-2. Make sure you have [Node.js](https://nodejs.org) installed
-3. Open the Front End folder in VS Code and in the terminal run `npm install`
-4. Run `npm start` in terminal
-5. Make sure the Back End is also running locally
-
 
 # Back End Build Dependancies 
 You will need to install all the below packages to be able to build the project
@@ -90,14 +83,20 @@ You will need to install all the below packages to be able to build the project
 [NLog.Targets.Syslog (6.0.3)](https://www.nuget.org/packages/NLog.Targets.Syslog)
 
 <br />
-<br />
-the two dependancies below this are for using SqlServer, this can be connected to any DB though with the correct dependancies installed.
+The two dependancies below this are for using SqlServer, this can be connected to any DB though with the correct dependancies installed.
 <br />
 [Microsoft.EntityFrameworkCore.SqlServer (3.1.9)](https://docs.microsoft.com/en-us/ef/core/)
 <br />
-[Microsoft.EntityFrameworkCore.SqlServer.Design (3.1.9)](https://docs.microsoft.com/en-us/ef/core/)<br />
+[Microsoft.EntityFrameworkCore.SqlServer.Design (3.1.9)](https://docs.microsoft.com/en-us/ef/core/)
 <br />
 
+# Front End Setup
+1. Clone this repoitory
+2. Make sure you have [Node.js](https://nodejs.org) installed
+3. Open the Front End folder in VS Code and in the terminal run `npm install`
+4. Run `npm start` in terminal
+5. Make sure the Back End is also running locally
+<br />
 
 
 # End Points
