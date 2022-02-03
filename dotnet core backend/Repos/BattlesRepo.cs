@@ -77,6 +77,7 @@ namespace RoyaleTrackerAPI.Repos
             //battles that weren't already saved will be prepped then added to the DB
             battlesToSave.ForEach(b =>
             {
+                //sets the battle Id to 0 so EF Core can auto assign
                 if (b.BattleId != 0) b.BattleId = 0;
 
                 if (b.GameMode != null)

@@ -123,7 +123,6 @@ namespace RoyaleTrackerAPI.Repos
         }
 
 
-
         //deletes card at given cardID
         public void DeleteCard(int cardID)
         {
