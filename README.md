@@ -84,10 +84,11 @@ You will need to install all the below packages to be able to build the project
 
 <br />
 The two dependancies below this are for using SqlServer, this can be connected to any DB though with the correct dependancies installed.
-<br />
+
 [Microsoft.EntityFrameworkCore.SqlServer (3.1.9)](https://docs.microsoft.com/en-us/ef/core/)
 <br />
 [Microsoft.EntityFrameworkCore.SqlServer.Design (3.1.9)](https://docs.microsoft.com/en-us/ef/core/)
+
 <br />
 
 # Front End Setup
