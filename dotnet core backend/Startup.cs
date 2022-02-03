@@ -32,7 +32,7 @@ namespace RoyaleTrackerAPI
 
             services.AddCors(options =>
             {
-                options.AddPolicy("local",
+                options.AddPolicy("hosted",
                                   builder =>
                                   {
                                       builder.WithOrigins("http://localhost:3000")
@@ -46,7 +46,7 @@ namespace RoyaleTrackerAPI
             services.AddDbContext<TRContext>(options => options.UseSqlServer(Configuration["ConnectionStrings:DBConnectionString"]), ServiceLifetime.Transient);
 
 
-            
+
             services.AddAuthorizationCore(options =>
             {
                 options.AddPolicy("AdminOnly", policy => policy.RequireRole("Admin"));
@@ -76,7 +76,7 @@ namespace RoyaleTrackerAPI
 
             app.UseRouting();
 
-            app.UseCors("local");
+            app.UseCors("hosted");
 
 
             app.UseAuthorization();

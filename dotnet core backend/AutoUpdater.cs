@@ -118,14 +118,12 @@ namespace RoyaleTrackerAPI
                 loopTime = ((int)Math.Round(timeElapsed.TotalSeconds));
 
 
-                //Console.WriteLine("High priority");
-                UpdateHighPriority();
+                if (_trackedPlayers == null) _trackedPlayers = _context.TrackedPlayers.ToList();
+                
 
-
-                //if it's been less than 15 seconds it sleeps the thread
-                if (loopTime > 15)
+                    //if it's been less than 15 seconds it sleeps the thread
+                    if (loopTime > 15)
                 {
-
                     //saves any new data that has arose
                      _trackedPlayers.ForEach(p =>
                     {

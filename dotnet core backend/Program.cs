@@ -35,14 +35,14 @@ namespace RoyaleTrackerAPI
 
             host.Run();
 
-		    }
+        }
 
-		public static IHostBuilder CreateHostBuilder(string[] args) =>
-			Host.CreateDefaultBuilder(args)
-				.ConfigureWebHostDefaults(webBuilder =>
-				{
-					webBuilder.UseStartup<Startup>().UseUrls(new[] { "http://localhost:52003" }); // now the Kestrel server will listen on port 5001!
-				}).ConfigureLogging(logging =>
+        public static IHostBuilder CreateHostBuilder(string[] args) =>
+            Host.CreateDefaultBuilder(args)
+                .ConfigureWebHostDefaults(webBuilder =>
+                {
+                    webBuilder.UseStartup<Startup>().UseUrls(new[] { "http://localhost:52003" }); // now the Kestrel server will listen on port 5001!
+                }).ConfigureLogging(logging =>
                 {
                     logging.ClearProviders();
                     logging.SetMinimumLevel(Microsoft.Extensions.Logging.LogLevel.Trace);
