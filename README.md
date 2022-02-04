@@ -5,10 +5,10 @@
 
 
 *   [Overview](#overview)
-*   [Back End Setup](#back-end-setup)
-*   [Back End Dependancies](#back-end-build-dependancies)
-*   [Front End Setup](#front-end-setup)
-*   [EndPoints](#end-points)
+*   [Backend Setup](#backend-setup)
+*   [Backend Dependencies](#backend-build-dependencies)
+*   [Frontend Setup](#frontend-setup)
+*   [API](#api)
     *   [Users](#users)
     *   [Battles](#battles)
     *   [Cards](#cards)
@@ -21,114 +21,109 @@
 *   [Contact](#contact)
 
 # Overview
-#### [Codexroyale.com](https://codexroyale.com/) tracks searched Clash Royale player's game results and other game data. This data is then presented to end users on the site. The Clash Royale API only provides a player's past ~30 battles at any point in time, so searched players are continuously tracked in a separate thread to ensure all future battles are saved. When players are searched for the first time, they are added to a high priority list that updates before any other tracked player so new player battles will be quickly retrievable. 
+#### [Codexroyale.com](https://codexroyale.com/) tracks Clash Royale game data. Since the official APIs only show the most recent ~30 battles, we continuously check and save battle history to provide the most detailed stats for our players.
 
-The Front End is built in [React](https://reactjs.org/), and makes calls to the Back End using [Axios](https://axios-http.com/). Users can sign-up to immediately get their player stats as soon as they access the site. User account authentication and password reset is handled via emailing URL token links using [Send Grid](https://sendgrid.com). All user passwords are hashed using [BCrypt](https://www.nuget.org/packages/BCrypt.Net-Next/). Account authentication is handled using bearer tokens with [Microsoft.AspNetCore.Authentication](https://docs.microsoft.com/en-us/dotnet/api/microsoft.aspnetcore.authentication?view=aspnetcore-3.1). 
+The frontend is built in [React](https://reactjs.org/), and makes calls to our API using [Axios](https://axios-http.com/). Users can sign-up to immediately get their player stats as soon as they access the site. User account authentication and password reset is handled via emailing URL token links using [SendGrid](https://sendgrid.com). All user passwords are hashed using [BCrypt](https://www.nuget.org/packages/BCrypt.Net-Next/). Account authentication is handled using bearer tokens with [Microsoft.AspNetCore.Authentication](https://docs.microsoft.com/en-us/dotnet/api/microsoft.aspnetcore.authentication?view=aspnetcore-3.1). 
 
-Data is intaken with [HTTPClient](https://docs.microsoft.com/en-us/dotnet/api/system.net.http.httpclient?view=net-6.0) and [Newtonsoft](https://www.newtonsoft.com/json). Received JSON is deserialized into classes for [EFCore](https://docs.microsoft.com/en-us/ef/core/) to use as context classes. These classes are also used to code first build the [MYSQL](https://www.mysql.com/) database. 
+The backend is built in .NET. Data is intaken with [HTTPClient](https://docs.microsoft.com/en-us/dotnet/api/system.net.http.httpclient?view=net-6.0) and [Newtonsoft](https://www.newtonsoft.com/json). Received JSON is deserialized into classes for [EFCore](https://docs.microsoft.com/en-us/ef/core/) to use as context classes. These classes are also used to code first build the [MYSQL](https://www.mysql.com/) database. 
 
-Both programs are hosted on Linux using [NGINX](https://www.nginx.com/). All Back End calls are logged using [NLog](https://nlog-project.org/) and [Paper Trail](https://www.papertrail.com/). End user IP's are retrieved using [HTTPOverrides](https://docs.microsoft.com/en-us/dotnet/api/microsoft.aspnetcore.httpoverrides?view=aspnetcore-3.1) and included in logs.
+Both programs are hosted on Linux using [NGINX](https://www.nginx.com/). All backend calls are logged using [NLog](https://nlog-project.org/) and [Paper Trail](https://www.papertrail.com/). End user IP's are retrieved using [HTTPOverrides](https://docs.microsoft.com/en-us/dotnet/api/microsoft.aspnetcore.httpoverrides?view=aspnetcore-3.1) and included in logs.
 
 <br />
 
-# Back End Setup
+# Backend Setup
 1. Get a bearer token for the [Clash Royale API](https://developer.clashroyale.com) connected to the IP you will be using
-2. Get a Send Grid account and key
-2. Get a Paper Trail account
-3. Clone this repository
-4. <a href="#dependancies">Install the dependancies in Visual Studio Package Manager</a>
-5. Edit appsettings.json
+2. Get a SendGrid account and key
+3. Get a Paper Trail account
+4. Clone this repository
+5. <a href="#dependencies">Install the dependencies in Visual Studio Package Manager</a>
+6. Edit appsettings.json
 * Change the BearerToken to the token given to you by Clash Royale API
 * Change the SendGridUser and SendGridKey to your credentials
 * _Change the ConnectionString to your connection string if you are using a different database system_
-6. Edit nlog.config
+7. Edit nlog.config
 * Set the server and port to the given Paper Trail credentials
-7. Setup EF Tools
-* Open Terminal/Cli routed to the Back End project file
+8. Setup EF Tools
+* Open Terminal/Cli routed to the backend project file
 * Run `dotnet tool install --global dotnet-ef` in the terminal to install ef core tools
 * Close the terminal
-8. Build the database
+9. Build the database
 * Reopen the terminal as you did previously
 * Create a migration for the database (Local SqlServer is chosen be default). Run `dotnet ef migrations add migration-name` in the terminal
 * Build the database for the project `dotnet ef database update`
-9. Run the program, neccesary data will automatically be seeded if your Clash Royale bearer token is valid
+10. Run the program, neccesary data will automatically be seeded if your Clash Royale bearer token is valid
 
-# Back End Build Dependancies 
-You will need to install all the below packages to be able to build the project
-<br />
-[Microsoft.EntityFrameworkCore (3.1.9)](https://docs.microsoft.com/en-us/ef/core/)
-<br />
-[Microsoft.EntityFrameworkCore.Design (3.1.9)](https://docs.microsoft.com/en-us/ef/core/)
-<br />
-[Microsoft.EntityFrameworkCore.Tools (3.1.9)](https://docs.microsoft.com/en-us/ef/core/)<br />
-<br />
-[Microsoft.AspNetCore.Cors (2.2.0)](https://www.nuget.org/packages/Microsoft.AspNetCore.Cors/)<br />
-<br />
-[Microsoft.Extensions.Hosting.Systemd (3.1.1)](https://docs.microsoft.com/en-us/dotnet/api/microsoft.extensions.hosting.systemd?view=dotnet-plat-ext-3.1)
-<br />
-[Microsoft.AspNetCore.HttpOverrides (3.1.1)](https://docs.microsoft.com/en-us/dotnet/api/microsoft.aspnetcore.httpoverrides?view=aspnetcore-5.0)
-<br />
-[Microsoft.AspNetCore.Authentication (2.2.0)](https://docs.microsoft.com/en-us/aspnet/core/security/authentication/?view=aspnetcore-3.1)
-<br />
-[Microsoft.AspNetCore.Authentication.JwtBearer (3.1.9)](https://docs.microsoft.com/enus/aspnet/core/security/authentication/?view=aspnetcore-3.1)<br />
-<br />
-[Newtonsoft.Json (12.0.3)](https://www.newtonsoft.com/json)<br />
-<br />
-[SendGrid (9.24.2)](https://www.nuget.org/packages/Sendgrid)
-<br />
-[BCrypt.Net-Next (4.0.2)](https://github.com/BcryptNet/bcrypt.net/)
-<br />
-[NLog.Web.AspNetCore (4.14.0)](https://www.nuget.org/packages/NLog.Web.AspNetCore/)
-<br />
-[NLog.Targets.Syslog (6.0.3)](https://www.nuget.org/packages/NLog.Targets.Syslog)
+## Backend Build Dependencies
 
-<br />
-The two dependancies below this are for using SqlServer, this can be connected to any DB though with the correct dependancies installed.
+Install these packages before building the project.
 
-[Microsoft.EntityFrameworkCore.SqlServer (3.1.9)](https://docs.microsoft.com/en-us/ef/core/)
-<br />
-[Microsoft.EntityFrameworkCore.SqlServer.Design (3.1.9)](https://docs.microsoft.com/en-us/ef/core/)
+- [Microsoft.EntityFrameworkCore (3.1.9)](https://docs.microsoft.com/en-us/ef/core/)
+- [Microsoft.EntityFrameworkCore.Design (3.1.9)](https://docs.microsoft.com/en-us/ef/core/)
+- [Microsoft.EntityFrameworkCore.Tools (3.1.9)](https://docs.microsoft.com/en-us/ef/core/)
+- [Microsoft.EntityFrameworkCore.Tools (3.1.9)](https://docs.microsoft.com/en-us/ef/core/)
+- [Microsoft.AspNetCore.Cors (2.2.0)](https://www.nuget.org/packages/Microsoft.AspNetCore.Cors/)
+- [Microsoft.Extensions.Hosting.Systemd (3.1.1)](https://docs.microsoft.com/en-us/dotnet/api/microsoft.extensions.hosting.systemd?view=dotnet-plat-ext-3.1)
+- [Microsoft.AspNetCore.HttpOverrides (3.1.1)](https://docs.microsoft.com/en-us/dotnet/api/microsoft.aspnetcore.httpoverrides?view=aspnetcore-5.0)
+- [Microsoft.AspNetCore.Authentication (2.2.0)](https://docs.microsoft.com/en-us/aspnet/core/security/authentication/?view=aspnetcore-3.1)
+- [Microsoft.AspNetCore.Authentication.JwtBearer (3.1.9)](https://docs.microsoft.com/enus/aspnet/core/security/authentication/?view=aspnetcore-3.1)
+- [Newtonsoft.Json (12.0.3)](https://www.newtonsoft.com/json)
+- [SendGrid (9.24.2)](https://www.nuget.org/packages/Sendgrid)
+- [BCrypt.Net-Next (4.0.2)](https://github.com/BcryptNet/bcrypt.net/)
+- [NLog.Web.AspNetCore (4.14.0)](https://www.nuget.org/packages/NLog.Web.AspNetCore/)
+- [NLog.Targets.Syslog (6.0.3)](https://www.nuget.org/packages/NLog.Targets.Syslog)
 
-<br />
+## Backend SQL Dependencies 
 
-# Front End Setup
+These dependencies are for using SqlServer, this can be connected to any DB though with the correct dependencies installed.
+
+- [Microsoft.EntityFrameworkCore.SqlServer (3.1.9)](https://docs.microsoft.com/en-us/ef/core/)
+- [Microsoft.EntityFrameworkCore.SqlServer.Design (3.1.9)](https://docs.microsoft.com/en-us/ef/core/)
+
+# Frontend Setup
 1. Clone this repoitory
-2. Make sure you have [Node.js](https://nodejs.org) installed
-3. Open the Front End folder in VS Code and in the terminal run `npm install`
+2. Make sure you have [Node.js](https://nodejs.org) installed on your system
+3. Open the frontend folder in VS Code and in the terminal run `npm install`
 4. Run `npm start` in terminal
-5. Make sure the Back End is also running locally
-<br />
+5. Make sure the backend is also running locally
 
+# API
+ASP.Net Core Web API uses the [MVC Pattern](https://docs.microsoft.com/en-us/aspnet/core/mvc/overview?WT.mc_id=dotnet-35129-website&view=aspnetcore-3.1) so all the endpoints can be found in the /Controllers folder. These files can be identified by end-point-name-Controller.cs and can be called at `http://localhost:52003/api/EndPoint`.
 
-# End Points
-ASP.Net Core Web API uses the [MVC Pattern](https://docs.microsoft.com/en-us/aspnet/core/mvc/overview?WT.mc_id=dotnet-35129-website&view=aspnetcore-3.1) so all the end points can be found in the /Controllers folder. These files can be identified by end-point-name-Controller.cs and can be called at `http://localhost:52003/api/EndPoint`. This API uses [AspNet Core Authorization](https://docs.microsoft.com/en-us/aspnet/core/security/authentication/?view=aspnetcore-5.0) to handle authentication. There are three levels of authorization, Anonymous [AllowAnonymous], Any user with a valid user token [All], and Admin users [Admin Only]. If there are no users within the database, the first user created will be given admin privledges. 
+This API uses [AspNet Core Authorization](https://docs.microsoft.com/en-us/aspnet/core/security/authentication/?view=aspnetcore-5.0) to handle authentication. There are three levels of authorization:
 
+ - Anonymous [AllowAnonymous]
+ - Any user with a valid user token [All]
+ - Admin users [Admin Only].
 
+If there are no users within the database, the first user created will be given admin privledges. 
 
 ## Users 
 Account to access deeper API functions, and log into [codexroyale.com](www.codexroyale.com)
 #### User JSON format
-`{
-    "username": "username",
-    "password": null,
-    "email": "user-email",
-    "tag": "#null-if-given-invalid-player-tag",
-    "clanTag": "#clantag-if-user-has-valid-player-tag",
-    "role": "user-role",
-    "token": "user-Token"
-}`
+
+	{
+		"username": "username",
+		"password": null,
+		"email": "user-email",
+		"tag": "#null-if-given-invalid-player-tag",
+		"clanTag": "#clantag-if-user-has-valid-player-tag",
+		"role": "user-role",
+		"token": "user-Token"
+	}
+
 
 * ### POST://Users/Signup 
 ###### [AllowAnonymous] (POST w/ User JSON in Body)
 If there is no user with this username or email, the user's password is encrypted and then the user is saved into the database, and a user token is generated. The server then returns the User with relevant fields filled, and a token included for access. If signup fails returns 401
 
 #### POST from body JSON login format
-`{ 
-"username": "username", 
-"password": "password", 
-"email": "user-email", 
-"tag": "#user-Clash-Royale-Tag"
-}`
+
+	{ 
+		"username": "username", 
+		"password": "password", 
+		"email": "user-email", 
+		"tag": "#user-Clash-Royale-Tag"
+	}
 
 * ### POST://Users/Login 
 ###### [AllowAnonymous] (POST with User JSON in Body)
@@ -174,36 +169,38 @@ updates given User's basic information as well as password if given a valid pass
 ## Battles 
 battles are added if new, battles are returned from the viewpoint of a player, but via Teams I am able to avoid duplicate battles and have conistent battle formatting between 1v1 and 2v2
 #### Battle JSON Object format
-`{
-  "BattleId": 1,
-  "BattleTime": "20210821T213000",
-  "Team1Name": "Elodin",
-  "Team1Id": 1,
-  "Team1Win": false,
-  "Team1StartingTrophies": 5674,
-  "Team1TrophyChange": 0,
-  "Team1DeckAId": 2,
-  "Team1DeckBId": 0,
-  "Team1Crowns": 0,
-  "Team1KingTowerHp": 0,
-  "Team1PrincessTowerHpA": -1,
-  "Team1PrincessTowerHpB": -1,
-  "Team2Name": "xume",
-  "Team2Id": 2,
-  "Team2Win": true,
-  "Team2StartingTrophies": 5517,
-  "Team2TrophyChange": 0,
-  "Team2DeckAId": 3,
-  "Team2DeckBId": 0,
-  "Team2Crowns": 3,
-  "Team2KingTowerHp": 5832,
-  "Team2PrincessTowerHpA": 3237,
-  "Team2PrincessTowerHpB": 2183,
-  "Type": "riverRacePvP",
-  "DeckSelection": "collection",
-  "IsLadderTournament": false,
-  "GameModeId": 72000268
-}`
+
+	{
+		"BattleId": 1,
+		"BattleTime": "20210821T213000",
+		"Team1Name": "Elodin",
+		"Team1Id": 1,
+		"Team1Win": false,
+		"Team1StartingTrophies": 5674,
+		"Team1TrophyChange": 0,
+		"Team1DeckAId": 2,
+		"Team1DeckBId": 0,
+		"Team1Crowns": 0,
+		"Team1KingTowerHp": 0,
+		"Team1PrincessTowerHpA": -1,
+		"Team1PrincessTowerHpB": -1,
+		"Team2Name": "xume",
+		"Team2Id": 2,
+		"Team2Win": true,
+		"Team2StartingTrophies": 5517,
+		"Team2TrophyChange": 0,
+		"Team2DeckAId": 3,
+		"Team2DeckBId": 0,
+		"Team2Crowns": 3,
+		"Team2KingTowerHp": 5832,
+		"Team2PrincessTowerHpA": 3237,
+		"Team2PrincessTowerHpB": 2183,
+		"Type": "riverRacePvP",
+		"DeckSelection": "collection",
+		"IsLadderTournament": false,
+		"GameModeId": 72000268
+	}
+
 
 * ### POST://Battles 
 ###### [AdminOnly] (POST w/ JSON in body)
@@ -237,11 +234,12 @@ Updates the battle in the database with the given data
 
 ## Cards 
 #### Card JSON format
-`{
-  "Id": 26000000,
-  "Name": "Knight",
-  "Url": "https://api-assets.clashroyale.com/cards/300/jAj1Q5rclXxU9kVImGqSJxa4wEMfEhvwNQ_4jiGUuqg.png"
-}`
+
+	{
+		"Id": 26000000,
+		"Name": "Knight",
+		"Url": "https://api-assets.clashroyale.com/cards/300/jAj1Q5rclXxU9kVImGqSJxa4wEMfEhvwNQ_4jiGUuqg.png"
+	}
 
 
 * ### POST://api/Cards 
@@ -273,10 +271,11 @@ Updates the given Card
 ## Chests 
 Chests are seeded in with usable URL, if more chests are added to the game this will need to be updated.
 #### Chest JSON Format
-`{
-    "Name": "Crown Chest",
-    "Url": "https://static.wikia.nocookie.net/clashroyale/images/7/75/CrownChest.png"
-}`
+
+	{
+		"Name": "Crown Chest",
+		"Url": "https://static.wikia.nocookie.net/clashroyale/images/7/75/CrownChest.png"
+	}`
 
 
 * ### POST://api/Chests
@@ -303,23 +302,24 @@ Updates the given chest
 ## Clans
 
 #### Clan JSON format
-`{
-    "Id": 1,
-    "Tag": "#8CYPL8R",
-    "UpdateTime": "20210824T121500",
-    "Name": "We are Funny?",
-    "Type": "open",
-    "Description": "Welcome! We are an active clan that focuses on donations/participation. discord.gg/VRK4eVg over 10 days inactive booted.",
-    "BadgeId": 16000153,
-    "LocationCode": "International",
-    "RequiredTrophies": 4300,
-    "DonationsPerWeek": 1070,
-    "ClanChestStatus": "inactive",
-    "ClanChestLevel": 1,
-    "ClanScore": 49138,
-    "ClanWarTrophies": 1655,
-    "Members": 34
-  }`
+
+	{
+		"Id": 1,
+		"Tag": "#8CYPL8R",
+		"UpdateTime": "20210824T121500",
+		"Name": "We are Funny?",
+		"Type": "open",
+				booted.",
+		"BadgeId": 16000153,
+		"LocationCode": "International",
+		"RequiredTrophies": 4300,
+		"DonationsPerWeek": 1070,
+		"ClanChestStatus": "inactive",
+		"ClanChestLevel": 1,
+		"ClanScore": 49138,
+		"ClanWarTrophies": 1655,
+		"Members": 34
+	}
 
 * ### POST://api/Clans
 ###### [Admin Only] (POST with the clan JSON in body)
@@ -351,17 +351,18 @@ Updates the given clan data save
 ## Decks
 decks are typically automatically added when new ones are encountered in the proccess of saving battles
 #### Deck JSON format
-`{
-  "Id": 36,
-  "Card1Id": 77777777,
-  "Card2Id": 999999,
-  "Card3Id": 999999,
-  "Card4Id": 999999,
-  "Card5Id": 999999,
-  "Card6Id": 27000012,
-  "Card7Id": 27000013,
-  "Card8Id": 28000013
-  }`
+
+	{
+		"Id": 36,
+		"Card1Id": 77777777,
+		"Card2Id": 999999,
+		"Card3Id": 999999,
+		"Card4Id": 999999,
+		"Card5Id": 999999,
+		"Card6Id": 27000012,
+		"Card7Id": 27000013,
+		"Card8Id": 28000013
+	}
 
 * ### POST://api/Decks
 ###### [Admin Only] (POST with the Deck JSON in body)
@@ -390,10 +391,11 @@ Updates the given deck
 game modes are typically automatically added when new ones are encountered in the proccess of saving battles
 
 #### GameMode JSON format
-`{
-    "Id": 72000006,
-    "Name": "Ladder"
-  }`
+
+	{
+		"Id": 72000006,
+		"Name": "Ladder"
+	}
 
 * ### POST://api/GameModes
 ###### [Admin Only] (POST with the game mode JSON in body)
@@ -419,29 +421,30 @@ Updates the given game mode
 ## Players
 
 #### Player JSON format
-`{
-  "Id": 1,
-  "Tag": "#29PGJURQL",
-  "TeamId": 1,
-  "Name": "It's been changed!",
-  "UpdateTime": "20210824T121501",
-  "ClanTag": "#8CYPL8R",
-  "CurrentFavouriteCardId": 26000020,
-  "CurrentDeckId": 1,
-  "Role": "coLeader",
-  "LastSeen": "20210824T074916",
-  "ExpLevel": 13,
-  "Trophies": 5721,
-  "BestTrophies": 5750,
-  "StarPoints": 4272,
-  "Wins": 9671,
-  "Losses": 10413,
-  "Donations": 106,
-  "DonationsReceived": 160,
-  "TotalDonations": 152367,
-  "CardsDiscovered": 103,
-  "ClanCardsCollected": 348242
-}`
+
+	{
+		"Id": 1,
+		"Tag": "#29PGJURQL",
+		"TeamId": 1,
+		"Name": "It's been changed!",
+		"UpdateTime": "20210824T121501",
+		"ClanTag": "#8CYPL8R",
+		"CurrentFavouriteCardId": 26000020,
+		"CurrentDeckId": 1,
+		"Role": "coLeader",
+		"LastSeen": "20210824T074916",
+		"ExpLevel": 13,
+		"Trophies": 5721,
+		"BestTrophies": 5750,
+		"StarPoints": 4272,
+		"Wins": 9671,
+		"Losses": 10413,
+		"Donations": 106,
+		"DonationsReceived": 160,
+		"TotalDonations": 152367,
+		"CardsDiscovered": 103,
+		"ClanCardsCollected": 348242
+	}
 
 * ### POST://api/Players
 ###### [Admin Only] (POST with the player JSON in body)
@@ -476,13 +479,13 @@ Updates the given save of player data
 ## Teams
 teams are generated for each unique combination of player(s) they are typically automatically added when new ones are encountered in the proccess of saving battles
 #### Team JSON format
-`{
-    "TeamId": 1,
-    "TeamName": "Elodin",
-    "TwoVTwo": false,
-    "Name": "Elodin",
-    "Tag": "#29PGJURQL"
-  }`
+	{
+		"TeamId": 1,
+		"TeamName": "Elodin",
+		"TwoVTwo": false,
+		"Name": "Elodin",
+		"Tag": "#29PGJURQL"
+	}
 
 
 * ### POST://api/Teams
