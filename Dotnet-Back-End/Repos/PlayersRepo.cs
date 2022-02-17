@@ -23,7 +23,6 @@ namespace RoyaleTrackerAPI.Repos
             _logger = NLog.LogManager.Setup().LoadConfigurationFromAppSettings().GetCurrentClassLogger();
         }
 
-        //Adds given Player
         public void AddPlayer(PlayerSnapshot player)
         {
             // removes Id in case posted with an Id
