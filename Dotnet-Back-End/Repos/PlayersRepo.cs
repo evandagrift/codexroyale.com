@@ -87,7 +87,6 @@ namespace RoyaleTrackerAPI.Repos
 
         }
 
-        //Player Last seen is fetched from a Clan Api Call
         public async Task<string> GetLastSeen(string playerTag, string clanTag)
         {
             //handler to fetch clan
