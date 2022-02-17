@@ -133,7 +133,6 @@ namespace RoyaleTrackerAPI.Repos
 
                     if (player.Name != "" && player.CurrentFavouriteCard != null)
                     {
-                        //gets the players team ID
                         player.TeamId = 0;
 
                         //assigns current favorite card details
