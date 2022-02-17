@@ -46,13 +46,11 @@ namespace RoyaleTrackerAPI.Repos
             }
         }
 
-        //Returns a List of all players in DB
         public List<PlayerSnapshot> GetAllPlayers() { return _context.PlayersSnapshots.ToList(); }
 
-        //returns player from DB with given Tag
         public PlayerSnapshot GetPlayerById(int playerTag) { return _context.PlayersSnapshots.Find(playerTag); }
 
-        //updates Player
+
         public void UpdatePlayer(PlayerSnapshot player)
         {
             //pulls instance of player from DB
