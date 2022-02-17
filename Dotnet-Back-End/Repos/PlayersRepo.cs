@@ -89,13 +89,13 @@ namespace RoyaleTrackerAPI.Repos
 
         public async Task<string> GetLastSeen(string playerTag, string clanTag)
         {
-            //handler to fetch clan
-            ClansRepo clansHandler = new ClansRepo(_client, _context);
+            ClansRepo clanRepo = new ClansRepo(_client, _context);
+
             try
             {
 
                 //fetch clan to get data from
-                Clan clan = await clansHandler.GetOfficialClan(clanTag);
+                Clan clan = await clanRepo.GetOfficialClan(clanTag);
 
                 //clan members are a list of players, we grab the player with matching tag
                 PlayerSnapshot player = clan.MemberList.Where(p => p.Tag == playerTag).FirstOrDefault();
