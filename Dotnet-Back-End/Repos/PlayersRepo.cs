@@ -111,12 +111,8 @@ namespace RoyaleTrackerAPI.Repos
         //gets player data from the official api via their player tag
         public async Task<PlayerSnapshot> GetOfficialPlayer(string tag)
         {
-            //teams handler to get/set teamId
             TeamsRepo temsRepo = new TeamsRepo(_context);
-            //decks handler to get set deckId
             DecksRepo decksRepo = new DecksRepo(_client, _context);
-
-            //Needs client so it can autofill new cards if they're missing
             CardsRepo cardsRepo = new CardsRepo(_client, _context);
 
             ClansRepo clansRepo = new ClansRepo(_client, _context);
