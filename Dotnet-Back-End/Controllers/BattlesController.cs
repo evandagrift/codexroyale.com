@@ -1,0 +1,120 @@
+﻿using System.Collections.Generic;
+using System.Linq;
+using System.Net;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.Features;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
+using RoyaleTrackerAPI.Models;
+using RoyaleTrackerAPI.Repos;
+using RoyaleTrackerClasses;
+
+namespace RoyaleTrackerAPI.Controllers
+{
+    [Authorize]
+    [Route("api/[controller]")]
+    [ApiController]
+    public class BattlesController : ControllerBase
+    {
+
+        //context to DB and Repo for handling
+        private TRContext context;
+        private Client client;
+        private BattlesRepo repo;
+        private  ILogger<BattlesController> _logger;
+
+        //loading in injected dependancies
+        public BattlesController(Client c, TRContext ct, ILogger<BattlesController> logger)
+        {
+            context = ct;
+            client = c;
+            repo = new BattlesRepo(client, context);
+            _logger = logger;
+        }
+
+
+        //returns list of battles
+        [AllowAnonymous]
+        [HttpGet]
+        public IActionResult Get()
+        {
+            List<Battle> battles = repo.GetRecentBattles();
+            _logger.LogInformation($"{Request.HttpContext.Connection.RemoteIpAddress} Getting Most Recently Saved Battles");
+            return Ok(JsonConvert.SerializeObject(battles, Formatting.Indented, new JsonSerializerSettings
+            {
+                NullValueHandling = NullValueHandling.Ignore
+            }));
+        }
+
+        //adds the Posted battle to DB if it's new
+        [Authorize(Policy = "AdminOnly")]
+        [HttpPost]
+        public IActionResult Post([FromBody] Battle battle)
+        {
+            _logger.LogWarning($"{Request.HttpContext.Connection.RemoteIpAddress} POSTING BATTLE!");
+            repo.AddBattle(battle);
+            return Ok();
+        }
+
+        //adds the list of battles to DB if they are new
+        [Authorize(Policy = "AdminOnly")]
+        [HttpPost("list")]
+        public IActionResult Post([FromBody] List<Battle> battles)
+        {
+
+            _logger.LogWarning($"{Request.HttpContext.Connection.RemoteIpAddress} Posting {battles.Count()} battles");
+            repo.AddBattles(battles);
+            return Ok();
+        }
+
+
+
+
+        [AllowAnonymous]
+        [HttpGet("player/{playerTag}")]
+        // GET: api/Battles/{user}
+        public IActionResult GetBattles(string playerTag)
+        {
+            
+            //returns battle with Id based off given battle, if said battle doesn't exist it is created and returned after assigned Id
+            List<Battle> battles = repo.GetRecentBattles(playerTag);
+
+            _logger.LogInformation($"{Request.HttpContext.Connection.RemoteIpAddress} Getting Recent Battles from player:{playerTag}");
+
+            //returns list of battles
+            return Ok(JsonConvert.SerializeObject(battles, Formatting.Indented, new JsonSerializerSettings {NullValueHandling = NullValueHandling.Ignore}));
+        }
+
+
+        //returns player with given Id
+        [Authorize(Policy = "AdminOnly")]
+        [HttpGet("id/{id}")]
+        public string Get(int id)
+        {
+            _logger.LogInformation($"{Request.HttpContext.Connection.RemoteIpAddress} Getting battle {id}");
+            return JsonConvert.SerializeObject(repo.GetBattleByID(id), Formatting.Indented, new JsonSerializerSettings{ NullValueHandling = NullValueHandling.Ignore });
+        }
+
+
+        //deletes battle at given Id
+        [Authorize(Policy = "AdminOnly")]
+        [HttpDelete("{id}")]
+        public void Delete(int id)
+        {
+            _logger.LogWarning($"{Request.HttpContext.Connection.RemoteIpAddress} DELETING BATTLE {id}!");
+            repo.DeleteBattle(id);
+        }
+
+        //updates battle with same Id as argument
+        [Authorize(Policy = "AdminOnly")]
+        [HttpPut]
+        public void Update([FromBody] Battle battle)
+        {
+            _logger.LogWarning($"{Request.HttpContext.Connection.RemoteIpAddress} UPDATING BATTLE {battle.BattleId}!");
+            repo.UpdateBattle(battle);
+        }
+
+    }
+}
