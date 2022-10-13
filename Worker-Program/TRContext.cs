@@ -1,17 +1,11 @@
-﻿using Microsoft.EntityFrameworkCore;
-using RoyaleTrackerAPI.Models.RoyaleClasses;
-using RoyaleTrackerAPI.Repos;
-using RoyaleTrackerClasses;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using ClashFeeder.Models;
+using Microsoft.EntityFrameworkCore;
 
-namespace RoyaleTrackerAPI.Models
+namespace ClashFeeder
 {
     public class TRContext : DbContext
     {
-        
+
 
         //DB Context using EF Core
         public TRContext(DbContextOptions<TRContext> options, Client c) : base(options) { }
@@ -19,15 +13,14 @@ namespace RoyaleTrackerAPI.Models
 
 
         //Each Table is Generated off the Classes in DBSets
-        public DbSet<PlayerSnapshot> PlayersSnapshots { get; set; }
-        public DbSet<TrackedPlayer> TrackedPlayers { get; set; }
+        public DbSet<PlayerSnapshot> PlayerSnapshots { get; set; }
+        public DbSet<TrackedPlayer> TrackedPlayerSnapshots { get; set; }
         public DbSet<Clan> Clans { get; set; }
         public DbSet<Card> Cards { get; set; }
         public DbSet<Deck> Decks { get; set; }
         public DbSet<Battle> Battles { get; set; }
         public DbSet<GameMode> GameModes { get; set; }
         public DbSet<Team> Teams { get; set; }
-        public DbSet<User> Users { get; set; }
         public DbSet<Chest> Chests { get; set; }
 
 
@@ -36,7 +29,7 @@ namespace RoyaleTrackerAPI.Models
         {
 
             //all available chests are seeded in with a url to their image
-            //this list is used to assign URLs to fetched player chests
+            //this list is used to assign URLs to fetched PlayerSnapshot chests
             modelBuilder.Entity<Chest>().HasData(
                 new Chest { Name = "Epic Chest", Url = "https://static.wikia.nocookie.net/clashroyale/images/f/f5/EpicChest.png" },
                 new Chest { Name = "Crown Chest", Url = "https://static.wikia.nocookie.net/clashroyale/images/7/75/CrownChest.png" },

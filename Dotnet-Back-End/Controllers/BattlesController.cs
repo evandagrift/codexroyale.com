@@ -40,6 +40,7 @@ namespace RoyaleTrackerAPI.Controllers
         [HttpGet]
         public IActionResult Get()
         {
+
             List<Battle> battles = repo.GetRecentBattles();
             _logger.LogInformation($"{Request.HttpContext.Connection.RemoteIpAddress} Getting Most Recently Saved Battles");
             return Ok(JsonConvert.SerializeObject(battles, Formatting.Indented, new JsonSerializerSettings

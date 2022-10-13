@@ -1,12 +1,13 @@
-﻿using Newtonsoft.Json;
-using RoyaleTrackerAPI.Models;
-using RoyaleTrackerClasses;
+﻿using ClashFeeder.Models;
+using Microsoft.EntityFrameworkCore;
+using MySql.Data.MySqlClient.Memcached;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace RoyaleTrackerAPI.Repos
+namespace ClashFeeder.Repos
 {
     public class BattlesRepo
     {
@@ -18,8 +19,6 @@ namespace RoyaleTrackerAPI.Repos
 
 
 
-        //connection sting for the Codex API Controller that is being handled\
-        private string officialConnectionString = "players/%23";
 
 
         public BattlesRepo(Client c, TRContext ct)
@@ -37,7 +36,7 @@ namespace RoyaleTrackerAPI.Repos
             AddBattles(battles);
         }
         //adds given battle to the context
-        public void AddBattles(List<Battle> battles)
+        public int AddBattles(List<Battle> battles)
         {
             //creates repos to handle deck and team intake/finding
             DecksRepo decksRepo = new DecksRepo(_client, _context);
@@ -59,10 +58,10 @@ namespace RoyaleTrackerAPI.Repos
 
                 if (b.Team != null)
                 {
-                    //sets team Id's for the players(Teams are unique to the Codex)
+                    //sets team Id's for the PlayerSnapshots(Teams are unique to the Codex)
                     b.Team1Id = teamsRepo.GetSetTeamId(b.Team).TeamId;
                     b.Team2Id = teamsRepo.GetSetTeamId(b.Opponent).TeamId;
-                    //fetches any battles at this time with these players in any combination
+                    //fetches any battles at this time with these PlayerSnapshots in any combination
                     savedBattle = _context.Battles.Where(t => t.Team1Id == b.Team1Id && t.BattleTime == b.BattleTime ||
                     t.Team2Id == b.Team1Id && t.BattleTime == b.BattleTime).FirstOrDefault();
 
@@ -90,7 +89,7 @@ namespace RoyaleTrackerAPI.Repos
                 if (b.Team != null)
                 {
                     //trophies and how much they changed from the game
-                    //only fetches one player from each team because 1v1 is the only format with trophies
+                    //only fetches one PlayerSnapshot from each team because 1v1 is the only format with trophies
                     b.Team1StartingTrophies = b.Team[0].StartingTrophies;
                     b.Team1TrophyChange = b.Team[0].TrophyChange;
 
@@ -141,7 +140,7 @@ namespace RoyaleTrackerAPI.Repos
                         b.Team2DeckBId = decksRepo.GetDeckId(d);
                     }
 
-                    //setting score variables(2v2 both teammates will have the same values so variables are grabbed from player 1)
+                    //setting score variables(2v2 both teammates will have the same values so variables are grabbed from PlayerSnapshot 1)
                     b.Team1Crowns = b.Team[0].Crowns;
                     b.Team1KingTowerHp = b.Team[0].KingTowerHitPoints;
                     b.Team1PrincessTowerHpA = b.Team[0].PrincessTowerA;
@@ -162,6 +161,7 @@ namespace RoyaleTrackerAPI.Repos
 
             //after all new battles are added to context changes are saved
             _context.SaveChanges();
+            return battlesToSave.Count();
         }
 
         //returns a list of all battles from DB
@@ -180,17 +180,17 @@ namespace RoyaleTrackerAPI.Repos
             return null; 
         }
         //returns a list of all battles from DB with specific tag
-        public List<Battle> GetRecentBattles(string playerTag)
+        public List<Battle> GetRecentBattles(string PlayerSnapshotTag)
         {
 
-                if (playerTag != null && _context.Battles.Count() > 0)
+                if (PlayerSnapshotTag != null && _context.Battles.Count() > 0)
             {
-                Team playerTeam = _context.Teams.Where(t => t.Tag == playerTag && t.TwoVTwo == false).FirstOrDefault();
-                int numPlayerBattles = _context.Battles.Where(b => b.Team1Id == playerTeam.TeamId || b.Team2Id == playerTeam.TeamId).Count();
+                Team PlayerSnapshotTeam = _context.Teams.Where(t => t.Tag == PlayerSnapshotTag && t.TwoVTwo == false).FirstOrDefault();
+                int numPlayerSnapshotBattles = _context.Battles.Where(b => b.Team1Id == PlayerSnapshotTeam.TeamId || b.Team2Id == PlayerSnapshotTeam.TeamId).Count();
 
                 int fetchThisMany = 30;
 
-                if (fetchThisMany > numPlayerBattles) fetchThisMany = numPlayerBattles;
+                if (fetchThisMany > numPlayerSnapshotBattles) fetchThisMany = numPlayerSnapshotBattles;
 
                 if (fetchThisMany != 0)
                 {
@@ -350,8 +350,10 @@ namespace RoyaleTrackerAPI.Repos
 
             public async Task<List<Battle>> GetOfficialPlayerBattles(string tag)
         {
-            //connection string to fetch player battles with given Tag
-            string connectionString = officialConnectionString + tag.Substring(1) + "/battlelog/";
+        //connection sting for the Codex API Controller that is being handled\
+         string officialConnectionString = "players/%23";
+        //connection string to fetch PlayerSnapshot battles with given Tag
+        string connectionString = officialConnectionString + tag.Substring(1) + "/battlelog";
 
             //calls the official API
             var result = await _client.officialAPI.GetAsync(connectionString);

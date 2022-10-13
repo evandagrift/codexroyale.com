@@ -1,3 +1,4 @@
+
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpOverrides;
@@ -14,7 +15,7 @@ namespace RoyaleTrackerAPI
     {
         public Startup(IConfiguration configuration)
         {
-            Configuration = configuration;
+         Configuration = configuration;
         }
 
         public IConfiguration Configuration { get; }
@@ -23,16 +24,19 @@ namespace RoyaleTrackerAPI
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.Configure<ForwardedHeadersOptions>(options =>
-            {
-                options.ForwardedHeaders =
-                    ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
-                options.KnownProxies.Add(IPAddress.Parse("127.0.10.1"));
-            });
+            //services.Configure<ForwardedHeadersOptions>(options =>
+            //{
+            //    options.ForwardedHeaders =
+            //        ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
+            //    options.KnownProxies.Add(IPAddress.Parse("127.0.10.1"));
+            //});
+
+
+            services.AddControllers();
 
             services.AddCors(options =>
             {
-                options.AddPolicy("hosted",
+                options.AddPolicy("local",
                                   builder =>
                                   {
                                       builder.WithOrigins("http://localhost:3000")
@@ -41,7 +45,7 @@ namespace RoyaleTrackerAPI
 
             });
 
-            services.AddControllers();
+            //services.AddDbContext<TRContext>(options => options.UseMySQL(Configuration["ConnectionStrings:DBConnectionString"]), ServiceLifetime.Transient);
 
             services.AddDbContext<TRContext>(options => options.UseSqlServer(Configuration["ConnectionStrings:DBConnectionString"]), ServiceLifetime.Transient);
 
@@ -75,9 +79,7 @@ namespace RoyaleTrackerAPI
             app.UseForwardedHeaders();
 
             app.UseRouting();
-
-            app.UseCors("hosted");
-
+            app.UseCors("local");
 
             app.UseAuthorization();
 

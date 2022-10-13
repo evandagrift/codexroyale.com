@@ -9,6 +9,7 @@ class ChestCollection extends Component{
   constructor(props){
     super(props);
     this.state = {
+      playerTag:"",
       chestCollection:[]
     };
   } 
@@ -26,6 +27,20 @@ class ChestCollection extends Component{
       }
   }
 
+  async componentDidUpdate()
+  {
+    const { playerTag } = this.props;
+
+      if(playerTag && playerTag != this.state.playerTag)
+      {
+        this.setState({playerTag:playerTag});
+        try {
+        let chests = await GetChestsAsync(FormatTag(playerTag));
+        this.setState({chestCollection:chests});
+        }
+        catch{}
+      }
+  }
 
 
   render () {
