@@ -10,12 +10,15 @@ class Player extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      player: []
+      player: [],
+      playerTag:""
     };
   }
 
   async componentDidMount() {
     const { playerTag } = this.props;
+
+    this.setState({playerTag:playerTag});
 
     //call player at given Tag
 
@@ -33,6 +36,31 @@ class Player extends Component {
 
     } catch {this.setState({redirect:true})}
   } 
+  async componentDidUpdate()
+  {
+    
+    const { playerTag } = this.props;
+
+    if(playerTag != this.state.playerTag)
+    {
+      this.setState({playerTag:playerTag});
+      this.setState({player:[]});
+    try {
+      let responsePlayer = await getPlayerDataAsync(playerTag);
+
+      if(responsePlayer)
+      {
+
+        this.setState({ player: responsePlayer });
+
+      }
+      else this.setState({redirect:true});
+
+
+    } catch {this.setState({redirect:true})}
+    
+  }
+  }
 
   render() {
     let draw = "";

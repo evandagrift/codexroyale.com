@@ -10,6 +10,7 @@ import ChestCollection from "../components/ChestCollection";
 import BattleCollection from "../components/BattleCollection";
 import Deck from "../components/Deck";
 import { GetDeckAsync } from "../Utilities/axios-functions";
+import TopDecks from "../components/TopDecks";
 
 const PlayerPage = () => {
   const { playerTag } = useParams();
@@ -17,6 +18,7 @@ const PlayerPage = () => {
 
   const [tag, setTag] = useState("");
   const [deck, setDeck] = useState("");
+  
 
   //same as componentDidMount
   useEffect(async() => {
@@ -25,9 +27,10 @@ const PlayerPage = () => {
     } else if (user && user.tag != "") {
       setTag(user.tag);
     } 
+  }, [playerTag]);
 
-  }, []);
-  
+
+
   if(tag)
   {
     
@@ -35,6 +38,7 @@ const PlayerPage = () => {
       <div>
       {<ChestCollection playerTag={tag} />}
         {<Player playerTag={tag} />}
+        {<TopDecks playerTag={tag}/>}
         {<BattleCollection playerTag={tag} />}
       </div>
     );

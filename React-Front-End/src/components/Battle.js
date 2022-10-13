@@ -2,17 +2,39 @@ import React, { Component } from "react";
 import Deck from "./Deck";
 import Time from "./Time";
 import styles from "../cssModules/Battle.module.css";
+import { Link, Redirect, Route } from "react-router-dom";
+import { GetPlayerTagAsync } from "../Utilities/axios-functions";
+import { FormatTag } from "../Utilities/scripts";
 
 class Battle extends Component {
   constructor(props) {
     super(props);
-    this.state = {};
+    this.state = {
+      redirect:"",
+    };
   }
+ 
+  
   render() {
     const { battle } = this.props;
     
-    //only rendering 1v1 Battles
-    if (battle.Team1DeckBId == 0 && battle.Team1DeckAId != 0) {
+
+    var clickPlayer1 = async ()=>{
+      var playerTag = await GetPlayerTagAsync(battle.Team1Id);
+      this.setState({redirect:playerTag})
+     }
+
+     var clickPlayer2 = async ()=>{
+       var playerTag = await GetPlayerTagAsync(battle.Team2Id);
+       this.setState({redirect:playerTag})
+      }
+
+
+
+
+      
+     if(this.state.redirect == "")
+     {
       let team1Result = "";
       let team2Result = "";
 
@@ -23,13 +45,12 @@ class Battle extends Component {
         team1Result = "Loser";
         team2Result = "Winner";
       }
-      
 
     return (
       <div className={styles.battle}>
         
 
-        <div id="left-panel" className={styles.leftPanel}>
+        <div id="left-panel"  onClick={clickPlayer1} className={styles.leftPanel}>
 
         <h1>{battle.Team1Name}</h1>
         
@@ -49,7 +70,7 @@ class Battle extends Component {
           <Time  time={battle.BattleTime}/>
         </div>
 
-        <div id="right-panel" className={styles.rightPanel}>
+        <div id="right-panel"  onClick={clickPlayer2} className={styles.rightPanel}>
 
         <h1>{battle.Team2Name}</h1>
         <p ><b>{team2Result}</b></p>
@@ -61,10 +82,14 @@ class Battle extends Component {
 
         </div>
     </div>);
+     }
+     else{
+      this.setState({redirect:""});
+     return (<Redirect to={"/player/" + FormatTag(this.state.redirect)}/>);
+     }
       
       
-    }
-    else return null;
+     return null;
 
   }
 }

@@ -86,7 +86,7 @@ class TopDecks extends Component {
         </div>
       ));
     }
-    else componentHeader = (<h2>Loading best decks...</h2>);
+    else componentHeader = <h2>Loading Best Decks...</h2>;
 
 return(<div className={styles.topDecks}>
       {componentHeader}

@@ -23,6 +23,14 @@ export async function GetBattlesAsync() {
     return undefined;
   }
 }
+export async function GetPlayerTagAsync(id) {
+  try {
+    const response = await axios.get("players/team/"+id);
+    return response.data;
+  } catch {
+    return undefined;
+  }
+}
 
 export async function GetClanAsync(tag) {
   
@@ -57,6 +65,15 @@ export async function GetChestsAsync(playerTag) {
       "players/chests/" + FormatTag(playerTag),
       {}
     );
+    return response.data;
+  } catch {
+    return undefined;
+  }
+}
+
+export async function GetTopDecks(playerTag) {
+  try {
+    const response = await axios.get( "players/decks/" + FormatTag(playerTag));
     return response.data;
   } catch {
     return undefined;
