@@ -121,7 +121,7 @@ namespace RoyaleTrackerAPI.Repos
             try
             {
 
-                string connectionString = "/v1/players/%23" + tag.Substring(1);
+                string connectionString = "players/%23" + tag.Substring(1);
 
                 var result = await _client.officialAPI.GetAsync(connectionString);
 
@@ -252,7 +252,7 @@ namespace RoyaleTrackerAPI.Repos
 
             if (fetchedPlayer != null)
             {
-                fetchedPlayer.Battles = battlesRepo.GetRecentBattles(playerTag);
+                fetchedPlayer.Battles = battlesRepo.GetPlayersRecentBattles(playerTag);
 
                 if (fetchedPlayer.Battles != null)
                 {

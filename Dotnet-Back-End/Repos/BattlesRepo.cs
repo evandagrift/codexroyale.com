@@ -13,6 +13,7 @@ namespace RoyaleTrackerAPI.Repos
         //DB Access
         private TRContext _context;
         private Client _client;
+        private DecksRepo _decksRepo;
         //constructor, connects Connect argumented context
 
 
@@ -26,6 +27,7 @@ namespace RoyaleTrackerAPI.Repos
         {
             _context = ct;
             _client = c;
+            _decksRepo = new DecksRepo(_client, _context);
         }
 
         public void AddBattle(Battle battle)
@@ -154,8 +156,8 @@ namespace RoyaleTrackerAPI.Repos
 
 
                 }
-               
-                
+
+
                 //adds this battle to context to be saved
                 _context.Battles.Add(b);
             });
@@ -165,7 +167,7 @@ namespace RoyaleTrackerAPI.Repos
         }
 
         //returns a list of all battles from DB
-        public List<Battle> GetAllBattles() { return FillDeckImages(_context.Battles.ToList()); }
+        public List<Battle> GetAllBattles() { return PopulateBattleDecks(_context.Battles.ToList()); }
 
         //returns a list of all battles from DB with specific tag
         public List<Battle> GetAllBattles(string playerTag)
@@ -173,17 +175,20 @@ namespace RoyaleTrackerAPI.Repos
             if (playerTag != null)
             {
                 Team playerTeam = _context.Teams.Where(t => t.Tag == playerTag && t.Tag2 == null).FirstOrDefault();
-                if(playerTeam != null)
-                return FillDeckImages(_context.Battles.Where(b => b.Team1Id == playerTeam.TeamId || b.Team2Id == playerTeam.TeamId).OrderByDescending(b => b.BattleTime).ToList());
+                if (playerTeam != null)
+                {
+                    List<Battle> playerBattles = _context.Battles.Where(b => b.Team1Id == playerTeam.TeamId || b.Team2Id == playerTeam.TeamId).OrderByDescending(b => b.BattleTime).ToList();
+                    return PopulateBattleDecks(playerBattles);
+                }
             }
-            
-            return null; 
+
+            return null;
         }
         //returns a list of all battles from DB with specific tag
-        public List<Battle> GetRecentBattles(string playerTag)
+        public List<Battle> GetPlayersRecentBattles(string playerTag)
         {
 
-                if (playerTag != null && _context.Battles.Count() > 0)
+            if (playerTag != null && _context.Battles.Count() > 0)
             {
                 Team playerTeam = _context.Teams.Where(t => t.Tag == playerTag && t.TwoVTwo == false).FirstOrDefault();
                 int numPlayerBattles = _context.Battles.Where(b => b.Team1Id == playerTeam.TeamId || b.Team2Id == playerTeam.TeamId).Count();
@@ -194,7 +199,7 @@ namespace RoyaleTrackerAPI.Repos
 
                 if (fetchThisMany != 0)
                 {
-                    return FillDeckImages(_context.Battles.OrderByDescending(b => b.BattleTime).Take(fetchThisMany).ToList());
+                    return PopulateBattleDecks(_context.Battles.Where(b => b.Team1Id == playerTeam.TeamId || b.Team2Id == playerTeam.TeamId).OrderByDescending(b => b.BattleTime).Take(fetchThisMany).ToList());
                 }
                 else return null;
             }
@@ -202,26 +207,27 @@ namespace RoyaleTrackerAPI.Repos
         }
         public List<Battle> GetRecentBattles()
         {
-            DecksRepo decksRepo = new DecksRepo(_client, _context);
-                int fetchThisMany = 30;
+            int fetchThisMany = 30;
 
-                if (fetchThisMany > _context.Battles.Count()) fetchThisMany = _context.Battles.Count();
+            if (fetchThisMany > _context.Battles.Count()) fetchThisMany = _context.Battles.Count();
 
-                List<Battle> battlesToReturn = _context.Battles.OrderByDescending(b => b.BattleTime).Take(fetchThisMany).ToList();
-            battlesToReturn.ForEach(b =>
-            {
-                b.Team1DeckA = decksRepo.GetDeckByID(b.Team1DeckAId);
-                b.Team2DeckA = decksRepo.GetDeckByID(b.Team2DeckAId);
-                if (b.Team1DeckBId != 0)
-                {
-                    b.Team1DeckB = decksRepo.GetDeckByID(b.Team1DeckBId);
-                    b.Team2DeckB = decksRepo.GetDeckByID(b.Team2DeckBId);
+            List<Battle> battlesToReturn = _context.Battles.OrderByDescending(b => b.BattleTime).Take(fetchThisMany).ToList();
 
-                }
-            });
+            //battlesToReturn.ForEach(b =>
+            //{
+            //    b.Team1DeckA = _decksRepo.GetDeckByID(b.Team1DeckAId);
+            //    b.Team2DeckA = _decksRepo.GetDeckByID(b.Team2DeckAId);
+            //    if (b.Team1DeckBId != 0)
+            //    {
+            //        b.Team1DeckB = _decksRepo.GetDeckByID(b.Team1DeckBId);
+            //        b.Team2DeckB = _decksRepo.GetDeckByID(b.Team2DeckBId);
 
-            return FillDeckImages(battlesToReturn);
+            //    }
+            //});
+
+            return PopulateBattleDecks(battlesToReturn);
         }
+
 
         //gets battle with given battleID
         public Battle GetBattleByID(int battleID) { return _context.Battles.Find(battleID); }
@@ -317,16 +323,7 @@ namespace RoyaleTrackerAPI.Repos
                 _context.SaveChanges();
             }
         }
-
-        public async Task AddOfficialBattles(string tag)
-        {
-
-            List<Battle> fetchedBattles = await GetOfficialPlayerBattles(tag);
-            AddBattles(fetchedBattles);
-        }
-
-
-        public List<Battle> FillDeckImages(List<Battle> battles)
+        public List<Battle> PopulateBattleDecks(List<Battle> battles)
         {
             DecksRepo decksRepo = new DecksRepo(_client, _context);
 
@@ -348,7 +345,7 @@ namespace RoyaleTrackerAPI.Repos
             else return null;
         }
 
-            public async Task<List<Battle>> GetOfficialPlayerBattles(string tag)
+        public async Task<List<Battle>> GetOfficialPlayerBattles(string tag)
         {
             //connection string to fetch player battles with given Tag
             string connectionString = officialConnectionString + tag.Substring(1) + "/battlelog/";

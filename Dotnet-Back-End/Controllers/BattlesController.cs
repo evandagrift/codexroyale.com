@@ -20,17 +20,17 @@ namespace RoyaleTrackerAPI.Controllers
     {
 
         //context to DB and Repo for handling
-        private TRContext context;
-        private Client client;
-        private BattlesRepo repo;
+        private TRContext _context;
+        private Client _client;
+        private BattlesRepo _repo;
         private  ILogger<BattlesController> _logger;
 
         //loading in injected dependancies
         public BattlesController(Client c, TRContext ct, ILogger<BattlesController> logger)
         {
-            context = ct;
-            client = c;
-            repo = new BattlesRepo(client, context);
+            _context = ct;
+            _client = c;
+            _repo = new BattlesRepo(_client, _context);
             _logger = logger;
         }
 
@@ -41,8 +41,9 @@ namespace RoyaleTrackerAPI.Controllers
         public IActionResult Get()
         {
 
-            List<Battle> battles = repo.GetRecentBattles();
-            _logger.LogInformation($"{Request.HttpContext.Connection.RemoteIpAddress} Getting Most Recently Saved Battles");
+            List<Battle> battles = _repo.GetRecentBattles();
+            //_logger.LogInformation($"{Request.HttpContext.Connection.RemoteIpAddress} Getting Most Recently Saved Battles");
+            
             return Ok(JsonConvert.SerializeObject(battles, Formatting.Indented, new JsonSerializerSettings
             {
                 NullValueHandling = NullValueHandling.Ignore
@@ -55,7 +56,7 @@ namespace RoyaleTrackerAPI.Controllers
         public IActionResult Post([FromBody] Battle battle)
         {
             _logger.LogWarning($"{Request.HttpContext.Connection.RemoteIpAddress} POSTING BATTLE!");
-            repo.AddBattle(battle);
+            _repo.AddBattle(battle);
             return Ok();
         }
 
@@ -66,7 +67,7 @@ namespace RoyaleTrackerAPI.Controllers
         {
 
             _logger.LogWarning($"{Request.HttpContext.Connection.RemoteIpAddress} Posting {battles.Count()} battles");
-            repo.AddBattles(battles);
+            _repo.AddBattles(battles);
             return Ok();
         }
 
@@ -80,7 +81,7 @@ namespace RoyaleTrackerAPI.Controllers
         {
             
             //returns battle with Id based off given battle, if said battle doesn't exist it is created and returned after assigned Id
-            List<Battle> battles = repo.GetRecentBattles(playerTag);
+            List<Battle> battles = _repo.GetPlayersRecentBattles(playerTag);
 
             _logger.LogInformation($"{Request.HttpContext.Connection.RemoteIpAddress} Getting Recent Battles from player:{playerTag}");
 
@@ -95,7 +96,7 @@ namespace RoyaleTrackerAPI.Controllers
         public string Get(int id)
         {
             _logger.LogInformation($"{Request.HttpContext.Connection.RemoteIpAddress} Getting battle {id}");
-            return JsonConvert.SerializeObject(repo.GetBattleByID(id), Formatting.Indented, new JsonSerializerSettings{ NullValueHandling = NullValueHandling.Ignore });
+            return JsonConvert.SerializeObject(_repo.GetBattleByID(id), Formatting.Indented, new JsonSerializerSettings{ NullValueHandling = NullValueHandling.Ignore });
         }
 
 
@@ -105,7 +106,7 @@ namespace RoyaleTrackerAPI.Controllers
         public void Delete(int id)
         {
             _logger.LogWarning($"{Request.HttpContext.Connection.RemoteIpAddress} DELETING BATTLE {id}!");
-            repo.DeleteBattle(id);
+            _repo.DeleteBattle(id);
         }
 
         //updates battle with same Id as argument
@@ -114,7 +115,7 @@ namespace RoyaleTrackerAPI.Controllers
         public void Update([FromBody] Battle battle)
         {
             _logger.LogWarning($"{Request.HttpContext.Connection.RemoteIpAddress} UPDATING BATTLE {battle.BattleId}!");
-            repo.UpdateBattle(battle);
+            _repo.UpdateBattle(battle);
         }
 
     }

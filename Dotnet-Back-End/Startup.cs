@@ -45,11 +45,11 @@ namespace RoyaleTrackerAPI
 
             });
 
-            //services.AddDbContext<TRContext>(options => options.UseMySQL(Configuration["ConnectionStrings:DBConnectionString"]), ServiceLifetime.Transient);
-
-            services.AddDbContext<TRContext>(options => options.UseSqlServer(Configuration["ConnectionStrings:DBConnectionString"]), ServiceLifetime.Transient);
+            services.AddDbContext<TRContext>(options => options.UseMySQL(Configuration["ConnectionStrings:DBConnectionString"]), ServiceLifetime.Transient);
 
 
+
+            //services.AddDbContext<TRContext>(options => options.UseSqlServer(Configuration["ConnectionStrings:DBConnectionString"]), ServiceLifetime.Transient);
 
             services.AddAuthorizationCore(options =>
             {

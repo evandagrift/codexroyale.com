@@ -91,7 +91,6 @@ namespace RoyaleTrackerAPI.Controllers
         [HttpGet("chests/{playerTag}")]
         public async Task<IActionResult> GetPlayerChests(string playerTag)
         {
-
             _logger.LogInformation($"{Request.HttpContext.Connection.RemoteIpAddress} getting {playerTag}'s upcoming chests");
             //gets players upcoming Chests
             List<Chest> playerChests = await _playersRepo.GetPlayerChestsAsync(playerTag);

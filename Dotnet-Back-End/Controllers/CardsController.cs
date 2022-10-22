@@ -31,8 +31,6 @@ namespace RoyaleTrackerAPI.Controllers
 
             //init the repo with DB context
             _repo = new CardsRepo(client, context);
-            //adds any new cards that may have been added to the game/seed initial data
-            _repo.UpdateCards().Wait();
         }
 
         //adds the recieved card
@@ -83,15 +81,18 @@ namespace RoyaleTrackerAPI.Controllers
            return Ok(_repo.UpdateCards());
         }
 
-        //Updates card to given details at provided card id from the Card class
-        [Authorize(Policy = "AdminOnly")]
-        [HttpPut]
-        public void Update([FromBody] Card card)
-        {
 
-            _logger.LogWarning($"{Request.HttpContext.Connection.RemoteIpAddress} UPDATING CARD {card.Id}!");
-            _repo.UpdateCard(card);
-        }
+        /* update commented out until properly tested */
+
+        //Updates card to given details at provided card id from the Card class
+        //[Authorize(Policy = "AdminOnly")]
+        //[HttpPut]
+        //public void Update([FromBody] Card card)
+        //{
+
+        //    _logger.LogWarning($"{Request.HttpContext.Connection.RemoteIpAddress} UPDATING CARD {card.Id}!");
+        //    _repo.UpdateCard(card);
+        //}
 
     }
 }

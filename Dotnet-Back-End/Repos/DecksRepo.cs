@@ -15,17 +15,16 @@ namespace RoyaleTrackerAPI.Repos
         private CardsRepo _cardsRepo;
 
         //constructor assigning argumented context
-        public DecksRepo(Client client, TRContext context) 
-        { 
+        public DecksRepo(Client client, TRContext context)
+        {
             _context = context;
             _client = client;
+            _cardsRepo = new CardsRepo(_client, _context);
         }
 
 
         public Deck GetDeckWithId(Deck deck)
         {
-            CardsRepo cardsRepo = new CardsRepo(_client, _context);
-
 
             //sorts cards in deck highest to lowest so any combo will register the same
             deck.SortCards();
@@ -55,13 +54,13 @@ namespace RoyaleTrackerAPI.Repos
                 //if this list isn't 8 cards then at least one card in the deck is not saved in the cards section of the database
 
                 List<Card> cardsInDeckAndSaved = _context.Cards.Where(c => c.Id == deck.Card1Id || c.Id == deck.Card2Id || c.Id == deck.Card3Id || c.Id == deck.Card4Id || c.Id == deck.Card5Id || c.Id == deck.Card6Id || c.Id == deck.Card7Id || c.Id == deck.Card8Id).ToList();
-                
+
 
                 //TODO make this more efficient... it's bad
-                if(cardsInDeckAndSaved.Count != 8)
+                if (cardsInDeckAndSaved.Count != 8)
                 {
-                    List<Card> allCards = cardsRepo.GetAllOfficialCards().Result;
-                    cardsRepo.AddCardsIfNew(allCards);
+                    List<Card> allCards = _cardsRepo.GetAllOfficialCards().Result;
+                    _cardsRepo.AddCardsIfNew(allCards);
                 }
 
 
@@ -83,16 +82,15 @@ namespace RoyaleTrackerAPI.Repos
 
         public Deck FillDeckUrls(Deck deck)
         {
-            CardsRepo carsdRepo = new CardsRepo(_client, _context);
 
-            deck.Card1 = carsdRepo.GetCardByID(deck.Card1Id);
-            deck.Card2 = carsdRepo.GetCardByID(deck.Card2Id);
-            deck.Card3 = carsdRepo.GetCardByID(deck.Card3Id);
-            deck.Card4 = carsdRepo.GetCardByID(deck.Card4Id);
-            deck.Card5 = carsdRepo.GetCardByID(deck.Card5Id);
-            deck.Card6 = carsdRepo.GetCardByID(deck.Card6Id);
-            deck.Card7 = carsdRepo.GetCardByID(deck.Card7Id);
-            deck.Card8 = carsdRepo.GetCardByID(deck.Card8Id);
+            deck.Card1 = _cardsRepo.GetCardByID(deck.Card1Id);
+            deck.Card2 = _cardsRepo.GetCardByID(deck.Card2Id);
+            deck.Card3 = _cardsRepo.GetCardByID(deck.Card3Id);
+            deck.Card4 = _cardsRepo.GetCardByID(deck.Card4Id);
+            deck.Card5 = _cardsRepo.GetCardByID(deck.Card5Id);
+            deck.Card6 = _cardsRepo.GetCardByID(deck.Card6Id);
+            deck.Card7 = _cardsRepo.GetCardByID(deck.Card7Id);
+            deck.Card8 = _cardsRepo.GetCardByID(deck.Card8Id);
 
             return deck;
         }
@@ -131,10 +129,10 @@ namespace RoyaleTrackerAPI.Repos
         //returns Deck with given ID from DB
         public Deck GetDeckByID(int deckId)
         {
-            _cardsRepo = new CardsRepo(_client, _context);
             if (_context.Decks.Any(d => d.Id == deckId))
             {
                 Deck returnDeck = _context.Decks.Find(deckId);
+
                 returnDeck.Card1 = _cardsRepo.GetCardByID(returnDeck.Card1Id);
                 returnDeck.Card2 = _cardsRepo.GetCardByID(returnDeck.Card2Id);
                 returnDeck.Card3 = _cardsRepo.GetCardByID(returnDeck.Card3Id);
@@ -143,6 +141,7 @@ namespace RoyaleTrackerAPI.Repos
                 returnDeck.Card6 = _cardsRepo.GetCardByID(returnDeck.Card6Id);
                 returnDeck.Card7 = _cardsRepo.GetCardByID(returnDeck.Card7Id);
                 returnDeck.Card8 = _cardsRepo.GetCardByID(returnDeck.Card8Id);
+
                 return returnDeck;
             }
             else return null;
