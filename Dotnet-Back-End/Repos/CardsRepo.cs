@@ -11,13 +11,16 @@ namespace RoyaleTrackerAPI.Repos
     public class CardsRepo
     {
         //Access to DB
-        private TRContext context;
-        private Client client;
+        private TRContext _context;
+        private Client _client;
+        public List<Card> _cards;
+
         //Constructor assigning argumented context
-        public CardsRepo(Client c, TRContext ct)
+        public CardsRepo(Client client, TRContext context)
         {
-            context = ct;
-            client = c;
+            _context = context;
+            _client = client;
+            _cards = _context.Cards.ToList();
         }
 
         //I recieve card URL as Card.IconUrls["medium"] from the official API
@@ -39,7 +42,7 @@ namespace RoyaleTrackerAPI.Repos
                 string connectionString = "cards";
 
                 //gets the cards in a response message variable
-                var result = await client.officialAPI.GetAsync(connectionString);
+                var result = await _client.officialAPI.GetAsync(connectionString);
 
                 //If the api call was successful
                 if (result.IsSuccessStatusCode)
@@ -75,99 +78,96 @@ namespace RoyaleTrackerAPI.Repos
             //test against official
             //add any that aren't in DB
             List<Card> officialCards = await GetAllOfficialCards();
-            List<Card> codexCards = context.Cards.ToList();
+            List<Card> codexCards = _context.Cards.ToList();
             List<Card> cardsToAdd = new List<Card>();
-            if(officialCards != null){ 
-            if (codexCards.Count == 0)
+            if (officialCards != null)
             {
-                cardsToAdd = officialCards;
-            }
-            else if (codexCards.Count != officialCards.Count && officialCards != null && codexCards != null)
-            {
-                AddCardsIfNew(officialCards);
+                if (codexCards.Count == 0)
+                {
+                    cardsToAdd = officialCards;
+                }
+                else if (codexCards.Count != officialCards.Count && officialCards != null && codexCards != null)
+                {
+                    AddCardsIfNew(officialCards);
 
+                }
             }
-            }
-            return context.Cards.ToList(); ;
-        }
-
-        public async Task<List<Card>> UpdateGetCards()
-        {
-            await UpdateCards();
-            return context.Cards.ToList();
+            _cards = _context.Cards.ToList();
+            return _cards;
         }
 
         //adds given card to context
         public void AddCardIfNew(Card card)
         {
             //adds card to db if currently unsaved
-            if (!context.Cards.Any(c => c.Id == card.Id))
+            if (_cards.Any(c => c.Id == card.Id))
             {
-                context.Cards.Add(card);
-                context.SaveChanges();
+                _context.Cards.Add(card);
+                _context.SaveChanges();
             }
-        }      
+        }
 
         //checks a list of cards to see if any are not included in the database and adds them
         public void AddCardsIfNew(List<Card> card)
         {
-            card.ForEach(c =>
-            {
-                if (!context.Cards.Any(c2 => c2.Id == c.Id))
-                {
-                    context.Cards.Add(c);
-                    context.SaveChanges();
-                }
-            });
-    
+            card.ForEach(c => { AddCardIfNew(c); });
+
         }
 
 
         //deletes card at given cardID
-        public void DeleteCard(int cardID)
+        public bool DeleteCard(int cardID)
         {
             //if a valid card is fetched from the database that card is removed from the context
-            if (context.Cards.Any(c => c.Id == cardID))
+            if (_cards.Any(c => c.Id == cardID))
             {
                 //fetches card with given cardID
                 Card cardToDelete = GetCardByID(cardID);
 
                 //removes that card and saves changes
-                context.Cards.Remove(cardToDelete);
-                context.SaveChanges();
+                _context.Cards.Remove(cardToDelete);
+                _context.SaveChanges();
+
+                //true if deleted
+                return true;
             }
+            else { return false; }
         }
 
         //returns a list of all cards in DB
-        public List<Card> GetAllCards() { return context.Cards.ToList(); }
+        public List<Card> GetAllCards() { return _cards; }
 
         //returns Card from Db with given Card ID
-        public Card GetCardByID(int cardId) {
-            if (context.Cards.Any(c => c.Id == cardId))
+        public Card GetCardByID(int cardId)
+        {
+            if (_cards.Any(c => c.Id == cardId))
             {
-                return context.Cards.Where(c => c.Id == cardId).FirstOrDefault();
+                return _cards.Where(c => c.Id == cardId).FirstOrDefault();
             }
             else return null;
         }
 
-        //updates card at given ID
-        public void UpdateCard(Card card)
-        {
-            //if this card exists in the databases
-            if (context.Cards.Any(c => c.Id == card.Id))
-            {
 
-                //fetches card with given ID
-                Card cardToUpdate = GetCardByID(card.Id);
+        //commented out until future testing
 
-                //updates fields
-                cardToUpdate.Name = card.Name;
-                cardToUpdate.Url = card.Url;
+        ////updates card at given ID
+        ////public void UpdateCard(Card card)
+        ////{
+        ////    if this card exists in the databases
+        ////    if (_cards.Any(c => c.Id == card.Id))
+        ////    {
 
-                //saves changes to DB
-                context.SaveChanges();
-            }
-        }
+        ////        fetches card with given ID
+        ////        Card cardToUpdate = GetCardByID(card.Id);
+
+        ////        updates fields
+        ////        cardToUpdate.Name = card.Name;
+        ////        cardToUpdate.Url = card.Url;
+
+        ////        saves changes to DB
+        ////        _context.SaveChanges();
+        ////    }
+        ////}
 
 
 

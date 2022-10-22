@@ -1,0 +1,8 @@
+{
+  "runtimeOptions": {
+    "additionalProbingPaths": [
+      "C:\\Users\\Elodin\\.dotnet\\store\\|arch|\\|tfm|",
+      "C:\\Users\\Elodin\\.nuget\\packages"
+    ]
+  }
+}

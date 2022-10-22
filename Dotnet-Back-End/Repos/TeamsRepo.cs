@@ -48,6 +48,7 @@ namespace RoyaleTrackerAPI.Repos
                         teamToReturn = teams.Where(t => ((t.Tag == teamMembers[0].Tag && t.Tag2 == teamMembers[1].Tag) || (t.Tag == teamMembers[1].Tag && t.Tag2 == teamMembers[0].Tag))).FirstOrDefault();
 
                     }
+
                     if (teamToReturn != null) { teamId = teamToReturn.TeamId; }
 
                 }
@@ -90,6 +91,8 @@ namespace RoyaleTrackerAPI.Repos
             t.Add(p);
             return GetSetTeamId(t);
         }
+
+
         // any unique team of players, a, b, a+b... is saved and given a team Id by the database
         public Team GetSetTeamId(Team team)
         {

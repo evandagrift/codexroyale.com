@@ -38,7 +38,7 @@ const PlayerPage = () => {
       <div>
       {<ChestCollection playerTag={tag} />}
         {<Player playerTag={tag} />}
-        {<TopDecks playerTag={tag}/>}
+        {/* {<TopDecks playerTag={tag}/>} */}
         {<BattleCollection playerTag={tag} />}
       </div>
     );
