@@ -20,7 +20,6 @@ class BattleCollection extends Component {
 
     this.setState({ date: Date.now() });
 
-    do {
       //if there is a tag in the header it will search that individual player
       if (playerTag) {
         this.setState({ playerTag: playerTag });
@@ -44,7 +43,6 @@ class BattleCollection extends Component {
         
         this.setState({ date: Date.now() });
       }
-    } while (this.state.battles.length < 10);
   }
 
   async componentDidUpdate() {
@@ -55,7 +53,6 @@ class BattleCollection extends Component {
       this.setState({ battles: [] });
       this.setState({ playerTag: playerTag });
 
-      do {  
         //gets player's battles from backend
         const fetchedBattles = await GetPlayerBattlesAsync(playerTag);
 
@@ -69,7 +66,6 @@ class BattleCollection extends Component {
           }
         }
         this.setState({ date: Date.now() });
-      } while (this.state.battles.length < 10);
       
     }
 
