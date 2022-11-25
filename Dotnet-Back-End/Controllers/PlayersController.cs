@@ -72,7 +72,7 @@ namespace RoyaleTrackerAPI.Controllers
         {
             _logger.LogInformation($"{Request.HttpContext.Connection.RemoteIpAddress} getting playersnapshot with Id:{id}");
             PlayerSnapshot player = _playersRepo.GetPlayerById(id);
-            return JsonConvert.SerializeObject(player, Formatting.Indented, new JsonSerializerSettings {NullValueHandling = NullValueHandling.Ignore});
+            return JsonConvert.SerializeObject(player, Formatting.Indented, new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore });
         }
 
         //gets current player data with given tag
@@ -83,9 +83,9 @@ namespace RoyaleTrackerAPI.Controllers
             _logger.LogInformation($"{Request.HttpContext.Connection.RemoteIpAddress} getting {playerTag}'s current player data");
             PlayerSnapshot returnPlayer = await _playersRepo.GetOfficialPlayer(playerTag);
 
-            return Ok(JsonConvert.SerializeObject(returnPlayer, Formatting.Indented, new JsonSerializerSettings {NullValueHandling = NullValueHandling.Ignore}));
+            return Ok(JsonConvert.SerializeObject(returnPlayer, Formatting.Indented, new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore }));
         }
-        
+
         //gets the players upcoming chests that they will unlock
         [AllowAnonymous]
         [HttpGet("chests/{playerTag}")]
@@ -95,7 +95,19 @@ namespace RoyaleTrackerAPI.Controllers
             //gets players upcoming Chests
             List<Chest> playerChests = await _playersRepo.GetPlayerChestsAsync(playerTag);
 
-            return Ok(JsonConvert.SerializeObject(playerChests, Formatting.Indented, new JsonSerializerSettings {NullValueHandling = NullValueHandling.Ignore}));
+            return Ok(JsonConvert.SerializeObject(playerChests, Formatting.Indented, new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore }));
+        }
+
+        //gets the players upcoming chests that they will unlock
+        [AllowAnonymous]
+        [HttpGet("decks/{playerTag}")]
+        public async Task<IActionResult> GetPlayerTopDeks(string playerTag)
+        {
+            _logger.LogInformation($"{Request.HttpContext.Connection.RemoteIpAddress} getting {playerTag}'s Top Decks");
+            //gets players upcoming Chests
+            List<Deck> playerTopDecks = await _playersRepo.GetPlayerTopDecksAsync(playerTag);
+
+            return Ok(JsonConvert.SerializeObject(playerTopDecks, Formatting.Indented, new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore }));
         }
 
         //Deleteing player snapshot with given Id

@@ -19,7 +19,10 @@ namespace RoyaleTrackerAPI.Repos
         private readonly ILogger _logger;
 
         //constructor loads in DB Context
-        public PlayersRepo(Client c, TRContext ct) { _context = ct; _client = c;
+        public PlayersRepo(Client c, TRContext ct)
+        {
+            _context = ct;
+            _client = c;
             _logger = NLog.LogManager.Setup().LoadConfigurationFromAppSettings().GetCurrentClassLogger();
         }
 
@@ -185,6 +188,111 @@ namespace RoyaleTrackerAPI.Repos
             catch { return null; }
 
         }
+
+        public async Task<List<Deck>> GetPlayerTopDecksAsync(string tag)
+        {
+            int teamId = _context.Teams.Where(t => t.TwoVTwo == false && t.Tag == tag).FirstOrDefault().TeamId;
+
+
+            if (teamId > 0)
+            {
+                List<Deck> playerDecks = new List<Deck>();
+
+                List<Battle> battlesPlayed = _context.Battles.Where(b => b.Team1Id == teamId).ToList();
+                if (battlesPlayed.Count > 0)
+                {
+                    foreach (Battle battle in battlesPlayed)
+                    {
+                        if (!playerDecks.Where(d => d.Id == battle.Team1DeckAId).Any())
+                        {
+                            playerDecks.Add(new Deck { Id = battle.Team1DeckAId });
+                        }
+
+                        if (battle.Team1Win)
+                        {
+                            playerDecks.Where(d => d.Id == battle.Team1DeckAId).FirstOrDefault().Wins++;
+                        }
+                        else
+                        {
+                            playerDecks.Where(d => d.Id == battle.Team1DeckAId).FirstOrDefault().Loss++;
+                        }
+
+                    }
+                }
+
+                battlesPlayed = _context.Battles.Where(b => b.Team2Id == teamId).ToList();
+
+                if (battlesPlayed.Count > 0)
+                {
+                    foreach (Battle battle in battlesPlayed)
+                    {
+                        if (!playerDecks.Where(d => d.Id == battle.Team2DeckAId).Any())
+                        {
+                            playerDecks.Add(new Deck { Id = battle.Team2DeckAId });
+                        }
+
+                        if (battle.Team2Win)
+                        {
+                            playerDecks.Where(d => d.Id == battle.Team2DeckAId).FirstOrDefault().Wins++;
+                        }
+                        else
+                        {
+                            playerDecks.Where(d => d.Id == battle.Team2DeckAId).FirstOrDefault().Loss++;
+                        }
+
+                    }
+                }
+
+                int takeThisMany = 12;
+
+                if (playerDecks.Count < 12)
+                {
+                    takeThisMany = playerDecks.Count;
+                }
+
+                try
+                {
+                    playerDecks = playerDecks.Where(d => d.Wins > 0).OrderByDescending(d => d.Wins / (d.Loss == 0 ? Convert.ToDecimal(0.99) : d.Loss)).Take(takeThisMany).ToList();
+                }
+                catch
+                {
+
+                    _logger.Debug($"failed to fetch players best decks");
+                }
+                //playerDecks = playerDecks.Take(10).ToList();
+                DecksRepo decksRepo = new DecksRepo(_client, _context);
+                List<Deck> decksFilledWithURLs = new List<Deck>();
+                playerDecks.ForEach(d =>
+                {
+                    Deck filledDeck = decksRepo.GetDeckByID(d.Id);
+                    filledDeck.Wins = d.Wins;
+                    filledDeck.Loss = d.Loss;
+                    if (d.Loss == 0)
+                    {
+                        filledDeck.WinLossRate = d.Wins;
+                    }
+                    else
+                    {
+                        filledDeck.WinLossRate = d.Wins / d.Loss;
+
+                    }
+                    decksFilledWithURLs.Add(filledDeck);
+                });
+
+                //foreach(Deck d in playerDecks)
+                //{
+                //    Deck filledDeck = decksRepo.GetDeckByID(d.Id);
+                //    filledDeck.Wins = d.Wins;
+                //    filledDeck.Loss = d.Loss;
+                //    filledDeck.WinLossRate = d.WinLossRate;
+                //    d = filledDeck;
+                //}
+
+                _logger.Debug($"Got player:{tag}'s best decks");
+                return decksFilledWithURLs;
+            }
+            return null;
+        }
         public async Task<List<Chest>> GetPlayerChestsAsync(string tag)
         {
             if (tag != "" && tag.Length > 3)
@@ -194,11 +302,11 @@ namespace RoyaleTrackerAPI.Repos
                 {
                     tag = "%23" + tag.Substring(1);
                 }
-                else 
-                    if(tag.Substring(0,3) == "%23")
-                    {
+                else
+                    if (tag.Substring(0, 3) == "%23")
+                {
 
-                    }
+                }
                 else
                 {
                     return null;
@@ -226,10 +334,21 @@ namespace RoyaleTrackerAPI.Repos
                 else return null;
             }
 
-            catch { return null; }
+            catch
+            {
+                return null;
+            }
 
         }
 
+        public async Task<string> GetPlayerTagByTeamID(int teamID)
+        {
+            Team fetchedTeam = _context.Teams.Where(t => t.TeamId == teamID).FirstOrDefault();
+
+            if (fetchedTeam == null || fetchedTeam.TwoVTwo != false) { return null; }
+
+            return fetchedTeam.Tag;
+        }
 
 
         public async Task<PlayerSnapshot> GetFullPlayer(string playerTag)
@@ -337,9 +456,9 @@ namespace RoyaleTrackerAPI.Repos
 
                     //fetches the current player battles from the official DB
                     List<Battle> pBattles = battlesRepo.GetOfficialPlayerBattles(fetchedPlayer.Tag).Result;
-                    
-                    
-                    
+
+
+
                     _logger.Debug($"got battles");
 
 
