@@ -21,11 +21,14 @@ const HomePage = () => {
 
   return (
     <div>
-      <div className={styles.backgroundImage}>
+    <div className={styles.homePage}>
+      <img className={styles.homeImgTemp} src={require("../assets/KeyArt_Season_011.png")} /> 
+      <div className={styles.overlayTemp}>
       {greeting}
       {upcomingChests}
       {searchBox}
-      </div>
+    </div>
+    </div>
       {drawBattles}
     </div>
   );
@@ -33,3 +36,13 @@ const HomePage = () => {
 
 export default HomePage;
 
+/*
+ <div>
+      <div className={styles.backgroundImage}>
+      {greeting}
+      {upcomingChests}
+      {searchBox}
+      </div>
+      {drawBattles}
+    </div>
+    */

@@ -1,21 +1,63 @@
-.backgroundImage
-{
+.backgroundImage {
     background-image: url("../assets/KeyArt_Season_010.png");
     background-size: cover;
-    background-clip:border-box;
+    background-clip: border-box;
     background-position-y: center;
     background-position-x: center;
-    background-repeat:no-repeat;
+    background-repeat: no-repeat;
 }
 
-.greeting{
-    color:#fffcfc;
+.relative {
+    position: relative;
+    height: fit-content;
+}
+
+.homeBannerImg {
+    width: 100%;
+    position: absolute;
+    left: 0px;
+    z-index: 0;
+    background-size: cover;
+    background-clip: border-box;
+    background-position-y: center;
+    background-position-x: center;
+    background-repeat: no-repeat;
+}
+
+.overlayTemp {
+
+    grid-row: 1/2;
+    grid-column: 1/2;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+}
+
+.homeImgTemp {
+    grid-row: 1/2;
+    grid-column: 1/2;
+    width: 100%;
+    height: auto;
+
+}
+
+.homePage {
+
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: 1fr;
+}
+
+.greeting {
+    color: #fffcfc;
     -webkit-text-stroke: .25px black;
 }
-.chestCollection{
-    
+
+.chestCollection {
+
     background-color: rgb(26, 39, 63);
     opacity: .7;
-    color:#fffcfc;
+    color: #fffcfc;
     -webkit-text-stroke: .25px black;
 }
