@@ -1,18 +1,12 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
-using System.Net;
 using System.Threading.Tasks;
+using CodexRoyaleClassesCore3;
+using CodexRoyaleClassesCore3.Models;
+using CodexRoyaleClassesCore3.Repos;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
-using RoyaleTrackerAPI.Models;
-using RoyaleTrackerAPI.Models.RoyaleClasses;
-using RoyaleTrackerAPI.Repos;
-using RoyaleTrackerClasses;
-
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace RoyaleTrackerAPI.Controllers
@@ -20,23 +14,23 @@ namespace RoyaleTrackerAPI.Controllers
     [Authorize]
     [Route("api/[controller]")]
     [ApiController]
-    public class PlayersController : ControllerBase
+    public class PlayerSnapshotController : ControllerBase
     {
 
         //context to DB and Repo for handling
         private TRContext _context;
         private Client _client;
-        private PlayersRepo _playersRepo;
+        private PlayerSnapshotRepo _playerSnapshotRepo;
         private ChestsRepo _chestsRepo;
-        private ILogger<PlayersController> _logger;
+        private ILogger<PlayerSnapshotController> _logger;
 
         //loading in injected dependancies
-        public PlayersController(Client c, TRContext ct, ILogger<PlayersController> logger)
+        public PlayerSnapshotController(Client c, TRContext ct, ILogger<PlayerSnapshotController> logger)
         {
             _context = ct;
             _client = c;
             //init the repo with DB context
-            _playersRepo = new PlayersRepo(_client, _context);
+            _playerSnapshotRepo = new PlayerSnapshotRepo(_client, _context);
             _chestsRepo = new ChestsRepo(_client, _context);
             _logger = logger;
         }
@@ -47,7 +41,7 @@ namespace RoyaleTrackerAPI.Controllers
         public void Post([FromBody] PlayerSnapshot player)
         {
             _logger.LogWarning($"{Request.HttpContext.Connection.RemoteIpAddress} POSTING PLAYER SNAPSHOT FROM PLAYER {player.Tag}");
-            _playersRepo.AddPlayer(player);
+            _playerSnapshotRepo.AddPlayer(player);
         }
 
         [Authorize(Policy = "AdminOnly")]
@@ -56,7 +50,7 @@ namespace RoyaleTrackerAPI.Controllers
         public string Get()
         {
             _logger.LogInformation($"{Request.HttpContext.Connection.RemoteIpAddress} getting all player snapshots");
-            List<PlayerSnapshot> players = _playersRepo.GetAllPlayers();
+            List<PlayerSnapshot> players = _playerSnapshotRepo.GetAllPlayers();
 
             return JsonConvert.SerializeObject(players, Formatting.Indented, new JsonSerializerSettings
             {
@@ -71,7 +65,7 @@ namespace RoyaleTrackerAPI.Controllers
         public string Get(int id)
         {
             _logger.LogInformation($"{Request.HttpContext.Connection.RemoteIpAddress} getting playersnapshot with Id:{id}");
-            PlayerSnapshot player = _playersRepo.GetPlayerById(id);
+            PlayerSnapshot player = _playerSnapshotRepo.GetPlayerById(id);
             return JsonConvert.SerializeObject(player, Formatting.Indented, new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore });
         }
 
@@ -81,7 +75,7 @@ namespace RoyaleTrackerAPI.Controllers
         public async Task<IActionResult> GetOfficialPlayer(string playerTag)
         {
             _logger.LogInformation($"{Request.HttpContext.Connection.RemoteIpAddress} getting {playerTag}'s current player data");
-            PlayerSnapshot returnPlayer = await _playersRepo.GetOfficialPlayer(playerTag);
+            PlayerSnapshot returnPlayer = await _playerSnapshotRepo.GetOfficialPlayer(playerTag);
 
             return Ok(JsonConvert.SerializeObject(returnPlayer, Formatting.Indented, new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore }));
         }
@@ -93,7 +87,7 @@ namespace RoyaleTrackerAPI.Controllers
         {
             _logger.LogInformation($"{Request.HttpContext.Connection.RemoteIpAddress} getting {playerTag}'s upcoming chests");
             //gets players upcoming Chests
-            List<Chest> playerChests = await _playersRepo.GetPlayerChestsAsync(playerTag);
+            List<Chest> playerChests = await _playerSnapshotRepo.GetPlayerChestsAsync(playerTag);
 
             return Ok(JsonConvert.SerializeObject(playerChests, Formatting.Indented, new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore }));
         }
@@ -105,7 +99,7 @@ namespace RoyaleTrackerAPI.Controllers
         {
             _logger.LogInformation($"{Request.HttpContext.Connection.RemoteIpAddress} getting {playerTag}'s Top Decks");
             //gets players upcoming Chests
-            List<Deck> playerTopDecks = await _playersRepo.GetPlayerTopDecksAsync(playerTag);
+            List<Deck> playerTopDecks = await _playerSnapshotRepo.GetPlayerTopDecksAsync(playerTag);
 
             return Ok(JsonConvert.SerializeObject(playerTopDecks, Formatting.Indented, new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore }));
         }
@@ -116,7 +110,7 @@ namespace RoyaleTrackerAPI.Controllers
         public void Delete([FromHeader] int id)
         {
             _logger.LogWarning($"{Request.HttpContext.Connection.RemoteIpAddress} DELETING PLAYER SNAPSHOT WITH Id:{id}");
-            _playersRepo.DeletePlayer(id);
+            _playerSnapshotRepo.DeletePlayer(id);
         }
 
         [Authorize(Policy = "AdminOnly")]
@@ -124,7 +118,7 @@ namespace RoyaleTrackerAPI.Controllers
         public void Update([FromBody] PlayerSnapshot player)
         {
             _logger.LogWarning($"{Request.HttpContext.Connection.RemoteIpAddress} UPDATING PLAYER SNAPSHOT WITH Id:{player.Id}");
-            _playersRepo.UpdatePlayer(player);
+            _playerSnapshotRepo.UpdatePlayer(player);
         }
 
 

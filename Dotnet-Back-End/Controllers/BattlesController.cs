@@ -1,16 +1,12 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using System.Net;
+using CodexRoyaleClassesCore3;
+using CodexRoyaleClassesCore3.Models;
+using CodexRoyaleClassesCore3.Repos;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
-using RoyaleTrackerAPI.Models;
-using RoyaleTrackerAPI.Repos;
-using RoyaleTrackerClasses;
-
 namespace RoyaleTrackerAPI.Controllers
 {
     [Authorize]

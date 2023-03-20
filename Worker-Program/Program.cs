@@ -5,7 +5,10 @@ using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.IO;
 using System.Linq;
+using System.Net;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace ClashFeeder
@@ -18,17 +21,14 @@ namespace ClashFeeder
         static async Task Main(string[] args)
         {
 
-
             //config to get connection string
             var config = new ConfigurationBuilder()
         .SetBasePath(Environment.CurrentDirectory).AddJsonFile("appsettings.json", optional: false, reloadOnChange: true).Build();
-           
+
             //db options builder
             var optionsBuilder = new DbContextOptionsBuilder<TRContext>();
 
             optionsBuilder.UseMySQL(config["ConnectionStrings:DBConnectionString"]);
-           
-
 
 
             Client client = new Client(config["ConnectionStrings:BearerToken"]);
@@ -52,216 +52,263 @@ namespace ClashFeeder
             string randomClanTag = "#9QGPC82Y0";
             int count = 0;
             List<Battle> pBattles;
+
+
+            //using (WebClient webClient = new WebClient())
+            //{
+
+            //    byte[] dataArr = webClient.DownloadData("url.jpg");
+            //    //save file to local
+            //    File.WriteAllBytes(@"path.png", dataArr);
+            //}
+
+
+            using (WebClient imgClient = new WebClient())
+            {
+                int counter = 1;
+                imgClient.Headers.Add("User-Agent:https://cdn.royaleapi.com/");
+                string urlBase = "https://cdn.royaleapi.com/static/img/cards-150/";
+                foreach (Card c in cards)
+                {
+                    imgClient.Headers.Add("User-Agent:https://cdn.royaleapi.com/"+counter);
+                    string cardName = c.Name.Replace(" ", "-");
+                    cardName = cardName.Replace(".", string.Empty);
+
+
+                    string cardURL = $"{urlBase}{cardName}.png";
+                    cardURL = cardURL.ToLower();
+
+
+                    byte[] dataArr = imgClient.DownloadData(new Uri(cardURL));
+                    while (imgClient.IsBusy)
+                    {
+                    }
+
+                    cardName = c.Name.Replace("-", " ");
+                    //save file to local
+                    File.WriteAllBytes(@$"C:\Users\Elodin\Documents\Codex\Images\{cardName}.png", dataArr);
+
+                    imgClient.Headers.Remove("User-Agent");
+                    counter++;
+                    //imgClient.DownloadFileAsync(new Uri(cardURL), @$"C:\Users\Elodin\Documents\Codex\Images\{cardName}.png");
+                    
+                    //// OR 
+                    //imgClient.DownloadFileAsync(new Uri(cardURL), @"c:\temp\image35.png");
+                }
+
+            }
+
+
             //
 
 
-            //Get Clan
-            // Get all battles
+            ////Get Clan
+            //// Get all battles
 
-            //gets current clan with Tag
-            clan = await clansRepo.GetOfficialClan(clanTag);
+            ////gets current clan with Tag
+            //clan = await clansRepo.GetOfficialClan(clanTag);
 
-            //saves clan data to DB
-            clansRepo.AddClan(clan);
+            ////saves clan data to DB
+            //clansRepo.AddClan(clan);
 
-            //cycles through all PlayerSnapshots in the clan
-            clan.MemberList.ForEach(p =>
-            {
-                //fetches the current PlayerSnapshot battles from the official DB
-                pBattles = battlesRepo.GetOfficialPlayerBattles(p.Tag).Result;
+            ////cycles through all PlayerSnapshots in the clan
+            //clan.MemberList.ForEach(p =>
+            //{
+            //    //fetches the current PlayerSnapshot battles from the official DB
+            //    pBattles = battlesRepo.GetOfficialPlayerBattles(p.Tag).Result;
 
-                //adds new fetched battles to the DB and gets a count of added lines
-                count += battlesRepo.AddBattles(pBattles);
-                PlayerSnapshotsRepo.AddPlayerSnapshot(p);
-            });
+            //    //adds new fetched battles to the DB and gets a count of added lines
+            //    count += battlesRepo.AddBattles(pBattles);
+            //    PlayerSnapshotsRepo.AddPlayerSnapshot(p);
+            //});
 
-            //give count of battles added to the database
-            Console.WriteLine("Initially added " + count + " battles.");
-            count = 0;
+            ////give count of battles added to the database
+            //Console.WriteLine("Initially added " + count + " battles.");
+            //count = 0;
 
-            //sets date times for comparison
-            DateTime now = DateTime.UtcNow;
-            DateTime lastFullSave = DateTime.UtcNow;
-            DateTime lastClanSearch = DateTime.UtcNow;
-            DateTime clanLastUpdated = DateTime.UtcNow;
+            ////sets date times for comparison
+            //DateTime now = DateTime.UtcNow;
+            //DateTime lastFullSave = DateTime.UtcNow;
+            //DateTime lastClanSearch = DateTime.UtcNow;
+            //DateTime clanLastUpdated = DateTime.UtcNow;
 
-            //TODO SAVE PlayerSnapshotS W/ FULL SAVE if last seen is after last full save
+            ////TODO SAVE PlayerSnapshotS W/ FULL SAVE if last seen is after last full save
 
-            //get clan data if 30 sec has elapsed, so we don't call it each loop
-            TimeSpan timeSinceClanUpdate = now - clanLastUpdated;
-            TimeSpan timeSinceFullSave = now - lastFullSave;
-            TimeSpan timeSinceClanSearch = now - lastClanSearch;
+            ////get clan data if 30 sec has elapsed, so we don't call it each loop
+            //TimeSpan timeSinceClanUpdate = now - clanLastUpdated;
+            //TimeSpan timeSinceFullSave = now - lastFullSave;
+            //TimeSpan timeSinceClanSearch = now - lastClanSearch;
 
-            //list to fill with battles to add to DB this is so we don't constantly pass all the battles to the api even though most wont be saved
-            List<Battle> battlesToAdd = new List<Battle>();
+            ////list to fill with battles to add to DB this is so we don't constantly pass all the battles to the api even though most wont be saved
+            //List<Battle> battlesToAdd = new List<Battle>();
 
-            while (true)
-            {
-                now = DateTime.UtcNow;
-                //get clan data if 30 sec has elapsed, so we don't call it each loop
-                timeSinceClanSearch = now - lastClanSearch;
+            //while (true)
+            //{
+            //    now = DateTime.UtcNow;
+            //    //get clan data if 30 sec has elapsed, so we don't call it each loop
+            //    timeSinceClanSearch = now - lastClanSearch;
 
-                //calls the official API every 5 seconds
-                if (timeSinceClanSearch.TotalSeconds > 5)
-                {
-                    lastClanSearch = now;
+            //    //calls the official API every 5 seconds
+            //    if (timeSinceClanSearch.TotalSeconds > 5)
+            //    {
+            //        lastClanSearch = now;
 
-                    //calls the clan to get clan members and when last seen
-                    clan = await clansRepo.GetOfficialClan(clanTag);
+            //        //calls the clan to get clan members and when last seen
+            //        clan = await clansRepo.GetOfficialClan(clanTag);
 
-                    //if PlayerSnapshot last seen is less than 10 min and not in watched list add to list
-                    PlayerSnapshot playerSnapshot;
+            //        //if PlayerSnapshot last seen is less than 10 min and not in watched list add to list
+            //        PlayerSnapshot playerSnapshot;
 
-                    TimeSpan timeSinceLastSeen;
+            //        TimeSpan timeSinceLastSeen;
 
-                    //incase the officical API fails to respond properly
-                    if (clan != null)
-                    {
-                        clan.MemberList.ForEach(p =>
-                        {
+            //        //incase the officical API fails to respond properly
+            //        if (clan != null)
+            //        {
+            //            clan.MemberList.ForEach(p =>
+            //            {
 
-                            //if the PlayerSnapshot isn't already in the watchlist will return null
-                            playerSnapshot = watchList.Where(w => w.Tag == p.Tag).FirstOrDefault();
+            //                //if the PlayerSnapshot isn't already in the watchlist will return null
+            //                playerSnapshot = watchList.Where(w => w.Tag == p.Tag).FirstOrDefault();
 
-                            //if PlayerSnapshot isn't in the watch list
-                            if (playerSnapshot == null)
-                            {
+            //                //if PlayerSnapshot isn't in the watch list
+            //                if (playerSnapshot == null)
+            //                {
 
-                                DateTime playerLastSeen = DateTime.ParseExact(p.LastSeen.Substring(0, 15), "yyyyMMddTHHmmss", CultureInfo.InvariantCulture);
+            //                    DateTime playerLastSeen = DateTime.ParseExact(p.LastSeen.Substring(0, 15), "yyyyMMddTHHmmss", CultureInfo.InvariantCulture);
 
-                                timeSinceLastSeen = now - playerLastSeen;
+            //                    timeSinceLastSeen = now - playerLastSeen;
 
-                                //if PlayerSnapshot last seen in past 15 min
-                                if (timeSinceLastSeen.TotalMinutes < 15)
-                                {
-                                    watchList.Add(p);
-                                    Console.WriteLine(p.Name + " was added to the wathchlist");
-                                }
-                            }
-                        });
-                    }
-                    else { Console.WriteLine("Clan Is Null"); }
+            //                    //if PlayerSnapshot last seen in past 15 min
+            //                    if (timeSinceLastSeen.TotalMinutes < 15)
+            //                    {
+            //                        watchList.Add(p);
+            //                        Console.WriteLine(p.Name + " was added to the wathchlist");
+            //                    }
+            //                }
+            //            });
+            //        }
+            //        else { Console.WriteLine("Clan Is Null"); }
 
-                    //SLOWNESS IS COMING FROM ABOVE THIS ^^^^^^^
-                    if (watchList.Count > 0)
-                    {
-                        for (int w = 0; w < watchList.Count; w++)
-                        {
+            //        //SLOWNESS IS COMING FROM ABOVE THIS ^^^^^^^
+            //        if (watchList.Count > 0)
+            //        {
+            //            for (int w = 0; w < watchList.Count; w++)
+            //            {
 
-                            pBattles = await battlesRepo.GetOfficialPlayerBattles(watchList[w].Tag);
+            //                pBattles = await battlesRepo.GetOfficialPlayerBattles(watchList[w].Tag);
 
-                            if (pBattles != null)
-                            {
-                                battlesToAdd = new List<Battle>();
+            //                if (pBattles != null)
+            //                {
+            //                    battlesToAdd = new List<Battle>();
 
-                                pBattles.OrderByDescending(b => b.BattleTime);
+            //                    pBattles.OrderByDescending(b => b.BattleTime);
 
-                                //newest is returned in the list at 0
-                                for (int b = 0; b < pBattles.Count; b++)
-                                {
-                                    DateTime timeOfBattle = DateTime.ParseExact(pBattles[b].BattleTime.Substring(0, 15), "yyyyMMddTHHmmss", CultureInfo.InvariantCulture);
-
-
-                                    //get the difference between last full Save the battleTime
-                                    //if the battle is newer than last fullSave it adds
-                                    TimeSpan alreadySaved = timeOfBattle - lastFullSave;
-
-                                    if (alreadySaved.Seconds > 0)
-                                    {
-                                        battlesToAdd.Add(pBattles[b]);
-                                    }
-
-                                }
+            //                    //newest is returned in the list at 0
+            //                    for (int b = 0; b < pBattles.Count; b++)
+            //                    {
+            //                        DateTime timeOfBattle = DateTime.ParseExact(pBattles[b].BattleTime.Substring(0, 15), "yyyyMMddTHHmmss", CultureInfo.InvariantCulture);
 
 
-                                if (0 < battlesToAdd.Count)
-                                {
-                                    count =  battlesRepo.AddBattles(battlesToAdd);
+            //                        //get the difference between last full Save the battleTime
+            //                        //if the battle is newer than last fullSave it adds
+            //                        TimeSpan alreadySaved = timeOfBattle - lastFullSave;
 
-                                    if (count == 0 && battlesToAdd.Count > 0)
-                                    {
-                                        battlesToAdd = new List<Battle>();
-                                    }
-                                    else
-                                    {
-                                        watchList[w].LastSeen = now.ToString("yyyyMMddTHHmmss"); ;
-                                        Console.WriteLine(watchList[w].Name + " played " + count + " games.");
-                                    }
-                                }
-                            }
-                            else Console.WriteLine("Player Battles is null");
-                        }
+            //                        if (alreadySaved.Seconds > 0)
+            //                        {
+            //                            battlesToAdd.Add(pBattles[b]);
+            //                        }
 
-                        for (int p = 0; p < watchList.Count; p++)
-                        {
-                            TimeSpan timeOut = now - (DateTime.ParseExact(watchList[p].LastSeen.Substring(0, 15), "yyyyMMddTHHmmss", CultureInfo.InvariantCulture));
-
-                            if (timeOut.Minutes >= 15)
-                            {
-
-                                Console.WriteLine(watchList[p].Name + " was removed from watch list");
-                                watchList.Remove(watchList[p]);
-                            }
-                            //remove if sat too long
-                        }
-                    }
+            //                    }
 
 
+            //                    if (0 < battlesToAdd.Count)
+            //                    {
+            //                        count = battlesRepo.AddBattles(battlesToAdd);
 
-                    //add recently logged in if not in watch list
-                    //remove PlayerSnapshots in watchlist based off battle time
-                    //ONLY ADD NEW IF YOU FEED NEW INSTANCES OF ALREADY WATCHED PlayerSnapshotS, PlayerSnapshotS ONLINE FOR LONGER PERIOD MIGHT BE MISSED
+            //                        if (count == 0 && battlesToAdd.Count > 0)
+            //                        {
+            //                            battlesToAdd = new List<Battle>();
+            //                        }
+            //                        else
+            //                        {
+            //                            watchList[w].LastSeen = now.ToString("yyyyMMddTHHmmss"); ;
+            //                            Console.WriteLine(watchList[w].Name + " played " + count + " games.");
+            //                        }
+            //                    }
+            //                }
+            //                else Console.WriteLine("Player Battles is null");
+            //            }
 
-                }
+            //            for (int p = 0; p < watchList.Count; p++)
+            //            {
+            //                TimeSpan timeOut = now - (DateTime.ParseExact(watchList[p].LastSeen.Substring(0, 15), "yyyyMMddTHHmmss", CultureInfo.InvariantCulture));
 
-                //full save every 2.5 hours in case missed anything
-                TimeSpan fullSaveTimer = now - lastFullSave;
-                if (fullSaveTimer.Minutes >= 20)
-                {
-                    //Get Clan
-                    // Get all battles
+            //                if (timeOut.Minutes >= 15)
+            //                {
 
-                    //gets current clan with Tag
-                    clan = await clansRepo.GetOfficialClan(clanTag);
-
-                    //saves clan data to DB
-                    clansRepo.AddClan(clan);
-
-                    //cycles through all PlayerSnapshots in the clan
-                    clan.MemberList.ForEach(p =>
-                    {
-                        //fetches the current PlayerSnapshot battles from the official DB
-                        List<Battle> pBattles = battlesRepo.GetOfficialPlayerBattles(p.Tag).Result;
-                        PlayerSnapshotsRepo.AddPlayerSnapshot(p);
-
-                        //adds new fetched battles to the DB and gets a count of added lines
-                        count += battlesRepo.AddBattles(pBattles);
-                    });
-
-                    lastFullSave = DateTime.UtcNow;
-                    clanLastUpdated = DateTime.UtcNow;
-                    //
-                    //ADD Save clan when do full save
-                    //
-
-                }
-                //cycle through all users in watchlist
-
-                //fetches their battles and sets watched PlayerSnapshot's last update time to the most recent battle time
-
-                //saves their battles newer than their last update time
-
-                // if PlayerSnapshot hasn't played a game in 20 min drop from watched list
+            //                    Console.WriteLine(watchList[p].Name + " was removed from watch list");
+            //                    watchList.Remove(watchList[p]);
+            //                }
+            //                //remove if sat too long
+            //            }
+            //        }
 
 
 
-                //returns most recent saved
+            //        //add recently logged in if not in watch list
+            //        //remove PlayerSnapshots in watchlist based off battle time
+            //        //ONLY ADD NEW IF YOU FEED NEW INSTANCES OF ALREADY WATCHED PlayerSnapshotS, PlayerSnapshotS ONLINE FOR LONGER PERIOD MIGHT BE MISSED
+
+            //    }
+
+            //    //full save every 2.5 hours in case missed anything
+            //    TimeSpan fullSaveTimer = now - lastFullSave;
+            //    if (fullSaveTimer.Minutes >= 20)
+            //    {
+            //        //Get Clan
+            //        // Get all battles
+
+            //        //gets current clan with Tag
+            //        clan = await clansRepo.GetOfficialClan(clanTag);
+
+            //        //saves clan data to DB
+            //        clansRepo.AddClan(clan);
+
+            //        //cycles through all PlayerSnapshots in the clan
+            //        clan.MemberList.ForEach(p =>
+            //        {
+            //            //fetches the current PlayerSnapshot battles from the official DB
+            //            List<Battle> pBattles = battlesRepo.GetOfficialPlayerBattles(p.Tag).Result;
+            //            PlayerSnapshotsRepo.AddPlayerSnapshot(p);
+
+            //            //adds new fetched battles to the DB and gets a count of added lines
+            //            count += battlesRepo.AddBattles(pBattles);
+            //        });
+
+            //        lastFullSave = DateTime.UtcNow;
+            //        clanLastUpdated = DateTime.UtcNow;
+            //        //
+            //        //ADD Save clan when do full save
+            //        //
+
+            //    }
+            //    //cycle through all users in watchlist
+
+            //    //fetches their battles and sets watched PlayerSnapshot's last update time to the most recent battle time
+
+            //    //saves their battles newer than their last update time
+
+            //    // if PlayerSnapshot hasn't played a game in 20 min drop from watched list
+
+
+
+            //    //returns most recent saved
 
 
 
 
 
-            }
+            //}
 
         }
 

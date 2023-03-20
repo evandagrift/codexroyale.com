@@ -1,0 +1,505 @@
+﻿using CodexRoyaleClassesCore3.Models;
+using Newtonsoft.Json;
+using NLog;
+using NLog.Web;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+
+namespace CodexRoyaleClassesCore3.Repos
+{
+    public class PlayerSnapshotRepo
+    {
+        //DB access
+        private TRContext _context;
+        private Client _client;
+        private readonly ILogger _logger;
+
+        //constructor loads in DB Context
+        public PlayerSnapshotRepo(Client c, TRContext ct)
+        {
+            _context = ct;
+            _client = c;
+            _logger = NLog.LogManager.Setup().LoadConfigurationFromAppSettings().GetCurrentClassLogger();
+        }
+
+        public void AddPlayer(PlayerSnapshot player)
+        {
+            // removes Id in case posted with an Id
+            player.Id = 0;
+            _context.PlayerSnapshots.Add(player);
+            _context.SaveChanges();
+        }
+
+        //deletes player with given playerTag
+        public void DeletePlayer(int playerId)
+        {
+            //pulls player instance from db w/ given tag
+            PlayerSnapshot playerToDelete = GetPlayerById(playerId);
+
+            //if a valid player instance i fetched from the database, it will be removed
+            if (playerToDelete != null)
+            {
+                _context.PlayerSnapshots.Remove(playerToDelete);
+                _context.SaveChanges();
+            }
+        }
+
+        public List<PlayerSnapshot> GetAllPlayers() { return _context.PlayerSnapshots.ToList(); }
+
+        public PlayerSnapshot GetPlayerById(int playerTag) { return _context.PlayerSnapshots.Find(playerTag); }
+
+
+        public void UpdatePlayer(PlayerSnapshot player)
+        {
+            //pulls instance of player from DB
+            PlayerSnapshot playerToUpdate = GetPlayerById(player.Id);
+
+            //if a valid player is returned it updates all the fields in the fetched class
+            if (playerToUpdate != null)
+            {
+                playerToUpdate.Tag = player.Tag;
+                playerToUpdate.Name = player.Name;
+                playerToUpdate.BestTrophies = player.BestTrophies;
+                playerToUpdate.Trophies = player.Trophies;
+
+                playerToUpdate.CardsDiscovered = player.CardsDiscovered;
+
+                playerToUpdate.ClanTag = player.ClanTag;
+
+
+                playerToUpdate.ClanCardsCollected = player.ClanCardsCollected;
+                playerToUpdate.CurrentDeckId = player.CurrentDeckId;
+                playerToUpdate.CurrentFavouriteCardId = player.CurrentFavouriteCardId;
+                playerToUpdate.Donations = player.Donations;
+                playerToUpdate.DonationsReceived = player.DonationsReceived;
+                playerToUpdate.ExpLevel = player.ExpLevel;
+                playerToUpdate.LastSeen = player.LastSeen;
+                playerToUpdate.StarPoints = player.StarPoints;
+                playerToUpdate.Tag = player.Tag;
+                playerToUpdate.TeamId = player.TeamId;
+                playerToUpdate.TotalDonations = player.TotalDonations;
+                playerToUpdate.UpdateTime = player.UpdateTime;
+                playerToUpdate.Wins = player.Wins;
+                playerToUpdate.Losses = player.Losses;
+                _context.SaveChanges();
+            }
+
+        }
+
+        public async Task<string> GetLastSeen(string playerTag, string clanTag)
+        {
+            ClansRepo clanRepo = new ClansRepo(_client, _context);
+
+            try
+            {
+
+                //fetch clan to get data from
+                Clan clan = await clanRepo.GetOfficialClan(clanTag);
+
+                //clan members are a list of players, we grab the player with matching tag
+                PlayerSnapshot player = clan.MemberList.Where(p => p.Tag == playerTag).FirstOrDefault();
+
+                //return when last seen, Substringed because returned time has a timezone offset but all players are returned with an offset of 0
+                return player.LastSeen.Substring(0, 15);
+
+            }
+            catch { return null; }
+        }
+
+
+        //gets player data from the official api via their player tag
+        public async Task<PlayerSnapshot> GetOfficialPlayer(string tag)
+        {
+            TeamsRepo temsRepo = new TeamsRepo(_context);
+            DecksRepo decksRepo = new DecksRepo(_client, _context);
+            CardsRepo cardsRepo = new CardsRepo(_client, _context);
+
+            ClansRepo clansRepo = new ClansRepo(_client, _context);
+
+            //try in case we get connection errors`
+            try
+            {
+
+                string connectionString = "players/%23" + tag.Substring(1);
+
+                var result = await _client.officialAPI.GetAsync(connectionString);
+
+                if (result.IsSuccessStatusCode)
+                {
+                    var content = await result.Content.ReadAsStringAsync();
+                    PlayerSnapshot player = JsonConvert.DeserializeObject<PlayerSnapshot>(content);
+
+
+                    if (player.Name != "" && player.CurrentFavouriteCard != null)
+                    {
+                        player.TeamId = 0;
+
+                        //assigns current favorite card details
+                        player.CurrentFavouriteCardId = player.CurrentFavouriteCard.Id;
+                        player.CurrentFavouriteCard = cardsRepo.ConvertCardUrl(player.CurrentFavouriteCard);
+                        player.CardsDiscovered = player.Cards.Count;
+                        player.Cards.ForEach(c =>
+                        {
+                            c = cardsRepo.ConvertCardUrl(c);
+                        });
+
+                        if (player.Clan != null)
+                        {
+                            player.ClanTag = player.Clan.Tag;
+                            player.LastSeen = await GetLastSeen(player.Tag, player.ClanTag);
+                        }
+
+
+                        player.Deck = decksRepo.GetDeckWithId(player.CurrentDeck);
+                        player.CurrentDeckId = player.Deck.Id;
+
+                        //removing this from the provided data so Front end doesn't use currentdeck instead of the dressed Deck with all details
+                        player.CurrentDeck = null;
+
+
+                        //sets the time of this update
+                        player.UpdateTime = DateTime.UtcNow.ToString("yyyyMMddTHHmmss");
+
+                        TrackedPlayer trackedPlayer = _context.TrackedPlayers.Where(t => t.Tag == player.Tag).FirstOrDefault();
+
+
+                        //adding battles is done in the auto update thread to handle concurrency errors
+                        //adds the player to have their data tracked
+                        if (trackedPlayer == null)
+                        {
+                            _context.TrackedPlayers.Add(new TrackedPlayer { Tag = player.Tag, Priority = "high" });
+                            _context.SaveChanges();
+                        }
+
+
+                        return player;
+                    }
+                    else { return null; }
+                }
+                else return null;
+
+
+            }
+
+            catch { return null; }
+
+        }
+
+        public async Task<List<Deck>> GetPlayerTopDecksAsync(string tag)
+        {
+            int teamId = _context.Teams.Where(t => t.TwoVTwo == false && t.Tag == tag).FirstOrDefault().TeamId;
+
+
+            if (teamId > 0)
+            {
+                List<Deck> playerDecks = new List<Deck>();
+
+                List<Battle> battlesPlayed = _context.Battles.Where(b => b.Team1Id == teamId).ToList();
+                if (battlesPlayed.Count > 0)
+                {
+                    foreach (Battle battle in battlesPlayed)
+                    {
+                        if (!playerDecks.Where(d => d.Id == battle.Team1DeckAId).Any())
+                        {
+                            playerDecks.Add(new Deck { Id = battle.Team1DeckAId });
+                        }
+
+                        if (battle.Team1Win)
+                        {
+                            playerDecks.Where(d => d.Id == battle.Team1DeckAId).FirstOrDefault().Wins++;
+                        }
+                        else
+                        {
+                            playerDecks.Where(d => d.Id == battle.Team1DeckAId).FirstOrDefault().Loss++;
+                        }
+
+                    }
+                }
+
+                battlesPlayed = _context.Battles.Where(b => b.Team2Id == teamId).ToList();
+
+                if (battlesPlayed.Count > 0)
+                {
+                    foreach (Battle battle in battlesPlayed)
+                    {
+                        if (!playerDecks.Where(d => d.Id == battle.Team2DeckAId).Any())
+                        {
+                            playerDecks.Add(new Deck { Id = battle.Team2DeckAId });
+                        }
+
+                        if (battle.Team2Win)
+                        {
+                            playerDecks.Where(d => d.Id == battle.Team2DeckAId).FirstOrDefault().Wins++;
+                        }
+                        else
+                        {
+                            playerDecks.Where(d => d.Id == battle.Team2DeckAId).FirstOrDefault().Loss++;
+                        }
+
+                    }
+                }
+
+                int takeThisMany = 12;
+
+                if (playerDecks.Count < 12)
+                {
+                    takeThisMany = playerDecks.Count;
+                }
+
+                try
+                {
+                    playerDecks = playerDecks.Where(d => d.Wins > 0).OrderByDescending(d => d.Wins / (d.Loss == 0 ? Convert.ToDecimal(0.99) : d.Loss)).Take(takeThisMany).ToList();
+                }
+                catch
+                {
+
+                    _logger.Debug($"failed to fetch players best decks");
+                }
+                //playerDecks = playerDecks.Take(10).ToList();
+                DecksRepo decksRepo = new DecksRepo(_client, _context);
+                List<Deck> decksFilledWithURLs = new List<Deck>();
+                playerDecks.ForEach(d =>
+                {
+                    Deck filledDeck = decksRepo.GetDeckByID(d.Id);
+                    filledDeck.Wins = d.Wins;
+                    filledDeck.Loss = d.Loss;
+                    if (d.Loss == 0)
+                    {
+                        filledDeck.WinLossRate = d.Wins;
+                    }
+                    else
+                    {
+                        filledDeck.WinLossRate = d.Wins / d.Loss;
+
+                    }
+                    decksFilledWithURLs.Add(filledDeck);
+                });
+
+                //foreach(Deck d in playerDecks)
+                //{
+                //    Deck filledDeck = decksRepo.GetDeckByID(d.Id);
+                //    filledDeck.Wins = d.Wins;
+                //    filledDeck.Loss = d.Loss;
+                //    filledDeck.WinLossRate = d.WinLossRate;
+                //    d = filledDeck;
+                //}
+
+                _logger.Debug($"Got player:{tag}'s best decks");
+                return decksFilledWithURLs;
+            }
+            return null;
+        }
+        public async Task<List<Chest>> GetPlayerChestsAsync(string tag)
+        {
+            if (tag != "" && tag.Length > 3)
+            {
+
+                if (tag[0] == '#')
+                {
+                    tag = "%23" + tag.Substring(1);
+                }
+                else
+                    if (tag.Substring(0, 3) == "%23")
+                {
+
+                }
+                else
+                {
+                    return null;
+                }
+
+
+
+            }
+            string connectionString = "/v1/players/" + tag + "/upcomingchests";
+            ChestsRepo chestsRepo = new ChestsRepo(_client, _context);
+            //try in case we get connection errors`
+            try
+            {
+                var result = await _client.officialAPI.GetAsync(connectionString);
+
+                if (result.IsSuccessStatusCode)
+                {
+                    var content = await result.Content.ReadAsStringAsync();
+
+                    List<Chest> chests = JsonConvert.DeserializeObject<List<Chest>>(content.Substring(9, content.Length - 10));
+
+                    //fills returned chests with urls
+                    return chestsRepo.FillChestUrls(chests);
+                }
+                else return null;
+            }
+
+            catch
+            {
+                return null;
+            }
+
+        }
+
+        public async Task<string> GetPlayerTagByTeamID(int teamID)
+        {
+            Team fetchedTeam = _context.Teams.Where(t => t.TeamId == teamID).FirstOrDefault();
+
+            if (fetchedTeam == null || fetchedTeam.TwoVTwo != false) { return null; }
+
+            return fetchedTeam.Tag;
+        }
+
+
+        public async Task<PlayerSnapshot> GetFullPlayer(string playerTag)
+        {
+            TrackedPlayer trackedPlayer = _context.TrackedPlayers.Where(t => t.Tag == playerTag).FirstOrDefault();
+
+
+            //adding battles is done in the auto update thread to handle concurrency errors
+            //adds the player to have their data tracked
+            if (trackedPlayer == null)
+            {
+                _context.TrackedPlayers.Add(new TrackedPlayer { Tag = playerTag, Priority = "high" });
+                _context.SaveChanges();
+            }
+
+
+            DecksRepo decksRepo = new DecksRepo(_client, _context);
+            BattlesRepo battlesRepo = new BattlesRepo(_client, _context);
+            PlayerSnapshot fetchedPlayer = await GetOfficialPlayer(playerTag);
+
+            if (fetchedPlayer != null)
+            {
+                fetchedPlayer.Battles = battlesRepo.GetPlayersRecentBattles(playerTag);
+
+                if (fetchedPlayer.Battles != null)
+                {
+                    fetchedPlayer.Battles.ForEach(b =>
+                    {
+                        b.Team1DeckA = decksRepo.GetDeckByID(b.Team1DeckAId);
+                        b.Team2DeckA = decksRepo.GetDeckByID(b.Team2DeckAId);
+                        if (b.Team1DeckBId != 0)
+                        {
+                            b.Team1DeckB = decksRepo.GetDeckByID(b.Team1DeckBId);
+                            b.Team2DeckB = decksRepo.GetDeckByID(b.Team2DeckBId);
+
+                        }
+                    });
+                }
+
+
+                //gets players Chests r
+                List<Chest> playerChests = await GetPlayerChestsAsync("%23" + playerTag.Substring(1));
+                if (playerChests.Count > 0)
+                {
+                    fetchedPlayer.Chests = playerChests;
+                }
+                return fetchedPlayer;
+
+            }
+            else return null;
+
+        }
+
+
+
+        public void SavePlayerFull(string playerTag)
+        {
+
+            _logger.Debug($"Saving full player {playerTag}");
+
+            BattlesRepo battlesRepo = new BattlesRepo(_client, _context);
+            ChestsRepo chestsRepo = new ChestsRepo(_client, _context);
+            ClansRepo clansRepo = new ClansRepo(_client, _context);
+            DecksRepo decksRepo = new DecksRepo(_client, _context);
+
+            //player fetched from official API
+            //still needs to be packaged for front end
+            PlayerSnapshot fetchedPlayer = GetOfficialPlayer(playerTag).Result;
+
+            _logger.Debug($"fetched player {fetchedPlayer}");
+
+            //creating the variable outside try so the function has access
+            PlayerSnapshot lastSavedPlayer;
+
+            try
+            {
+                lastSavedPlayer = _context.PlayerSnapshots.Where(p => p.Tag == playerTag).FirstOrDefault();
+            }
+            catch { lastSavedPlayer = null; }
+
+
+            //makes sure new player data is recieved from the offical API
+            if (fetchedPlayer != null)
+            {
+
+                //if there are no instances of this player saved or
+                if (lastSavedPlayer == null || fetchedPlayer.Wins != lastSavedPlayer.Wins || fetchedPlayer.Losses != lastSavedPlayer.Losses ||
+                    fetchedPlayer.ClanTag != lastSavedPlayer.ClanTag || fetchedPlayer.TotalDonations != lastSavedPlayer.TotalDonations)
+                {
+
+                    //if the user's Player's Clan has changed it will Automatically
+                    var users = _context.Users.Where(u => u.Tag == playerTag).ToList();
+
+                    if (users.Count() > 0)
+                    {
+                        users.ForEach(u =>
+                        {
+                            if (u.ClanTag != fetchedPlayer.ClanTag)
+                                u.ClanTag = fetchedPlayer.ClanTag;
+                        });
+                        _context.SaveChanges();
+                    }
+
+                    _logger.Debug($"last saved player");
+
+                    //fetches the current player battles from the official DB
+                    List<Battle> pBattles = battlesRepo.GetOfficialPlayerBattles(fetchedPlayer.Tag).Result;
+
+
+
+                    _logger.Debug($"got battles");
+
+
+                    _logger.Debug($"Getting battles in save player:{pBattles}");
+                    //adds new fetched battles to the DB and gets a count of added lines
+                    battlesRepo.AddBattles(pBattles);
+
+                    _context.PlayerSnapshots.Add(fetchedPlayer);
+                    _context.SaveChanges();
+                }
+
+                //gets players Chests r
+                List<Chest> playerChests = GetPlayerChestsAsync(playerTag).Result;
+
+                _logger.Debug($"fetched player chests {playerChests}");
+
+                if (playerChests.Count > 0)
+                {
+                    fetchedPlayer.Chests = playerChests;
+                }
+
+                if (fetchedPlayer.ClanTag != null)
+                {
+
+                    fetchedPlayer.Clan = clansRepo.SaveClanIfNew(fetchedPlayer.ClanTag).Result;
+                }
+                if (fetchedPlayer.Battles != null)
+                {
+                    fetchedPlayer.Battles.ForEach(b =>
+                    {
+                        b.Team1DeckA = decksRepo.GetDeckByID(b.Team1DeckAId);
+                        b.Team2DeckA = decksRepo.GetDeckByID(b.Team2DeckAId);
+
+                        if (b.Team1DeckBId != 0)
+                        {
+                            b.Team1DeckB = decksRepo.GetDeckByID(b.Team1DeckBId);
+                            b.Team2DeckB = decksRepo.GetDeckByID(b.Team2DeckBId);
+                        }
+                    });
+
+                }
+
+            }
+        }
+    }
+}

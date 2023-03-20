@@ -1,16 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net;
-using System.Threading.Tasks;
+using CodexRoyaleClassesCore3;
+using CodexRoyaleClassesCore3.Models;
+using CodexRoyaleClassesCore3.Repos;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
-using RoyaleTrackerAPI.Models;
-using RoyaleTrackerAPI.Models.RoyaleClasses;
-using RoyaleTrackerAPI.Repos;
-using RoyaleTrackerClasses;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 

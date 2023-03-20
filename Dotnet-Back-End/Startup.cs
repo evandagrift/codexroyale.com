@@ -1,14 +1,11 @@
-
+using CodexRoyaleClassesCore3;
+using CodexRoyaleClassesCore3.Models;
+using CodexRoyaleClassesCore3.Models.Email;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using RoyaleTrackerAPI.Models;
-using RoyaleTrackerAPI.Models.Email;
-using System.Net;
-
 namespace RoyaleTrackerAPI
 {
     public class Startup

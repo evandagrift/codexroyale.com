@@ -20,4 +20,16 @@
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Reference Include="CodexRoyaleClasses">
+      <HintPath>..\CodexRoyaleClasses\CodexRoyaleClasses\bin\Debug\net6.0\CodexRoyaleClasses.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="appsettings.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>

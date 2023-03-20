@@ -9,7 +9,6 @@ import Player from "../components/Player";
 import ChestCollection from "../components/ChestCollection";
 import BattleCollection from "../components/BattleCollection";
 import Deck from "../components/Deck";
-import { GetDeckAsync } from "../Utilities/axios-functions";
 import TopDecks from "../components/TopDecks";
 
 const PlayerPage = () => {
