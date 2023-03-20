@@ -2,9 +2,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using NLog;
 using NLog.Web;
-using RoyaleTrackerAPI.Models;
-using RoyaleTrackerAPI.Repos;
-using RoyaleTrackerClasses;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,7 +12,7 @@ namespace RoyaleTrackerAPI
     {
         private Client _client;
         private TRContext _context;
-        private PlayersRepo repo;
+        private PlayerSnapshotRepo repo;
         private List<TrackedPlayer> _trackedPlayers;
 
         private readonly ILogger _logger;
@@ -99,7 +96,7 @@ namespace RoyaleTrackerAPI
             // With the options generated above, we can then just construct a new DbContext class
 
 
-            repo = new PlayersRepo(_client, _context);
+            repo = new PlayerSnapshotRepo(_client, _context);
 
             DateTime now = DateTime.UtcNow;
             DateTime lastUpdate = now;

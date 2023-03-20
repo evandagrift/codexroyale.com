@@ -1,19 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
-using RoyaleTrackerAPI.Models;
-using RoyaleTrackerAPI.Repos;
-using RoyaleTrackerClasses;
-using RoyaleTrackerAPI.Models.Email;
 using Newtonsoft.Json.Linq;
 using Microsoft.Extensions.Logging;
-using System.Net;
-
+using CodexRoyaleClassesCore3;
+using CodexRoyaleClassesCore3.Models;
+using CodexRoyaleClassesCore3.Repos;
+using CodexRoyaleClassesCore3.Models.Email;
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace RoyaleTrackerAPI.Controllers
@@ -28,7 +22,7 @@ namespace RoyaleTrackerAPI.Controllers
         private TRContext _context;
         private Client _client;
         private UsersRepo _usersRepo;
-        private PlayersRepo _playersRepo;
+        private PlayerSnapshotRepo _playerSnapshotRepo;
         private EmailSender _emailSender;
         private ILogger<UsersController> _logger;
         
@@ -44,7 +38,7 @@ namespace RoyaleTrackerAPI.Controllers
             
             //init the repo with DB context
             _usersRepo = new UsersRepo(_client, _context);
-            _playersRepo = new PlayersRepo(_client, _context);
+            _playerSnapshotRepo = new PlayerSnapshotRepo(_client, _context);
         }
 
         //creates an account and sends email confirmation

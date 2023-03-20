@@ -1,11 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
-using RoyaleTrackerAPI.Models.RoyaleClasses;
-using RoyaleTrackerAPI.Repos;
-using RoyaleTrackerClasses;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using CodexRoyaleClasses.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace RoyaleTrackerAPI.Models
 {

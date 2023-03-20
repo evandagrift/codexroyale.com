@@ -1,12 +1,6 @@
 using System.Threading;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using NLog;
-using NLog.Web;
-using RoyaleTrackerAPI.Models;
-using Microsoft.Extensions.Logging;
-
 namespace RoyaleTrackerAPI
 {
     public class Program
