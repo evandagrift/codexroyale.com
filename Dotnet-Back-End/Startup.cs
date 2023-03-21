@@ -3,9 +3,12 @@ using CodexRoyaleClassesCore3.Models;
 using CodexRoyaleClassesCore3.Models.Email;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using System.Net;
+
 namespace RoyaleTrackerAPI
 {
     public class Startup
@@ -21,26 +24,36 @@ namespace RoyaleTrackerAPI
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            //services.Configure<ForwardedHeadersOptions>(options =>
-            //{
-            //    options.ForwardedHeaders =
-            //        ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
-            //    options.KnownProxies.Add(IPAddress.Parse("127.0.10.1"));
-            //});
+            services.Configure<ForwardedHeadersOptions>(options =>
+            {
+                options.ForwardedHeaders =
+                    ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
+                options.KnownProxies.Add(IPAddress.Parse("127.0.10.1"));
+            });
 
 
             services.AddControllers();
 
-            services.AddCors(options =>
-            {
-                options.AddPolicy("local",
-                                  builder =>
-                                  {
-                                      builder.WithOrigins("http://localhost:3000")
-                                      .AllowAnyHeader().AllowAnyMethod().AllowCredentials();
-                                  });
+            //services.AddCors(options =>
+            //{
+            //    options.AddPolicy("hosted",
+            //                      builder =>
+            //                      {
+            //                          builder.WithOrigins("http://localhost:3000")
+            //                          .AllowAnyHeader().AllowAnyMethod().AllowCredentials();
+            //                      });
 
-            });
+            //});
+            //services.AddCors(options =>
+            //{
+            //    options.AddPolicy("local",
+            //                      builder =>
+            //                      {
+            //                          builder.WithOrigins("http://localhost:3000")
+            //                          .AllowAnyHeader().AllowAnyMethod().AllowCredentials();
+            //                      });
+
+            //});
 
             services.AddDbContext<TRContext>(options => options.UseMySQL(Configuration["ConnectionStrings:DBConnectionString"]), ServiceLifetime.Transient);
 
@@ -76,7 +89,7 @@ namespace RoyaleTrackerAPI
             app.UseForwardedHeaders();
 
             app.UseRouting();
-            app.UseCors("local");
+            //app.UseCors("hosted");
 
             app.UseAuthorization();
 

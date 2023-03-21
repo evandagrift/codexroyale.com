@@ -1,13 +1,7 @@
-﻿using RoyaleTrackerAPI.Models;
-using RoyaleTrackerAPI.Models.Email;
-using RoyaleTrackerAPI.Repos;
-using RoyaleTrackerClasses;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using CodexRoyaleClasses.Models;
+using CodexRoyaleClasses.Repos;
 
-namespace RoyaleTrackerAPI
+namespace CodexRoyaleClasses
 {
     public class CustomAuthenticationManager
     {
@@ -57,7 +51,7 @@ namespace RoyaleTrackerAPI
             return null;
         }
 
-
+        /*
         public string SendPasswordReset(string userEmail, UsersRepo usersRepo, TRContext context, EmailSender emailSender)
         {
             //gets the user with the recieved email
@@ -86,7 +80,7 @@ namespace RoyaleTrackerAPI
             else return "";
         }
 
-
+        */
         public User ResetUserPassword(string password, string resetCode, UsersRepo usersRepo, TRContext context)
         {
             User fetchedUser = context.Users.Where(u => u.PasswordResetCode == resetCode && u.PasswordResetCode != null).FirstOrDefault();
@@ -111,7 +105,7 @@ namespace RoyaleTrackerAPI
             return null;
         }
 
-
+        /*
         //for users to create accounts
         public string CreateAccount(User user, EmailSender emailSender, UsersRepo usersRepo, TRContext context)
         {
@@ -233,6 +227,8 @@ namespace RoyaleTrackerAPI
 
 
         }
+        */
+
         public User Login(User submittedUser, TRContext context)
         {
             //fetches user with given username from the database

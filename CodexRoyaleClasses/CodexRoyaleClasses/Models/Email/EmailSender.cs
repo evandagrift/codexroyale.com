@@ -1,10 +1,5 @@
-﻿using Microsoft.Extensions.Options;
-using RoyaleTrackerClasses;
-using SendGrid;
-using SendGrid.Helpers.Mail;
-using System.Threading.Tasks;
-
-namespace RoyaleTrackerAPI.Models.Email
+﻿
+namespace CodexRoyaleClasses.Models.Email
 {
     public class EmailSender
     {
@@ -43,7 +38,7 @@ namespace RoyaleTrackerAPI.Models.Email
 
 
         public Task Execute(string apiKey, string subject, string message, string email)
-        {
+        {/*
             var client = new SendGridClient(apiKey);
             var msg = new SendGridMessage()
             {
@@ -59,6 +54,8 @@ namespace RoyaleTrackerAPI.Models.Email
             msg.SetClickTracking(false, false);
 
             return client.SendEmailAsync(msg);
+            */
+            return null;
         }
     }
 }

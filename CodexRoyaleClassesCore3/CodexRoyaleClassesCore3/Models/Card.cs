@@ -13,6 +13,7 @@ namespace CodexRoyaleClassesCore3.Models
         public int Id { get; set; }
         public string Name { get; set; }
         public string Url { get; set; }
+        public bool? EventCard { get; set; }
 
         [NotMapped]
         public IDictionary<string, string> IconUrls { get; set; }

@@ -1,11 +1,7 @@
-﻿using RoyaleTrackerAPI.Models;
-using RoyaleTrackerClasses;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿
+using CodexRoyaleClasses.Models;
 
-namespace RoyaleTrackerAPI
+namespace CodexRoyaleClasses
 {
     public interface ICustomAuthenticationManager
     {

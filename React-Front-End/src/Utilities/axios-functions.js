@@ -25,7 +25,7 @@ export async function GetBattlesAsync() {
 }
 export async function GetPlayerTagAsync(id) {
   try {
-    const response = await axios.get("players/team/"+id);
+    const response = await axios.get("playersnapshot/team/"+id);
     return response.data;
   } catch {
     return undefined;
@@ -62,7 +62,7 @@ export async function GetPlayerBattlesAsync(playerTag) {
 export async function GetChestsAsync(playerTag) {
   try {
     const response = await axios.get(
-      "players/chests/" + FormatTag(playerTag),
+      "playersnapshot/chests/" + FormatTag(playerTag),
       {}
     );
     return response.data;
@@ -73,7 +73,7 @@ export async function GetChestsAsync(playerTag) {
 
 export async function GetTopDecks(playerTag) {
   try {
-    const response = await axios.get( "players/decks/" + FormatTag(playerTag));
+    const response = await axios.get( "playersnapshot/decks/" + FormatTag(playerTag));
     return response.data;
   } catch {
     return undefined;
@@ -107,7 +107,16 @@ export async function updateUserSettings(user, tag, password, newPassword) {
 
 export async function getPlayerDataAsync(tag) {
   try {
-    const response = await axios.get("players/" + FormatTag(tag));
+    const response = await axios.get("playersnapshot/" + FormatTag(tag));
+    return response.data;
+  } catch {
+    return undefined;
+  }
+}
+
+export async function getAllCards() {
+  try {
+    const response = await axios.get("cards");
     return response.data;
   } catch {
     return undefined;

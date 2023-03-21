@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace RoyaleTrackerAPI.Models.Email
+namespace CodexRoyaleClasses.Models.Email
 {
     public class AuthMessageSenderOptions
     {

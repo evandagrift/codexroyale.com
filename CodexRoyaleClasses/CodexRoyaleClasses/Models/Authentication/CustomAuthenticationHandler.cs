@@ -1,17 +1,12 @@
-﻿using Microsoft.AspNetCore.Authentication;
+﻿using CodexRoyaleClasses.Models;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using RoyaleTrackerAPI.Models;
-using RoyaleTrackerClasses;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Security.Claims;
 using System.Security.Principal;
 using System.Text.Encodings.Web;
-using System.Threading.Tasks;
 
-namespace RoyaleTrackerAPI
+namespace CodexRoyaleClasses
 {
     public class CustomAuthenticationHandler : AuthenticationHandler<AuthenticationSchemeOptions>
     {
