@@ -42,12 +42,21 @@ namespace RoyaleTrackerAPI.Controllers
 
         //Gets all cards in DB
         [AllowAnonymous]
-        [HttpGet]
-        public string Get()
+        [HttpGet("all")]
+        public string GetAll()
         {
             _logger.LogInformation($"{Request.HttpContext.Connection.RemoteIpAddress} Getting all Cards");
             List<Card> cards = _repo.GetAllCards();
-            return JsonConvert.SerializeObject(cards, Formatting.Indented, new JsonSerializerSettings {NullValueHandling = NullValueHandling.Ignore});
+            return JsonConvert.SerializeObject(cards, Formatting.Indented, new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore });
+        }
+        //Gets all non event cards in DB
+        [AllowAnonymous]
+        [HttpGet]
+        public string Get()
+        {
+            _logger.LogInformation($"{Request.HttpContext.Connection.RemoteIpAddress} Getting all non event Cards");
+            List<Card> cards = _repo.GetAllNonEventCards();
+            return JsonConvert.SerializeObject(cards, Formatting.Indented, new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore });
         }
 
         //Gets card w/ provided Id

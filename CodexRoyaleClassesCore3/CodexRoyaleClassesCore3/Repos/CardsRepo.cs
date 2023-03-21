@@ -143,7 +143,10 @@ namespace CodexRoyaleClassesCore3.Repos
                 return _cards.Where(c => c.Id == cardId).FirstOrDefault();
             }
             else return null;
-        }
+        }        
+        
+        //returns a list of all non event cards in DB
+        public List<Card> GetAllNonEventCards() { return _cards.Where(c => c.EventCard == false).ToList(); }
 
 
         //commented out until future testing

@@ -142,6 +142,33 @@ namespace CodexRoyaleClasses.Repos
             else return null;
         }
 
+        public async void UpdateCardEventStatus()
+        {
+            //test against official
+            //add any that aren't in DB
+            List<Card> officialCards = GetAllOfficialCards().Result;
+            List<Card> codexCards = _context.Cards.ToList();
+
+            if (officialCards != null && codexCards != null)
+            {
+                codexCards.ForEach(c => {
+
+                    int matchCardId = officialCards.FindIndex(o => c.Id == o.Id);
+                    if (matchCardId == -1)
+                    {
+                        c.EventCard = true;
+                    }
+                    else
+                    {
+                        c.EventCard = false;
+                    }
+
+                    _context.Cards.Update(c);
+                });
+                _context.SaveChanges();
+            }
+        }
+
 
         //commented out until future testing
 
