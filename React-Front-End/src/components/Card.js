@@ -9,7 +9,7 @@ class Card extends Component{
           
     const { card } = this.props;
 
-    if(card) return (<div className={styles.card}><img key={"$id-"+card.Id} src={card.Url}/></div>);
+    if(card) return (<div className={styles.card}><img draggable={false} key={"$id-"+card.Id} src={card.Url}/></div>);
     
     else return (<div/>);
   }
