@@ -1,15 +1,14 @@
-import Test from '../components/Test';
+import DeckEditor from '../components/warDayDeckEditing/DeckEditor';
 import React, { useState, useContext, useEffect } from "react";
-import { Redirect, useParams } from "react-router-dom";
 
 
-const TestPage = () => {
+const WarDayDeckEditorPage = () => {
 
 
-  return <Test />;
+  return <DeckEditor />;
 };
 
-export default TestPage;
+export default WarDayDeckEditorPage;
 
 /*
  <div>
