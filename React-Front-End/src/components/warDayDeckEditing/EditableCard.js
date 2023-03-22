@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
-import styles from "../cssModules/Card.module.css";
+import styles from "../../cssModules/Card.module.css";
 
-class TestCard extends Component{
+class EditableCard extends Component{
   constructor(props){
     super(props);
   } 
@@ -16,7 +16,7 @@ class TestCard extends Component{
         this.props.dropEvent(e,card);
     }
     let dragOver = (e) =>{
-      this.props.dragOver(e);
+      this.props.dragOver(e,card);
     }
     if(card) return (<div onDrop={dropEvent} onDragOver={dragOver} onDrag={dragEvent} className={styles.card}><img  key={"$id-"+card.Id} src={card.Url}/></div>);
     
@@ -24,4 +24,4 @@ class TestCard extends Component{
   }
 
 }
-export default TestCard;  
+export default EditableCard;  
