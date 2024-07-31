@@ -30,8 +30,8 @@ function App() {
     <BrowserRouter>
           <MyNavbar  />
           
-          {/* <Route path="/" exact component={HomePage}  /> */}
-          <Route path="/" exact component={WarDayDeckEditorPage}  />
+          <Route path="/" exact component={HomePage}  />
+          {/* <Route path="/" exact component={WarDayDeckEditorPage}  /> */}
 
           <Route path="/login" exact  component={LoginPage}  />
           <Route path="/register" exact component={RegisterPage}  />
@@ -39,7 +39,7 @@ function App() {
           <Route path="/clan" exact component={ClanPage}  />
           <Route path="/contact" exact component={ContactPage}  />
           <Route path="/clan/:clanTag"> <ClanPage /> </Route>
-          <Route path="/player"exact  component={PlayerPage}/>
+          <Route path="/player" exact component={PlayerPage}/>
           <Route path="/player/:playerTag"><PlayerPage /></Route>
           <Route path="/register/authenticate/:verificationCode"><EmailVerificationPage /></Route>
           <Route path="/forgotpassword/:passwordResetCode"exact  component={ForgotPasswordPage}/>

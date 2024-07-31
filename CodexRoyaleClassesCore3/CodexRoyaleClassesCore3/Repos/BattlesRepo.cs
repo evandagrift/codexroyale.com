@@ -1,4 +1,5 @@
 ﻿using CodexRoyaleClassesCore3.Models;
+using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -20,7 +21,6 @@ namespace CodexRoyaleClassesCore3.Repos
 
         //connection sting for the Codex API Controller that is being handled\
         private string officialConnectionString = "players/%23";
-
 
         public BattlesRepo(Client c, TRContext ct)
         {
@@ -163,7 +163,7 @@ namespace CodexRoyaleClassesCore3.Repos
 
             //after all new battles are added to context changes are saved
             _context.SaveChanges();
-        }
+        } 
 
         //returns a list of all battles from DB
         public List<Battle> GetAllBattles() { return PopulateBattleDecks(_context.Battles.ToList()); }
@@ -187,7 +187,7 @@ namespace CodexRoyaleClassesCore3.Repos
         public List<Battle> GetPlayersRecentBattles(string playerTag)
         {
 
-            if (playerTag != null && _context.Battles.Count() > 0)
+            if (playerTag != null && _context.Battles.Any() && _context.Battles.Count() > 0)
             {
                 Team playerTeam = _context.Teams.Where(t => t.Tag == playerTag && t.TwoVTwo == false).FirstOrDefault();
                 int numPlayerBattles = _context.Battles.Where(b => b.Team1Id == playerTeam.TeamId || b.Team2Id == playerTeam.TeamId).Count();
@@ -198,33 +198,23 @@ namespace CodexRoyaleClassesCore3.Repos
 
                 if (fetchThisMany != 0)
                 {
-                    return PopulateBattleDecks(_context.Battles.Where(b => b.Team1Id == playerTeam.TeamId || b.Team2Id == playerTeam.TeamId).OrderByDescending(b => b.BattleTime).Take(fetchThisMany).ToList());
+                    var temp = PopulateBattleDecks(_context.Battles.Where(b => b.Team1Id == playerTeam.TeamId || b.Team2Id == playerTeam.TeamId).OrderByDescending(b => b.BattleTime).Take(fetchThisMany).ToList());
+                    return temp;
                 }
                 else return null;
             }
             else { return null; }
         }
-        public List<Battle> GetRecentBattles()
-        {
-            int fetchThisMany = 30;
+        public async Task<PaginatedResponse<Battle>> GetRecentBattles(int pageIndex, int itemsPerPage)
+        {   
+            List<Battle> battles = await _context.Battles
+                .OrderByDescending(b => b.BattleTime)
+                .Skip((pageIndex - 1) * itemsPerPage)
+                .Take(itemsPerPage).ToListAsync();
 
-            if (fetchThisMany > _context.Battles.Count()) fetchThisMany = _context.Battles.Count();
+            var totalPages = (int)Math.Ceiling(_context.Battles.Count() / (double)itemsPerPage);
 
-            List<Battle> battlesToReturn = _context.Battles.OrderByDescending(b => b.BattleTime).Take(fetchThisMany).ToList();
-
-            //battlesToReturn.ForEach(b =>
-            //{
-            //    b.Team1DeckA = _decksRepo.GetDeckByID(b.Team1DeckAId);
-            //    b.Team2DeckA = _decksRepo.GetDeckByID(b.Team2DeckAId);
-            //    if (b.Team1DeckBId != 0)
-            //    {
-            //        b.Team1DeckB = _decksRepo.GetDeckByID(b.Team1DeckBId);
-            //        b.Team2DeckB = _decksRepo.GetDeckByID(b.Team2DeckBId);
-
-            //    }
-            //});
-
-            return PopulateBattleDecks(battlesToReturn);
+            return new PaginatedResponse<Battle>(PopulateBattleDecks(battles), pageIndex, itemsPerPage, totalPages);
         }
 
 
@@ -271,11 +261,8 @@ namespace CodexRoyaleClassesCore3.Repos
                 //removes it from the database and saves chages
                 _context.Battles.Remove(battleToDelete);
                 _context.SaveChanges();
-
             }
         }
-
-
 
         //updates battle at given ID
         public void UpdateBattle(Battle battle)
@@ -322,6 +309,7 @@ namespace CodexRoyaleClassesCore3.Repos
                 _context.SaveChanges();
             }
         }
+
         public List<Battle> PopulateBattleDecks(List<Battle> battles)
         {
             DecksRepo decksRepo = new DecksRepo(_client, _context);

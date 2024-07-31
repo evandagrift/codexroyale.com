@@ -1,5 +1,4 @@
 ﻿using CodexRoyaleClassesCore3.Models;
-using CodexRoyaleClassesCore3.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;

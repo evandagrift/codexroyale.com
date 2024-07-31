@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
+using System.Threading.Tasks;
 using CodexRoyaleClassesCore3;
 using CodexRoyaleClassesCore3.Models;
 using CodexRoyaleClassesCore3.Repos;
@@ -10,7 +10,7 @@ using Newtonsoft.Json;
 namespace RoyaleTrackerAPI.Controllers
 {
     [Authorize]
-    [Route("api/[controller]")]
+    [Route("[controller]")]
     [ApiController]
     public class BattlesController : ControllerBase
     {
@@ -19,7 +19,9 @@ namespace RoyaleTrackerAPI.Controllers
         private TRContext _context;
         private Client _client;
         private BattlesRepo _repo;
-        private  ILogger<BattlesController> _logger;
+
+        //logging currently broken 
+        //////private  ILogger<BattlesController> _logger;
 
         //loading in injected dependancies
         public BattlesController(Client c, TRContext ct, ILogger<BattlesController> logger)
@@ -27,31 +29,45 @@ namespace RoyaleTrackerAPI.Controllers
             _context = ct;
             _client = c;
             _repo = new BattlesRepo(_client, _context);
-            _logger = logger;
+           //_logger = logger;
         }
 
 
         //returns list of battles
         [AllowAnonymous]
         [HttpGet]
-        public IActionResult Get()
+        public async Task<IActionResult> Get([FromQuery] int pageIndex, [FromQuery] int itemsPerPage)
         {
-
-            List<Battle> battles = _repo.GetRecentBattles();
-            //_logger.LogInformation($"{Request.HttpContext.Connection.RemoteIpAddress} Getting Most Recently Saved Battles");
-            
-            return Ok(JsonConvert.SerializeObject(battles, Formatting.Indented, new JsonSerializerSettings
+            PaginatedResponse<Battle> response = await _repo.GetRecentBattles(pageIndex, itemsPerPage);
+            ////_logger.LogInformation($"{Request.HttpContext.Connection.RemoteIpAddress} Getting Most Recently Saved Battles");
+            return Ok(JsonConvert.SerializeObject(response, Formatting.Indented, new JsonSerializerSettings
             {
                 NullValueHandling = NullValueHandling.Ignore
             }));
         }
+
+        [AllowAnonymous]
+        [HttpGet("player/{playerTag}")]
+        // GET: api/Battles/{user}
+        public IActionResult GetBattles(string playerTag)
+        {
+
+            //returns battle with Id based off given battle, if said battle doesn't exist it is created and returned after assigned Id
+            List<Battle> battles = _repo.GetPlayersRecentBattles(playerTag);
+
+            ////_logger.LogInformation($"{Request.HttpContext.Connection.RemoteIpAddress} Getting Recent Battles from player:{playerTag}");
+
+            //returns list of battles
+            return Ok(JsonConvert.SerializeObject(battles, Formatting.Indented, new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore }));
+        }
+
 
         //adds the Posted battle to DB if it's new
         [Authorize(Policy = "AdminOnly")]
         [HttpPost]
         public IActionResult Post([FromBody] Battle battle)
         {
-            _logger.LogWarning($"{Request.HttpContext.Connection.RemoteIpAddress} POSTING BATTLE!");
+            ////_logger.LogWarning($"{Request.HttpContext.Connection.RemoteIpAddress} POSTING BATTLE!");
             _repo.AddBattle(battle);
             return Ok();
         }
@@ -62,28 +78,11 @@ namespace RoyaleTrackerAPI.Controllers
         public IActionResult Post([FromBody] List<Battle> battles)
         {
 
-            _logger.LogWarning($"{Request.HttpContext.Connection.RemoteIpAddress} Posting {battles.Count()} battles");
+            ////_logger.LogWarning($"{Request.HttpContext.Connection.RemoteIpAddress} Posting {battles.Count()} battles");
             _repo.AddBattles(battles);
             return Ok();
         }
 
-
-
-
-        [AllowAnonymous]
-        [HttpGet("player/{playerTag}")]
-        // GET: api/Battles/{user}
-        public IActionResult GetBattles(string playerTag)
-        {
-            
-            //returns battle with Id based off given battle, if said battle doesn't exist it is created and returned after assigned Id
-            List<Battle> battles = _repo.GetPlayersRecentBattles(playerTag);
-
-            _logger.LogInformation($"{Request.HttpContext.Connection.RemoteIpAddress} Getting Recent Battles from player:{playerTag}");
-
-            //returns list of battles
-            return Ok(JsonConvert.SerializeObject(battles, Formatting.Indented, new JsonSerializerSettings {NullValueHandling = NullValueHandling.Ignore}));
-        }
 
 
         //returns player with given Id
@@ -91,7 +90,7 @@ namespace RoyaleTrackerAPI.Controllers
         [HttpGet("id/{id}")]
         public string Get(int id)
         {
-            _logger.LogInformation($"{Request.HttpContext.Connection.RemoteIpAddress} Getting battle {id}");
+            //_logger.LogInformation($"{Request.HttpContext.Connection.RemoteIpAddress} Getting battle {id}");
             return JsonConvert.SerializeObject(_repo.GetBattleByID(id), Formatting.Indented, new JsonSerializerSettings{ NullValueHandling = NullValueHandling.Ignore });
         }
 
@@ -101,7 +100,7 @@ namespace RoyaleTrackerAPI.Controllers
         [HttpDelete("{id}")]
         public void Delete(int id)
         {
-            _logger.LogWarning($"{Request.HttpContext.Connection.RemoteIpAddress} DELETING BATTLE {id}!");
+            //_logger.LogWarning($"{Request.HttpContext.Connection.RemoteIpAddress} DELETING BATTLE {id}!");
             _repo.DeleteBattle(id);
         }
 
@@ -110,7 +109,7 @@ namespace RoyaleTrackerAPI.Controllers
         [HttpPut]
         public void Update([FromBody] Battle battle)
         {
-            _logger.LogWarning($"{Request.HttpContext.Connection.RemoteIpAddress} UPDATING BATTLE {battle.BattleId}!");
+            //_logger.LogWarning($"{Request.HttpContext.Connection.RemoteIpAddress} UPDATING BATTLE {battle.BattleId}!");
             _repo.UpdateBattle(battle);
         }
 

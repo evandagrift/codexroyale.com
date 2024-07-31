@@ -146,7 +146,7 @@ namespace CodexRoyaleClassesCore3.Repos
         }        
         
         //returns a list of all non event cards in DB
-        public List<Card> GetAllNonEventCards() { return _cards.Where(c => c.EventCard == false).ToList(); }
+        public List<Card> GetAllNonEventCards() { return _cards.Where(c => c.EventCard != true).ToList(); }
 
 
         //commented out until future testing

@@ -130,11 +130,11 @@ namespace ClashFeeder.Repos
 
                         //assigns current favorite card details
                         PlayerSnapshot.CurrentFavouriteCardId = PlayerSnapshot.CurrentFavouriteCard.Id;
-                        PlayerSnapshot.CurrentFavouriteCard = cardsRepo.ConvertCardUrl(PlayerSnapshot.CurrentFavouriteCard);
+                        PlayerSnapshot.CurrentFavouriteCard.SetUrls();
                         PlayerSnapshot.CardsDiscovered = PlayerSnapshot.Cards.Count;
                         PlayerSnapshot.Cards.ForEach(c =>
                         {
-                            c = cardsRepo.ConvertCardUrl(c);
+                            c.SetUrls();
                         });
 
                         if (PlayerSnapshot.Clan != null)
