@@ -187,11 +187,11 @@ namespace CodexRoyaleClassesCore3.Repos
 
         }
 
-        public async Task<List<Deck>> GetPlayerTopDecksAsync(string tag)
+        public List<Deck> GetPlayerTopDecksAsync(string tag)
         {
             int teamId = _context.Teams.Where(t => t.TwoVTwo == false && t.Tag == tag).FirstOrDefault().TeamId;
 
-
+             
             if (teamId > 0)
             {
                 List<Deck> playerDecks = new List<Deck>();

@@ -54,6 +54,9 @@
     -webkit-text-stroke: .25px black;
 }
 
+.loadingIcon {
+    margin: 32px;
+}
 .chestCollection {
 
     background-color: rgb(26, 39, 63);

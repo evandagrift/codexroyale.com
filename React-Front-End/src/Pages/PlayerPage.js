@@ -32,7 +32,6 @@ const PlayerPage = () => {
 
   if(tag)
   {
-    
     return (
       <div>
       {<ChestCollection playerTag={tag} />}

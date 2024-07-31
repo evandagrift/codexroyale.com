@@ -15,17 +15,18 @@ export async function LoginFunctionAsync(username, password) {
   }
 }
 
-export async function GetBattlesAsync() {
+export function GetBattlesAsync(paginationInfo) {
   try {
-    const response = await axios.get("battles");
-    return response.data;
-  } catch {
-    return undefined;
+    var response = axios.get(`battles?pageIndex=${paginationInfo.pageIndex}&itemsPerPage=${paginationInfo.itemsPerPage}`);
+    return response;
+  } catch(error){
+    console.error("Error fetching battles:", error);
+    return null;
   }
 }
 export async function GetPlayerTagAsync(id) {
   try {
-    const response = await axios.get("playersnapshot/team/"+id);
+    const response = await axios.get("teams/playertag/" + id);
     return response.data;
   } catch {
     return undefined;
@@ -33,11 +34,8 @@ export async function GetPlayerTagAsync(id) {
 }
 
 export async function GetClanAsync(tag) {
-  
   try {
     const searchTag = FormatTag(tag);
-    
-
     const response = await axios.get("clans/" + searchTag);
     return response.data;
   } catch {
@@ -46,13 +44,13 @@ export async function GetClanAsync(tag) {
 }
 
 
-export async function GetPlayerBattlesAsync(playerTag) {
+export async function GetPlayerBattlesAsync(playerTag, paginationInfo) {
   if (playerTag) {
     try {
       const searchTag = FormatTag(playerTag);
-      
-        const responseBattles = await axios.get("battles/player/" + searchTag);
-        return responseBattles.data
+
+      const responseBattles = await axios.get("battles/player/" + searchTag);
+      return responseBattles.data
     } catch {
       return undefined;
     }
@@ -62,9 +60,7 @@ export async function GetPlayerBattlesAsync(playerTag) {
 export async function GetChestsAsync(playerTag) {
   try {
     const response = await axios.get(
-      "playersnapshot/chests/" + FormatTag(playerTag),
-      {}
-    );
+      "players/" + FormatTag(playerTag) + "/chests");
     return response.data;
   } catch {
     return undefined;
@@ -73,7 +69,7 @@ export async function GetChestsAsync(playerTag) {
 
 export async function GetTopDecks(playerTag) {
   try {
-    const response = await axios.get( "playersnapshot/decks/" + FormatTag(playerTag));
+    const response = await axios.get("players/" + FormatTag(playerTag) + "/decks");
     return response.data;
   } catch {
     return undefined;
@@ -107,7 +103,7 @@ export async function updateUserSettings(user, tag, password, newPassword) {
 
 export async function getPlayerDataAsync(tag) {
   try {
-    const response = await axios.get("playersnapshot/" + FormatTag(tag));
+    const response = await axios.get("players/" + FormatTag(tag));
     return response.data;
   } catch {
     return undefined;
@@ -123,24 +119,16 @@ export async function getAllCards() {
   }
 }
 
-
-
-
 export async function GetDeckAsync(tag) {
-  
   try {
-
-    const response = await axios.get("decks/" +6224);
+    const response = await axios.get("decks/" + 6224);
     return response.data;
   } catch {
     return undefined;
   }
 }
 
-
 /*
-
-
   async function getCard(id) {
     const response = axios.get("cards/" + id, config);
     return response.data;
