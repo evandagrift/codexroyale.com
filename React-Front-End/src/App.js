@@ -14,7 +14,7 @@ import ContactPage from './Pages/ContactPage';
 import EmailVerificationPage from './Pages/EmailVerificationPage';
 import ForgotPasswordPage from './Pages/ForgotPasswordPage';
 
-import WarDayDeckEditorPage from './Pages/WarDayDeckEditorPage';
+import TestPage from './Pages/TestPage';
 
 function App() {
     const [user, setUser] = useState(null);
@@ -31,7 +31,7 @@ function App() {
           <MyNavbar  />
           
           {/* <Route path="/" exact component={HomePage}  /> */}
-          <Route path="/" exact component={WarDayDeckEditorPage}  />
+          <Route path="/" exact component={TestPage}  />
 
           <Route path="/login" exact  component={LoginPage}  />
           <Route path="/register" exact component={RegisterPage}  />
