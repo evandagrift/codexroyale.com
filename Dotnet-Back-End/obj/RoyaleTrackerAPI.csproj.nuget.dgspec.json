@@ -1,20 +1,24 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\Elodin\\Documents\\Codex\\codexroyale.com\\Dotnet-Back-End\\RoyaleTrackerAPI.csproj": {}
+    "C:\\Users\\evand\\OneDrive\\Documents\\Code\\Codex Royale\\codexroyale.com\\Dotnet-Back-End\\RoyaleTrackerAPI.csproj": {}
   },
   "projects": {
-    "C:\\Users\\Elodin\\Documents\\Codex\\codexroyale.com\\CodexRoyaleClassesCore3\\CodexRoyaleClassesCore3\\CodexRoyaleClassesCore3.csproj": {
+    "C:\\Users\\evand\\OneDrive\\Documents\\Code\\Codex Royale\\codexroyale.com\\CodexRoyaleClassesCore3\\CodexRoyaleClassesCore3\\CodexRoyaleClassesCore3.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\Elodin\\Documents\\Codex\\codexroyale.com\\CodexRoyaleClassesCore3\\CodexRoyaleClassesCore3\\CodexRoyaleClassesCore3.csproj",
+        "projectUniqueName": "C:\\Users\\evand\\OneDrive\\Documents\\Code\\Codex Royale\\codexroyale.com\\CodexRoyaleClassesCore3\\CodexRoyaleClassesCore3\\CodexRoyaleClassesCore3.csproj",
         "projectName": "CodexRoyaleClassesCore3",
-        "projectPath": "C:\\Users\\Elodin\\Documents\\Codex\\codexroyale.com\\CodexRoyaleClassesCore3\\CodexRoyaleClassesCore3\\CodexRoyaleClassesCore3.csproj",
-        "packagesPath": "C:\\Users\\Elodin\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\Elodin\\Documents\\Codex\\codexroyale.com\\CodexRoyaleClassesCore3\\CodexRoyaleClassesCore3\\obj\\",
+        "projectPath": "C:\\Users\\evand\\OneDrive\\Documents\\Code\\Codex Royale\\codexroyale.com\\CodexRoyaleClassesCore3\\CodexRoyaleClassesCore3\\CodexRoyaleClassesCore3.csproj",
+        "packagesPath": "C:\\Users\\evand\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\evand\\OneDrive\\Documents\\Code\\Codex Royale\\codexroyale.com\\CodexRoyaleClassesCore3\\CodexRoyaleClassesCore3\\obj\\",
         "projectStyle": "PackageReference",
+        "fallbackFolders": [
+          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+        ],
         "configFilePaths": [
-          "C:\\Users\\Elodin\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\evand\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
@@ -22,6 +26,7 @@
         ],
         "sources": {
           "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "C:\\Program Files\\dotnet\\library-packs": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
@@ -34,6 +39,11 @@
           "warnAsError": [
             "NU1605"
           ]
+        },
+        "restoreAuditProperties": {
+          "enableAudit": "true",
+          "auditLevel": "low",
+          "auditMode": "direct"
         }
       },
       "frameworks": {
@@ -67,7 +77,8 @@
             "net47",
             "net471",
             "net472",
-            "net48"
+            "net48",
+            "net481"
           ],
           "assetTargetFallback": true,
           "warn": true,
@@ -76,21 +87,25 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\6.0.301\\RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.300\\RuntimeIdentifierGraph.json"
         }
       }
     },
-    "C:\\Users\\Elodin\\Documents\\Codex\\codexroyale.com\\Dotnet-Back-End\\RoyaleTrackerAPI.csproj": {
+    "C:\\Users\\evand\\OneDrive\\Documents\\Code\\Codex Royale\\codexroyale.com\\Dotnet-Back-End\\RoyaleTrackerAPI.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\Elodin\\Documents\\Codex\\codexroyale.com\\Dotnet-Back-End\\RoyaleTrackerAPI.csproj",
+        "projectUniqueName": "C:\\Users\\evand\\OneDrive\\Documents\\Code\\Codex Royale\\codexroyale.com\\Dotnet-Back-End\\RoyaleTrackerAPI.csproj",
         "projectName": "RoyaleTrackerAPI",
-        "projectPath": "C:\\Users\\Elodin\\Documents\\Codex\\codexroyale.com\\Dotnet-Back-End\\RoyaleTrackerAPI.csproj",
-        "packagesPath": "C:\\Users\\Elodin\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\Elodin\\Documents\\Codex\\codexroyale.com\\Dotnet-Back-End\\obj\\",
+        "projectPath": "C:\\Users\\evand\\OneDrive\\Documents\\Code\\Codex Royale\\codexroyale.com\\Dotnet-Back-End\\RoyaleTrackerAPI.csproj",
+        "packagesPath": "C:\\Users\\evand\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\evand\\OneDrive\\Documents\\Code\\Codex Royale\\codexroyale.com\\Dotnet-Back-End\\obj\\",
         "projectStyle": "PackageReference",
+        "fallbackFolders": [
+          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+        ],
         "configFilePaths": [
-          "C:\\Users\\Elodin\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\evand\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
@@ -98,14 +113,15 @@
         ],
         "sources": {
           "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "C:\\Program Files\\dotnet\\library-packs": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
           "netcoreapp3.1": {
             "targetAlias": "netcoreapp3.1",
             "projectReferences": {
-              "C:\\Users\\Elodin\\Documents\\Codex\\codexroyale.com\\CodexRoyaleClassesCore3\\CodexRoyaleClassesCore3\\CodexRoyaleClassesCore3.csproj": {
-                "projectPath": "C:\\Users\\Elodin\\Documents\\Codex\\codexroyale.com\\CodexRoyaleClassesCore3\\CodexRoyaleClassesCore3\\CodexRoyaleClassesCore3.csproj"
+              "C:\\Users\\evand\\OneDrive\\Documents\\Code\\Codex Royale\\codexroyale.com\\CodexRoyaleClassesCore3\\CodexRoyaleClassesCore3\\CodexRoyaleClassesCore3.csproj": {
+                "projectPath": "C:\\Users\\evand\\OneDrive\\Documents\\Code\\Codex Royale\\codexroyale.com\\CodexRoyaleClassesCore3\\CodexRoyaleClassesCore3\\CodexRoyaleClassesCore3.csproj"
               }
             }
           }
@@ -114,6 +130,11 @@
           "warnAsError": [
             "NU1605"
           ]
+        },
+        "restoreAuditProperties": {
+          "enableAudit": "true",
+          "auditLevel": "low",
+          "auditMode": "direct"
         }
       },
       "frameworks": {
@@ -131,7 +152,8 @@
             "net47",
             "net471",
             "net472",
-            "net48"
+            "net48",
+            "net481"
           ],
           "assetTargetFallback": true,
           "warn": true,
@@ -143,7 +165,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\6.0.301\\RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.300\\RuntimeIdentifierGraph.json"
         }
       }
     }
