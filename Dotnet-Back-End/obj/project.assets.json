@@ -6793,11 +6793,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\evand\\OneDrive\\Documents\\Code\\Codex Royale\\codexroyale.com\\Dotnet-Back-End\\RoyaleTrackerAPI.csproj",
+      "projectUniqueName": "C:\\Users\\evand\\OneDrive\\Documents\\Code\\CodexRoyal\\codexroyale.com\\Dotnet-Back-End\\RoyaleTrackerAPI.csproj",
       "projectName": "RoyaleTrackerAPI",
-      "projectPath": "C:\\Users\\evand\\OneDrive\\Documents\\Code\\Codex Royale\\codexroyale.com\\Dotnet-Back-End\\RoyaleTrackerAPI.csproj",
+      "projectPath": "C:\\Users\\evand\\OneDrive\\Documents\\Code\\CodexRoyal\\codexroyale.com\\Dotnet-Back-End\\RoyaleTrackerAPI.csproj",
       "packagesPath": "C:\\Users\\evand\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\evand\\OneDrive\\Documents\\Code\\Codex Royale\\codexroyale.com\\Dotnet-Back-End\\obj\\",
+      "outputPath": "C:\\Users\\evand\\OneDrive\\Documents\\Code\\CodexRoyal\\codexroyale.com\\Dotnet-Back-End\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
@@ -6812,15 +6812,14 @@
       ],
       "sources": {
         "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
-        "C:\\Program Files\\dotnet\\library-packs": {},
         "https://api.nuget.org/v3/index.json": {}
       },
       "frameworks": {
         "netcoreapp3.1": {
           "targetAlias": "netcoreapp3.1",
           "projectReferences": {
-            "C:\\Users\\evand\\OneDrive\\Documents\\Code\\Codex Royale\\codexroyale.com\\CodexRoyaleClassesCore3\\CodexRoyaleClassesCore3\\CodexRoyaleClassesCore3.csproj": {
-              "projectPath": "C:\\Users\\evand\\OneDrive\\Documents\\Code\\Codex Royale\\codexroyale.com\\CodexRoyaleClassesCore3\\CodexRoyaleClassesCore3\\CodexRoyaleClassesCore3.csproj"
+            "C:\\Users\\evand\\OneDrive\\Documents\\Code\\CodexRoyal\\codexroyale.com\\CodexRoyaleClassesCore3\\CodexRoyaleClassesCore3\\CodexRoyaleClassesCore3.csproj": {
+              "projectPath": "C:\\Users\\evand\\OneDrive\\Documents\\Code\\CodexRoyal\\codexroyale.com\\CodexRoyaleClassesCore3\\CodexRoyaleClassesCore3\\CodexRoyaleClassesCore3.csproj"
             }
           }
         }
@@ -6834,7 +6833,8 @@
         "enableAudit": "true",
         "auditLevel": "low",
         "auditMode": "direct"
-      }
+      },
+      "SdkAnalysisLevel": "9.0.300"
     },
     "frameworks": {
       "netcoreapp3.1": {
@@ -6856,6 +6856,24 @@
         ],
         "assetTargetFallback": true,
         "warn": true,
+        "downloadDependencies": [
+          {
+            "name": "Microsoft.AspNetCore.App.Ref",
+            "version": "[3.1.10, 3.1.10]"
+          },
+          {
+            "name": "Microsoft.NETCore.App.Host.win-x64",
+            "version": "[3.1.32, 3.1.32]"
+          },
+          {
+            "name": "Microsoft.NETCore.App.Ref",
+            "version": "[3.1.0, 3.1.0]"
+          },
+          {
+            "name": "Microsoft.WindowsDesktop.App.Ref",
+            "version": "[3.1.0, 3.1.0]"
+          }
+        ],
         "frameworkReferences": {
           "Microsoft.AspNetCore.App": {
             "privateAssets": "none"
@@ -6864,7 +6882,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.300\\RuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.310\\RuntimeIdentifierGraph.json"
       }
     }
   }

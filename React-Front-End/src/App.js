@@ -30,9 +30,9 @@ function App() {
     <BrowserRouter>
           <MyNavbar  />
           
-          {/* <Route path="/" exact component={HomePage}  /> */}
-          <Route path="/" exact component={TestPage}  />
+          {/* <Route path="/" exact component={TestPage}  /> */}
 
+          {<Route path="/" exact component={HomePage}  />}
           <Route path="/login" exact  component={LoginPage}  />
           <Route path="/register" exact component={RegisterPage}  />
           <Route path="/settings"exact  component={UserSettingsPage}  />
