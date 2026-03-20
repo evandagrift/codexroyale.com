@@ -9,6 +9,9 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System.Net;
 
+using Swashbuckle.AspNetCore.SwaggerGen;
+using Microsoft.OpenApi.Models;
+
 namespace RoyaleTrackerAPI
 {
     public class Startup
@@ -39,29 +42,32 @@ namespace RoyaleTrackerAPI
             //    options.AddPolicy("hosted",
             //                      builder =>
             //                      {
-            //                          builder.WithOrigins("http://localhost:3000")
+            //                          builder.WithOrigins("https://codexroyale.com/")
             //                          .AllowAnyHeader().AllowAnyMethod().AllowCredentials();
             //                      });
 
             //});
-            //services.AddCors(options =>
-            //{
-            //    options.AddPolicy("local",
-            //                      builder =>
-            //                      {
-            //                          builder.WithOrigins("http://localhost:3000")
-            //                          .AllowAnyHeader().AllowAnyMethod().AllowCredentials();
-            //                      });
 
-            //});
+            services.AddCors(options =>
+            {
+                options.AddPolicy("local",
+                                  builder =>
+                                  {
+                                      builder.WithOrigins("http://localhost:3000")
+                                      .AllowAnyHeader().AllowAnyMethod().AllowCredentials();
+                                  });
+
+            });
 
             services.AddDbContext<TRContext>(options => options.UseMySQL(Configuration["ConnectionStrings:DBConnectionString"]), ServiceLifetime.Transient);
 
+            services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "Codex Royale API", Version = "v1" });
+            });
+                //services.AddDbContext<TRContext>(options => options.UseSqlServer(Configuration["ConnectionStrings:DBConnectionString"]), ServiceLifetime.Transient);
 
-
-            //services.AddDbContext<TRContext>(options => options.UseSqlServer(Configuration["ConnectionStrings:DBConnectionString"]), ServiceLifetime.Transient);
-
-            services.AddAuthorizationCore(options =>
+                services.AddAuthorizationCore(options =>
             {
                 options.AddPolicy("AdminOnly", policy => policy.RequireRole("Admin"));
                 options.AddPolicy("All", policy => policy.RequireRole("Admin", "User"));
@@ -70,11 +76,7 @@ namespace RoyaleTrackerAPI
             services.AddSingleton<CustomAuthenticationManager>();
 
 
-            var emailConfig = Configuration
-    .GetSection("EmailConfiguration")
-    .Get<AuthMessageSenderOptions>();
-
-
+            var emailConfig = Configuration.GetSection("EmailConfiguration").Get<AuthMessageSenderOptions>();
 
             services.AddSingleton<AuthMessageSenderOptions>(emailConfig);
             services.AddSingleton<EmailSender>();
@@ -86,10 +88,23 @@ namespace RoyaleTrackerAPI
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+
+            // Enable middleware to serve generated Swagger as a JSON endpoint
+            app.UseSwagger();
+
+            // Enable middleware to serve swagger-ui (HTML, JS, CSS, etc.), specifying the Swagger JSON endpoint
+            app.UseSwaggerUI(c =>
+            {
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "RoyaleTrackerAPI");
+                // To serve Swagger UI at the app's root (http://localhost:<port>/), set the RoutePrefix property to an empty string
+                c.RoutePrefix = string.Empty;
+            });
+
             app.UseForwardedHeaders();
 
             app.UseRouting();
             //app.UseCors("hosted");
+            app.UseCors("local");
 
             app.UseAuthorization();
 

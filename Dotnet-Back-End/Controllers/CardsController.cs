@@ -12,7 +12,7 @@ using CodexRoyaleClassesCore3.Repos;
 namespace RoyaleTrackerAPI.Controllers
 {
     [Authorize]
-    [Route("api/[controller]")]
+    [Route("[controller]")]
     [ApiController]
     public class CardsController : ControllerBase
     {
@@ -36,7 +36,7 @@ namespace RoyaleTrackerAPI.Controllers
         [HttpPost]
         public void Post([FromBody] Card card)
         {
-            _logger.LogWarning($"{Request.HttpContext.Connection.RemoteIpAddress} POSTING CARD {card.Id}!");
+            //_logger.LogWarning($"{Request.HttpContext.Connection.RemoteIpAddress} POSTING CARD {card.Id}!");
             _repo.AddCardIfNew(card);
         }
 
@@ -45,7 +45,7 @@ namespace RoyaleTrackerAPI.Controllers
         [HttpGet("all")]
         public string GetAll()
         {
-            _logger.LogInformation($"{Request.HttpContext.Connection.RemoteIpAddress} Getting all Cards");
+            //_logger.LogInformation($"{Request.HttpContext.Connection.RemoteIpAddress} Getting all Cards");
             List<Card> cards = _repo.GetAllCards();
             return JsonConvert.SerializeObject(cards, Formatting.Indented, new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore });
         }
@@ -54,7 +54,7 @@ namespace RoyaleTrackerAPI.Controllers
         [HttpGet]
         public string Get()
         {
-            _logger.LogInformation($"{Request.HttpContext.Connection.RemoteIpAddress} Getting all non event Cards");
+            //_logger.LogInformation($"{Request.HttpContext.Connection.RemoteIpAddress} Getting all non event Cards");
             List<Card> cards = _repo.GetAllNonEventCards();
             return JsonConvert.SerializeObject(cards, Formatting.Indented, new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore });
         }
@@ -64,7 +64,7 @@ namespace RoyaleTrackerAPI.Controllers
         [HttpGet("{id}")]
         public string Get(int id)
         {
-            _logger.LogInformation($"{Request.HttpContext.Connection.RemoteIpAddress} Getting card {id}");
+            //_logger.LogInformation($"{Request.HttpContext.Connection.RemoteIpAddress} Getting card {id}");
             Card card = _repo.GetCardByID(id);
             return JsonConvert.SerializeObject(card, Formatting.Indented, new JsonSerializerSettings {NullValueHandling = NullValueHandling.Ignore});
         }
@@ -74,7 +74,7 @@ namespace RoyaleTrackerAPI.Controllers
         [HttpDelete("{id}")]
         public void Delete(int id)
         {
-            _logger.LogWarning($"{Request.HttpContext.Connection.RemoteIpAddress} DELETING CARD {id}!");
+            //_logger.LogWarning($"{Request.HttpContext.Connection.RemoteIpAddress} DELETING CARD {id}!");
             _repo.DeleteCard(id);
         }
 
@@ -84,7 +84,7 @@ namespace RoyaleTrackerAPI.Controllers
         [HttpPost("UpdateCards")]
         public IActionResult UpdateCards()
         {
-            _logger.LogWarning($"{Request.HttpContext.Connection.RemoteIpAddress} Auto updating cards");
+            //_logger.LogWarning($"{Request.HttpContext.Connection.RemoteIpAddress} Auto updating cards");
            return Ok(_repo.UpdateCards());
         }
 
@@ -97,7 +97,7 @@ namespace RoyaleTrackerAPI.Controllers
         //public void Update([FromBody] Card card)
         //{
 
-        //    _logger.LogWarning($"{Request.HttpContext.Connection.RemoteIpAddress} UPDATING CARD {card.Id}!");
+        //    //_logger.LogWarning($"{Request.HttpContext.Connection.RemoteIpAddress} UPDATING CARD {card.Id}!");
         //    _repo.UpdateCard(card);
         //}
 

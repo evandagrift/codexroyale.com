@@ -15,7 +15,7 @@ using CodexRoyaleClassesCore3.Repos;
 namespace RoyaleTrackerAPI.Controllers
 {
     [Authorize]
-    [Route("api/[controller]")]
+    [Route("[controller]")]
     [ApiController]
     public class ClansController : ControllerBase
     {
@@ -43,7 +43,7 @@ namespace RoyaleTrackerAPI.Controllers
         [HttpPost]
         public void Post([FromBody] Clan clan)
         {
-            _logger.LogWarning($"{Request.HttpContext.Connection.RemoteIpAddress} POSTING CLAN SNAPSHOT {clan.Tag}!");
+            //_logger.LogWarning($"{Request.HttpContext.Connection.RemoteIpAddress} POSTING CLAN SNAPSHOT {clan.Tag}!");
             repo.AddClan(clan);
         }
 
@@ -52,7 +52,7 @@ namespace RoyaleTrackerAPI.Controllers
         [HttpGet]
         public string Get()
         {
-            _logger.LogInformation($"{Request.HttpContext.Connection.RemoteIpAddress} Getting all Clan Snapshots");
+            //_logger.LogInformation($"{Request.HttpContext.Connection.RemoteIpAddress} Getting all Clan Snapshots");
             List<Clan> clans = repo.GetAllClans();
             return JsonConvert.SerializeObject(clans, Formatting.Indented, new JsonSerializerSettings {NullValueHandling = NullValueHandling.Ignore});
         }
@@ -62,7 +62,7 @@ namespace RoyaleTrackerAPI.Controllers
         [HttpGet("id/{id}")]
         public string Get(int id)
         {
-            _logger.LogInformation($"{Request.HttpContext.Connection.RemoteIpAddress} Getting Clan Snapshot w/ id:{id}");
+            //_logger.LogInformation($"{Request.HttpContext.Connection.RemoteIpAddress} Getting Clan Snapshot w/ id:{id}");
             Clan clan = repo.GetClanById(id);
             return JsonConvert.SerializeObject(clan, Formatting.Indented, new JsonSerializerSettings {NullValueHandling = NullValueHandling.Ignore});
         }
@@ -73,7 +73,7 @@ namespace RoyaleTrackerAPI.Controllers
         public string Get(string tag)
         {
             Clan clan = repo.GetSiteClan(tag).Result;
-            _logger.LogInformation($"{Request.HttpContext.Connection.RemoteIpAddress} Getting {tag}'s clan {clan.Tag}'s current data");
+            //_logger.LogInformation($"{Request.HttpContext.Connection.RemoteIpAddress} Getting {tag}'s clan {clan.Tag}'s current data");
             return JsonConvert.SerializeObject(clan, Formatting.Indented, new JsonSerializerSettings {NullValueHandling = NullValueHandling.Ignore});
         } 
 
@@ -82,7 +82,7 @@ namespace RoyaleTrackerAPI.Controllers
         [HttpDelete("{id}")]
         public void Delete(int id)
         {
-            _logger.LogWarning($"{Request.HttpContext.Connection.RemoteIpAddress} DELETING CLAN SNAPSHOT {id}!");
+            //_logger.LogWarning($"{Request.HttpContext.Connection.RemoteIpAddress} DELETING CLAN SNAPSHOT {id}!");
             repo.DeleteClan(id);
         }
 
@@ -91,7 +91,7 @@ namespace RoyaleTrackerAPI.Controllers
         [HttpPut]
         public void Update([FromBody] Clan clan)
         {
-            _logger.LogWarning($"{Request.HttpContext.Connection.RemoteIpAddress} UPDATING CLAN SNAPSHOT {clan.Id}");
+            //_logger.LogWarning($"{Request.HttpContext.Connection.RemoteIpAddress} UPDATING CLAN SNAPSHOT {clan.Id}");
             repo.UpdateClan(clan);
         }
 

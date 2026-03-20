@@ -11,46 +11,46 @@ namespace ClashFeeder
 {
     public static class CardUpdater
     {
-        public static void UpdateCardImages()
-        {            //config to get connection string
-            var config = new ConfigurationBuilder().SetBasePath(Environment.CurrentDirectory).AddJsonFile("appsettings.json", optional: false, reloadOnChange: true).Build();
+        //public static void UpdateCardImages()
+        //{            //config to get connection string
+        //    var config = new ConfigurationBuilder().SetBasePath(Environment.CurrentDirectory).AddJsonFile("appsettings.json", optional: false, reloadOnChange: true).Build();
 
-            CardsRepo cardsRepo = new CardsRepo(client, context);
+        //    CardsRepo cardsRepo = new CardsRepo(client, context);
 
-            TRContext context = new TRContext(optionsBuilder.Options, client);
-
-
-            using (WebClient imgClient = new WebClient())
-            {
-                int counter = 1;
-                imgClient.Headers.Add("User-Agent:https://cdn.royaleapi.com/");
-                string urlBase = "https://cdn.royaleapi.com/static/img/cards-150/";
-                foreach (Card c in cards)
-                {
-                    imgClient.Headers.Add("User-Agent:https://cdn.royaleapi.com/" + counter);
-                    string cardName = c.Name.Replace(" ", "-");
-                    cardName = cardName.Replace(".", string.Empty);
+        //    TRContext context = new TRContext(optionsBuilder.Options, client);
 
 
-                    string cardURL = $"{urlBase}{cardName}.png";
-                    cardURL = cardURL.ToLower();
+        //    using (WebClient imgClient = new WebClient())
+        //    {
+        //        int counter = 1;
+        //        imgClient.Headers.Add("User-Agent:https://cdn.royaleapi.com/");
+        //        string urlBase = "https://cdn.royaleapi.com/static/img/cards-150/";
+        //        foreach (Card c in cards)
+        //        {
+        //            imgClient.Headers.Add("User-Agent:https://cdn.royaleapi.com/" + counter);
+        //            string cardName = c.Name.Replace(" ", "-");
+        //            cardName = cardName.Replace(".", string.Empty);
 
 
-                    byte[] dataArr = imgClient.DownloadData(new Uri(cardURL));
-                    while (imgClient.IsBusy)
-                    {
-                    }
+        //            string cardURL = $"{urlBase}{cardName}.png";
+        //            cardURL = cardURL.ToLower();
 
-                    cardName = c.Name.Replace("-", " ");
-                    //save file to local
-                    File.WriteAllBytes(@$"C:\Users\Elodin\Documents\Codex\Images\{cardName}.png", dataArr);
 
-                    imgClient.Headers.Remove("User-Agent");
-                    counter++;
+        //            byte[] dataArr = imgClient.DownloadData(new Uri(cardURL));
+        //            while (imgClient.IsBusy)
+        //            {
+        //            }
 
-                }
-            }
-        }
+        //            cardName = c.Name.Replace("-", " ");
+        //            //save file to local
+        //            File.WriteAllBytes(@$"C:\Users\Elodin\Documents\Codex\Images\{cardName}.png", dataArr);
+
+        //            imgClient.Headers.Remove("User-Agent");
+        //            counter++;
+
+        //        }
+        //    }
+        //}
     }
 }
 

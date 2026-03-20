@@ -12,7 +12,7 @@ using CodexRoyaleClassesCore3.Models.Email;
 
 namespace RoyaleTrackerAPI.Controllers
 {
-    [ApiController, Route("api/[controller]"), Authorize]
+    [ApiController, Route("[controller]"), Authorize]
     public class UsersController : ControllerBase
     {
         //Authentication Manager for handling Bearer Token
@@ -46,7 +46,7 @@ namespace RoyaleTrackerAPI.Controllers
         [HttpPost("Signup")]
         public IActionResult CreateAccount([FromBody] User user)
         {
-            _logger.LogInformation($"{Request.HttpContext.Connection.RemoteIpAddress} Signing up with username {user.Username}");
+            //_logger.LogInformation($"{Request.HttpContext.Connection.RemoteIpAddress} Signing up with username {user.Username}");
             //tries to create account, if created returns true
             string signupResult = _customAuthenticationManager.CreateAccount(user, _emailSender, _usersRepo, _context);
             return Ok(signupResult);
@@ -57,7 +57,7 @@ namespace RoyaleTrackerAPI.Controllers
         [HttpPost("Login")]
         public IActionResult Login([FromBody] User user)
         {
-            _logger.LogInformation($"{Request.HttpContext.Connection.RemoteIpAddress} logging in user {user.Username}");
+            //_logger.LogInformation($"{Request.HttpContext.Connection.RemoteIpAddress} logging in user {user.Username}");
             //if the login is correct it will return the user sanatized with their bearer token
             User fetchedUser = _customAuthenticationManager.Login(user, _context);
             if (fetchedUser != null) { return Ok(fetchedUser); }
@@ -69,7 +69,7 @@ namespace RoyaleTrackerAPI.Controllers
         [HttpGet]
         public string GetUsers()
         {
-            _logger.LogWarning($"{Request.HttpContext.Connection.RemoteIpAddress} getting all saved users in db!");
+            //_logger.LogWarning($"{Request.HttpContext.Connection.RemoteIpAddress} getting all saved users in db!");
             List<User> users = _usersRepo.GetAllUsers(); 
             return JsonConvert.SerializeObject(users, Formatting.Indented, new JsonSerializerSettings {NullValueHandling = NullValueHandling.Ignore});
         }
@@ -79,7 +79,7 @@ namespace RoyaleTrackerAPI.Controllers
         [HttpPost]
         public void PostUser([FromBody] User user)
         {
-            _logger.LogWarning($"{Request.HttpContext.Connection.RemoteIpAddress} POSTING USER {user.Username}!");
+            //_logger.LogWarning($"{Request.HttpContext.Connection.RemoteIpAddress} POSTING USER {user.Username}!");
             _usersRepo.AddUser(user);
         }
         
@@ -88,7 +88,7 @@ namespace RoyaleTrackerAPI.Controllers
         [HttpGet("{username}")]
         public string GetUser(string username)
         {
-            _logger.LogInformation($"{Request.HttpContext.Connection.RemoteIpAddress} getting user {username}");
+            //_logger.LogInformation($"{Request.HttpContext.Connection.RemoteIpAddress} getting user {username}");
             User user = _usersRepo.GetUserByUsername(username);
             return JsonConvert.SerializeObject(user, Formatting.Indented, new JsonSerializerSettings {NullValueHandling = NullValueHandling.Ignore});
         }
@@ -98,7 +98,7 @@ namespace RoyaleTrackerAPI.Controllers
         [HttpDelete("{username}")]
         public void DeleteUser(string username)
         {
-            _logger.LogWarning($"{Request.HttpContext.Connection.RemoteIpAddress} DELETING USER {username}!");
+            //_logger.LogWarning($"{Request.HttpContext.Connection.RemoteIpAddress} DELETING USER {username}!");
             _usersRepo.DeleteUser(username);
         }
 
@@ -107,7 +107,7 @@ namespace RoyaleTrackerAPI.Controllers
         [HttpPut]
         public IActionResult UpdateUser([FromBody] User user)
         {
-            _logger.LogWarning($"{Request.HttpContext.Connection.RemoteIpAddress} UPDATING USER {user.Username}!");
+            //_logger.LogWarning($"{Request.HttpContext.Connection.RemoteIpAddress} UPDATING USER {user.Username}!");
             _usersRepo.UpdateUser(user);
             return Ok();
         }
@@ -120,7 +120,7 @@ namespace RoyaleTrackerAPI.Controllers
             //if the verification code is a valid one it sets the connected user to being verified.
             //it then returns a sanitized instance of the user to the client
             User returnUser = _customAuthenticationManager.VerifyUser(verificationCode, _usersRepo, _context);
-            _logger.LogInformation($"{Request.HttpContext.Connection.RemoteIpAddress} verified their account {returnUser.Username}");
+            //_logger.LogInformation($"{Request.HttpContext.Connection.RemoteIpAddress} verified their account {returnUser.Username}");
             return Ok(returnUser);
         }
 
@@ -132,7 +132,7 @@ namespace RoyaleTrackerAPI.Controllers
             //if the verification code is a valid one it sets the connect user to being verified.
             //it then returns a sanitized instance of the user to the client
             string username = _customAuthenticationManager.SendPasswordReset(email, _usersRepo, _context, _emailSender);
-            _logger.LogInformation($"{Request.HttpContext.Connection.RemoteIpAddress} sending password reset for {username}");
+            //_logger.LogInformation($"{Request.HttpContext.Connection.RemoteIpAddress} sending password reset for {username}");
             return Ok(username);
         }
 
@@ -144,7 +144,7 @@ namespace RoyaleTrackerAPI.Controllers
             //if the verification code is a valid one it sets the connect user to being verified.
             //it then returns a sanitized instance of the user to the client'
             User returnUser = _customAuthenticationManager.ResetUserPassword(user.Password, user.PasswordResetCode, _usersRepo, _context);
-            _logger.LogInformation($"{Request.HttpContext.Connection.RemoteIpAddress} verefied email for {returnUser.Username}");
+            //_logger.LogInformation($"{Request.HttpContext.Connection.RemoteIpAddress} verefied email for {returnUser.Username}");
             return Ok(returnUser);
         }
 
@@ -154,7 +154,7 @@ namespace RoyaleTrackerAPI.Controllers
         public IActionResult UpdatePlayerSetting([FromBody] JObject recievedJson)
         {
             User user = recievedJson["user"].ToObject<User>();
-            _logger.LogInformation($"{Request.HttpContext.Connection.RemoteIpAddress} updating {user.Username} user settings");
+            //_logger.LogInformation($"{Request.HttpContext.Connection.RemoteIpAddress} updating {user.Username} user settings");
             string newPassword = recievedJson["newPassword"].ToString();
             return Ok(_customAuthenticationManager.UpdateUserSetting(user, newPassword, _context, _client));
         }

@@ -5,6 +5,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Newtonsoft.Json.Linq;
+using System.Security.Policy;
 
 namespace ClashFeeder.Repos
 {
@@ -22,12 +24,11 @@ namespace ClashFeeder.Repos
 
         //I recieve card URL as Card.IconUrls["medium"] from the official API
         //Must Convert to a string for saving in DB
-        public Card ConvertCardUrl(Card cardToConvert)
-        {
-
-            cardToConvert.Url = cardToConvert.IconUrls["medium"];
-            return cardToConvert;
-        }
+        //public Card ConvertCardUrl(Card cardToConvert)
+        //{
+        //    Card.
+        //    return cardToConvert;
+        //}
 
         //retrieves all cards in the game from official API
         //Returns as a list of Card objects parsed via Newtonsoft
@@ -47,26 +48,40 @@ namespace ClashFeeder.Repos
                     //puts the returned content to a string (of Json)
                     var content = await result.Content.ReadAsStringAsync();
 
+                    JObject responseJSON = JObject.Parse(content);
+                    string stringtoConvert = responseJSON["items"].ToString(Formatting.None);
+
+
                     // trim "{"items":" and the  "}"   from the end from the json call to make it consumable via Newtonsoft 
                     //10 for the begginning being removed, 2 for the last two characters
-                    content = content.Substring(9, (content.Length - (9 + 1)));
+                    //content = content.Substring(9, (content.Length - (9 + 1)));
 
-                    List<Card> cardsToReturn = JsonConvert.DeserializeObject<List<Card>>(content);
+                    List<Card> cardsToReturn = JsonConvert.DeserializeObject<List<Card>>(stringtoConvert);
 
                     cardsToReturn.ForEach(c =>
                     {
-                        c = ConvertCardUrl(c);
+                        if (c.IconUrls != null)
+                        {
+                            if (c.IconUrls.ContainsKey("medium"))
+                            {
+                                c.Url = c.IconUrls["medium"];
+                            }
+                            if (c.IconUrls.ContainsKey("evolutionMedium"))
+                            {
+                                c.UrlEvolved = c.IconUrls["evolutionMedium"];
+                            }
+                        }
                     });
 
                     //returns the json as a list of Card objects via newtonsoft
                     return cardsToReturn;
                 }
-                return null;
 
 
             }
             catch { return null; }
 
+            return null;
         }
 
 
@@ -77,16 +92,17 @@ namespace ClashFeeder.Repos
             List<Card> officialCards = await GetAllOfficialCards();
             List<Card> codexCards = context.Cards.ToList();
             List<Card> cardsToAdd = new List<Card>();
-            if(officialCards != null){ 
-            if (codexCards.Count == 0)
-            {
-                cardsToAdd = officialCards;
-            }
-            else if (codexCards.Count != officialCards.Count && officialCards != null && codexCards != null)
-            {
-                AddCardsIfNew(officialCards);
+            if(officialCards != null)
+            { 
+                if (codexCards.Count == 0)
+                {
+                    cardsToAdd = officialCards;
+                }
+                else if (codexCards.Count != officialCards.Count && officialCards != null && codexCards != null)
+                {
+                    AddCardsIfNew(officialCards);
 
-            }
+                }
             }
             return context.Cards.ToList(); ;
         }

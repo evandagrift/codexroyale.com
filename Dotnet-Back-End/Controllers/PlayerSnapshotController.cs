@@ -12,7 +12,7 @@ using Newtonsoft.Json;
 namespace RoyaleTrackerAPI.Controllers
 {
     [Authorize]
-    [Route("api/[controller]")]
+    [Route("[controller]")]
     [ApiController]
     public class PlayerSnapshotController : ControllerBase
     {

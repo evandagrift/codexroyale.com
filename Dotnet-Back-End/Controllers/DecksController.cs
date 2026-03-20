@@ -15,7 +15,7 @@ using CodexRoyaleClassesCore3.Repos;
 namespace RoyaleTrackerAPI.Controllers
 {
     [Authorize]
-    [Route("api/[controller]")]
+    [Route("[controller]")]
     [ApiController]
     public class DecksController : ControllerBase
     {
@@ -42,7 +42,7 @@ namespace RoyaleTrackerAPI.Controllers
         [HttpPost]
         public Deck GetDeckWithId([FromBody] Deck deck)
         {
-            _logger.LogInformation($"{Request.HttpContext.Connection.RemoteIpAddress} getting deck {deck.Id}");
+            //_logger.LogInformation($"{Request.HttpContext.Connection.RemoteIpAddress} getting deck {deck.Id}");
             return repo.GetDeckWithId(deck);
         }
 
@@ -51,7 +51,7 @@ namespace RoyaleTrackerAPI.Controllers
         [HttpGet]
         public string Get()
         {
-            _logger.LogInformation($"{Request.HttpContext.Connection.RemoteIpAddress} Getting all decks");
+            //_logger.LogInformation($"{Request.HttpContext.Connection.RemoteIpAddress} Getting all decks");
             List<Deck> decks = repo.GetAllDecks();
             return JsonConvert.SerializeObject(decks, Formatting.Indented, new JsonSerializerSettings {NullValueHandling = NullValueHandling.Ignore});
         }
@@ -61,7 +61,7 @@ namespace RoyaleTrackerAPI.Controllers
         [HttpGet("{id}")]
         public string Get(int id)
         {
-            _logger.LogInformation($"{Request.HttpContext.Connection.RemoteIpAddress} getting deck {id}");
+            //_logger.LogInformation($"{Request.HttpContext.Connection.RemoteIpAddress} getting deck {id}");
             Deck deck = repo.GetDeckByID(id);
             return JsonConvert.SerializeObject(deck, Formatting.Indented, new JsonSerializerSettings {NullValueHandling = NullValueHandling.Ignore});
         }
@@ -72,7 +72,7 @@ namespace RoyaleTrackerAPI.Controllers
         [HttpDelete("{id}")]
         public void Delete(int id)
         {
-            _logger.LogWarning($"{Request.HttpContext.Connection.RemoteIpAddress} DELETING DECK {id}");
+            //_logger.LogWarning($"{Request.HttpContext.Connection.RemoteIpAddress} DELETING DECK {id}");
             repo.DeleteDeck(id);
         }
 
@@ -81,7 +81,7 @@ namespace RoyaleTrackerAPI.Controllers
         [HttpPut]
         public void Update([FromBody] Deck deck)
         {
-            _logger.LogWarning($"{Request.HttpContext.Connection.RemoteIpAddress} UPDATING DECK {deck.Id}!"); ;
+            //_logger.LogWarning($"{Request.HttpContext.Connection.RemoteIpAddress} UPDATING DECK {deck.Id}!"); ;
             repo.UpdateDeck(deck);
         }
 

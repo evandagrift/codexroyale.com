@@ -1,22 +1,20 @@
 import React, { useState, useContext, useEffect } from "react";
-import { Redirect, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 
 import { UserContext } from "../UserContext";
 import Clan from "../components/Clan";
-import { GetClanAsync } from "../Utilities/scripts";
 
 const ClanPage = () => {
-
     const { user, setUser } = useContext(UserContext);
     const [tag, setTag] = useState('');
-    const [redirect, setRedirect] = useState(false);
+    // const [redirect, setRedirect] = useState(false);
     const {clanTag} = useParams();
 
   //same as componentDidMount
   useEffect( () => {
     if(clanTag != undefined) { setTag(clanTag) }
     else if(user && user.clanTag != "") { setTag(user.clanTag) }
-    else setRedirect(true);
+    // else setRedirect(true);
   }, [] );
 
 

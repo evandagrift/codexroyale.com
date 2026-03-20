@@ -14,7 +14,7 @@ using Newtonsoft.Json;
 namespace RoyaleTrackerAPI.Controllers
 {
     [Authorize]
-    [Route("api/[controller]")]
+    [Route("[controller]")]
     [ApiController]
     public class ChestsController : ControllerBase
     {
@@ -36,7 +36,7 @@ namespace RoyaleTrackerAPI.Controllers
         [HttpPost]
         public void Post([FromBody] Chest chest)
         {
-            _logger.LogWarning($"{Request.HttpContext.Connection.RemoteIpAddress} POSTING CHEST {chest.Name}!");
+            //_logger.LogWarning($"{Request.HttpContext.Connection.RemoteIpAddress} POSTING CHEST {chest.Name}!");
             //makes sure this chest doesn't already exist in the database
             if (!context.Chests.Any(c => c.Name == chest.Name))
             {
@@ -50,7 +50,7 @@ namespace RoyaleTrackerAPI.Controllers
         [HttpGet]
         public string Get()
         {
-            _logger.LogInformation($"{Request.HttpContext.Connection.RemoteIpAddress} Getting all Chests");
+            //_logger.LogInformation($"{Request.HttpContext.Connection.RemoteIpAddress} Getting all Chests");
             List<Chest> Chests = chestsRepo.GetAllChests();
             return JsonConvert.SerializeObject(Chests, Formatting.Indented, new JsonSerializerSettings {NullValueHandling = NullValueHandling.Ignore});
         }
@@ -60,7 +60,7 @@ namespace RoyaleTrackerAPI.Controllers
         [HttpGet("{chestName}")]
         public string Get(string chestName)
         {
-            _logger.LogInformation($"{Request.HttpContext.Connection.RemoteIpAddress} Getting chest {chestName}");
+            //_logger.LogInformation($"{Request.HttpContext.Connection.RemoteIpAddress} Getting chest {chestName}");
             Chest chest = chestsRepo.GetChestByName(chestName);
             return JsonConvert.SerializeObject(chest, Formatting.Indented, new JsonSerializerSettings {NullValueHandling = NullValueHandling.Ignore});
         }
@@ -71,7 +71,7 @@ namespace RoyaleTrackerAPI.Controllers
         [HttpDelete("{chestName}")]
         public void Delete(string chestName)
         {
-            _logger.LogWarning($"{Request.HttpContext.Connection.RemoteIpAddress} DELETING CHEST {chestName}!");
+            //_logger.LogWarning($"{Request.HttpContext.Connection.RemoteIpAddress} DELETING CHEST {chestName}!");
             chestsRepo.DeleteChest(chestName);
         }
 
@@ -82,7 +82,7 @@ namespace RoyaleTrackerAPI.Controllers
         [HttpPut]
         public void Update([FromBody] Chest chest)
         {
-            _logger.LogWarning($"{Request.HttpContext.Connection.RemoteIpAddress} UPDATING CHEST {chest.Name}!");
+            //_logger.LogWarning($"{Request.HttpContext.Connection.RemoteIpAddress} UPDATING CHEST {chest.Name}!");
             chestsRepo.UpdateChest(chest);
         }
 

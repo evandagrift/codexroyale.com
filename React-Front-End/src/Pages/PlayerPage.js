@@ -1,5 +1,5 @@
-import React, { useState, useContext, useEffect } from "react";
-import { Redirect, useParams } from "react-router-dom";
+import { useState, useContext, useEffect } from "react";
+import { useParams } from "react-router-dom";
 
 import { UserContext } from "../UserContext";
 import { axios } from "../axios";
@@ -16,7 +16,7 @@ const PlayerPage = () => {
   const { user, setUser } = useContext(UserContext);
 
   const [tag, setTag] = useState("");
-  const [deck, setDeck] = useState("");
+  // const [deck, setDeck] = useState("");
   
 
   //same as componentDidMount
@@ -32,7 +32,6 @@ const PlayerPage = () => {
 
   if(tag)
   {
-    
     return (
       <div>
       {<ChestCollection playerTag={tag} />}

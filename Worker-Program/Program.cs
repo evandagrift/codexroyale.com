@@ -22,36 +22,34 @@ namespace ClashFeeder
         {
 
             //config to get connection string
-            var config = new ConfigurationBuilder()
-        .SetBasePath(Environment.CurrentDirectory).AddJsonFile("appsettings.json", optional: false, reloadOnChange: true).Build();
+            var config = new ConfigurationBuilder().SetBasePath(Environment.CurrentDirectory).AddJsonFile("appsettings.json", optional: false, reloadOnChange: true).Build();
 
             //db options builder
             var optionsBuilder = new DbContextOptionsBuilder<TRContext>();
-
             optionsBuilder.UseMySQL(config["ConnectionStrings:DBConnectionString"]);
 
 
             Client client = new Client(config["ConnectionStrings:BearerToken"]);
-
             TRContext context = new TRContext(optionsBuilder.Options, client);
 
             CardsRepo cardsRepo = new CardsRepo(client, context);
-
-            List<Card> cards = cardsRepo.GetAllCards();
-
-            List<Card> cardsOFF = cardsRepo.GetAllOfficialCards().Result;
             ClansRepo clansRepo = new ClansRepo(client, context);
-
             PlayerSnapshotsRepo PlayerSnapshotsRepo = new PlayerSnapshotsRepo(client, context);
             BattlesRepo battlesRepo = new BattlesRepo(client, context);
 
-            Clan clan;
-            List<PlayerSnapshot> watchList = new List<PlayerSnapshot>();
+            //List<Card> cards = cardsRepo.GetAllCards();
+            List<Card> cardsOFF = cardsRepo.GetAllOfficialCards().Result;
+
+            foreach (Card card in cardsOFF)
+            {
+                cardsRepo.AddCardIfNew(card);
+            }
+
 
             string clanTag = "#8CYPL8R";
             string randomClanTag = "#9QGPC82Y0";
-            int count = 0;
-            List<Battle> pBattles;
+
+
 
 
             //using (WebClient webClient = new WebClient())
@@ -61,7 +59,7 @@ namespace ClashFeeder
             //    //save file to local
             //    File.WriteAllBytes(@"path.png", dataArr);
             //}
-
+            /*
 
             using (WebClient imgClient = new WebClient())
             {
@@ -98,7 +96,7 @@ namespace ClashFeeder
 
             }
 
-
+            */
             //
 
 

@@ -1,21 +1,19 @@
 import React, { Component } from 'react';
 import { ConvertTimer,FormatTag } from "../Utilities/scripts";
-import $ from "jquery"; 
 import styles from "../cssModules/ClanPlayer.module.css";
-import { Redirect } from 'react-router-dom';
 
 class ClanPlayer extends Component{
   constructor(props){
     super(props);
-    this.state = {
-      redirect:false
-    };
+    // this.state = {
+    //   redirect:false
+    // };
   } 
 
-  handleClick()
-  {
-    this.setState({redirect:true});
-  }
+  // handleClick()
+  // {
+  //   this.setState({redirect:true});
+  // }
 
   render () {
 
@@ -24,7 +22,7 @@ class ClanPlayer extends Component{
 
     let draw = '';
   
-    if(this.state.redirect){ return <Redirect to={"/player/" + FormatTag(clanPlayer.Tag)} /> }
+    // if(this.state.redirect){ return <Redirect to={"/player/" + FormatTag(clanPlayer.Tag)} /> }
 
     if(clanPlayer)
     {

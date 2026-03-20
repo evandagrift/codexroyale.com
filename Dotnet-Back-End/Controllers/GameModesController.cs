@@ -16,7 +16,7 @@ using CodexRoyaleClassesCore3.Repos;
 namespace RoyaleTrackerAPI.Controllers
 {
     [Authorize]
-    [Route("api/[controller]")]
+    [Route("[controller]")]
     [ApiController]
     public class GameModesController : ControllerBase
     {
@@ -43,7 +43,7 @@ namespace RoyaleTrackerAPI.Controllers
         [HttpPost]
         public void Post([FromBody] GameMode gameMode)
         {
-            _logger.LogInformation($"{Request.HttpContext.Connection.RemoteIpAddress} Posting gamemode {gameMode.Name}");
+            //_logger.LogInformation($"{Request.HttpContext.Connection.RemoteIpAddress} Posting gamemode {gameMode.Name}");
             repo.AddGameModeIfNew(gameMode);
         }
 
@@ -52,7 +52,7 @@ namespace RoyaleTrackerAPI.Controllers
         [HttpGet]
         public string Get()
         {
-            _logger.LogInformation($"{Request.HttpContext.Connection.RemoteIpAddress} Getting all gamemodes");
+            //_logger.LogInformation($"{Request.HttpContext.Connection.RemoteIpAddress} Getting all gamemodes");
             List<GameMode> gameModes = repo.GetAllGameModes();
             return JsonConvert.SerializeObject(gameModes, Formatting.Indented, new JsonSerializerSettings {NullValueHandling = NullValueHandling.Ignore});
         }
@@ -62,7 +62,7 @@ namespace RoyaleTrackerAPI.Controllers
         [HttpGet("{id}")]
         public string Get(int id)
         {
-            _logger.LogInformation($"{Request.HttpContext.Connection.RemoteIpAddress} Getting gamemode {id}");
+            //_logger.LogInformation($"{Request.HttpContext.Connection.RemoteIpAddress} Getting gamemode {id}");
             GameMode gameMode = repo.GetGameModeByID(id);
             return JsonConvert.SerializeObject(gameMode, Formatting.Indented, new JsonSerializerSettings {NullValueHandling = NullValueHandling.Ignore});
         }
@@ -73,7 +73,7 @@ namespace RoyaleTrackerAPI.Controllers
         [HttpDelete("{id}")]
         public void Delete(int id)
         {
-            _logger.LogWarning($"{Request.HttpContext.Connection.RemoteIpAddress} DELETING GAMEMODE {id}!");
+            //_logger.LogWarning($"{Request.HttpContext.Connection.RemoteIpAddress} DELETING GAMEMODE {id}!");
             repo.DeleteGameMode(id);
         }
 
@@ -82,7 +82,7 @@ namespace RoyaleTrackerAPI.Controllers
         [HttpPut]
         public void Update([FromBody] GameMode gameMode)
         {
-            _logger.LogWarning($"{Request.HttpContext.Connection.RemoteIpAddress} UPDATING GAMEMODE {gameMode.Name}!");
+            //_logger.LogWarning($"{Request.HttpContext.Connection.RemoteIpAddress} UPDATING GAMEMODE {gameMode.Name}!");
             repo.UpdateGameMode(gameMode);
         }
 

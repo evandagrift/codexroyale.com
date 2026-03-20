@@ -19,7 +19,7 @@ namespace RoyaleTrackerAPI
             Host.CreateDefaultBuilder(args)
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
-                    webBuilder.UseStartup<Startup>().UseUrls(new[] { "http://localhost:44390" }); // now the Kestrel server will listen on port 5001!
+                    webBuilder.UseStartup<Startup>().UseUrls(new[] { "http://localhost:44390" }); 
                 });
     }
 }

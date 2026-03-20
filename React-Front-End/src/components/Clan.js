@@ -1,5 +1,4 @@
 import React, { Component } from "react";
-import { Redirect } from "react-router";
 
 import Card from "../components/Card";
 import Deck from "../components/Deck";
@@ -13,7 +12,7 @@ class Clan extends Component {
     super(props);
     this.state = {
       clan: [],
-      redirect: false
+      // redirect: false
     };
   }
 
@@ -23,13 +22,13 @@ class Clan extends Component {
     if (clanTag) {
       const clan = await GetClanAsync(clanTag);
 
-      if (clan != undefined) {
+      // if (clan != undefined) {
 
-        this.setState({ clan: clan });
-      } 
-      else {
-        this.setState({redirect:true});
-      }
+      //   this.setState({ clan: clan });
+      // } 
+      // else {
+      //   this.setState({redirect:true});
+      // }
     }
   }
 
@@ -38,10 +37,10 @@ class Clan extends Component {
     let membersDraw = "";
     let membersHeader = "";
 
-    if (this.state.redirect)
-    {
-      return (<Redirect to="/" />);
-    }
+    // if (this.state.redirect)
+    // {
+    //   return (<Redirect to="/" />);
+    // }
     if (this.state.clan && this.state.clan.Name) {
       clanDraw = (
         <div className=" m-0">

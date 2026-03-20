@@ -16,7 +16,7 @@ using CodexRoyaleClassesCore3.Repos;
 namespace RoyaleTrackerAPI.Controllers
 {
     [Authorize]
-    [Route("api/[controller]")]
+    [Route("[controller]")]
     [ApiController]
     public class TeamsController : ControllerBase
     {
@@ -44,16 +44,26 @@ namespace RoyaleTrackerAPI.Controllers
         public Team GetSetTeamId([FromBody] Team team)
         {
             Team returnTeam = _repo.GetSetTeamId(team);
-            _logger.LogWarning($"{Request.HttpContext.Connection.RemoteIpAddress} getting team with an assigned Id {returnTeam.TeamId}!");
+            //_logger.LogWarning($"{Request.HttpContext.Connection.RemoteIpAddress} getting team with an assigned Id {returnTeam.TeamId}!");
             return returnTeam;
         }
+
+
+        //gets the players upcoming chests that they will unlock
+        [AllowAnonymous]
+        [HttpGet("playertag/{id}")]
+        public async Task<IActionResult> GetTeamPlayerOneTag(int id)
+        {
+            return Ok(JsonConvert.SerializeObject(_repo.GetTeamById(id).Tag, Formatting.Indented, new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore }));
+        }
+
 
         //gets all team saved in the db
         [Authorize(Policy = "AdminOnly")]
         [HttpGet]
         public string Get()
         {
-            _logger.LogInformation($"{Request.HttpContext.Connection.RemoteIpAddress} Getting all saved teams");
+            //_logger.LogInformation($"{Request.HttpContext.Connection.RemoteIpAddress} Getting all saved teams");
             List<Team> teams = _repo.GetAllTeams();
             return JsonConvert.SerializeObject(teams, Formatting.Indented, new JsonSerializerSettings {NullValueHandling = NullValueHandling.Ignore});
 
@@ -64,7 +74,7 @@ namespace RoyaleTrackerAPI.Controllers
         [HttpGet("{id}")]
         public string Get(int id)
         {
-            _logger.LogInformation($"{Request.HttpContext.Connection.RemoteIpAddress} Getting Team with Id {id}");
+            //_logger.LogInformation($"{Request.HttpContext.Connection.RemoteIpAddress} Getting Team with Id {id}");
             Team team = _repo.GetTeamById(id);
             return JsonConvert.SerializeObject(team, Formatting.Indented, new JsonSerializerSettings {NullValueHandling = NullValueHandling.Ignore});
         }
@@ -75,7 +85,7 @@ namespace RoyaleTrackerAPI.Controllers
         [HttpDelete("{teamid}")]
         public void Delete(int id)
         {
-            _logger.LogWarning($"{Request.HttpContext.Connection.RemoteIpAddress} DELETING TEAM {id}!");
+            //_logger.LogWarning($"{Request.HttpContext.Connection.RemoteIpAddress} DELETING TEAM {id}!");
             _repo.DeleteTeam(id);
         }
 
@@ -84,7 +94,7 @@ namespace RoyaleTrackerAPI.Controllers
         [HttpPut]
         public void Update([FromBody] Team team)
         {
-            _logger.LogWarning($"{Request.HttpContext.Connection.RemoteIpAddress} UPDATING TEAM {team.TeamId}!");
+            //_logger.LogWarning($"{Request.HttpContext.Connection.RemoteIpAddress} UPDATING TEAM {team.TeamId}!");
             _repo.UpdateTeam(team);
         }
     }
