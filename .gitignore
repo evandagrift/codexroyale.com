@@ -1,9 +1,25 @@
-# OS files
-.DS_Store
-Thumbs.db
-*.swp
+# ====================================
+# Combined .gitignore for .NET + React
+# Full-stack web applications
+# ====================================
 
-# Build output
+# ===================
+# OS Files
+# ===================
+.DS_Store
+.AppleDouble
+.LSOverride
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+*.swp
+*.swo
+*~
+
+# ===================
+# Build Output (Both .NET and React)
+# ===================
+# .NET build outputs
 [Bb]in/
 [Oo]bj/
 [Dd]ebug/
@@ -11,51 +27,187 @@ Thumbs.db
 [Pp]ublish/
 [Ll]og/
 [Ll]ogs/
+x64/
+x86/
+[Aa][Rr][Mm]/
+[Aa][Rr][Mm]64/
 
-# IDE
+# React build outputs
+/build
+/dist
+/.expo
+
+# ===================
+# IDE and Editor Files
+# ===================
+# Visual Studio
 .vs/
-.idea/
-.vscode/
 *.user
 *.suo
+*.userosscache
 *.sln.docstates
 _ReSharper*/
 *.DotSettings.user
 
-# Package management
+# JetBrains Rider / IntelliJ
+.idea/
+*.iml
+
+# Visual Studio Code
+.vscode/
+*.code-workspace
+
+# Other editors
+*.swp
+*.swo
+*~
+
+# ===================
+# Dependencies (Never Commit)
+# ===================
+# .NET dependencies
 packages/
 *.nupkg
 *.snupkg
 paket-files/
 .fake/
 
-# Test results
+# React/Node dependencies
+/node_modules
+/.pnp
+.pnp.js
+.yarn/install-state.gz
+
+# ===================
+# Testing
+# ===================
+# .NET test results
 [Tt]est[Rr]esult*/
 *.coverage
+*.coveragexml
 *.trx
 TestResults/
 
-# .NET specific
+# React test coverage
+/coverage
+/.nyc_output
+
+# ===================
+# Environment & Config Files with Secrets
+# ===================
+# .NET configs
+appsettings.Development.json
+appsettings.Local.json
+appsettings.*.local.json
+secrets.json
+local.settings.json
+*.pfx
+*.snk
+
+# React env files
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# General
+*.publishsettings
+
+# ===================
+# Generated Files
+# ===================
+# .NET generated files
+Generated_Code/
+*.Designer.cs
+*.generated.cs
 project.lock.json
+project.fragment.lock.json
 artifacts/
 *.pdb
 *.cache
 
-# Config files with secrets
-appsettings.Development.json
-appsettings.Local.json
-secrets.json
-local.settings.json
-.env
-*.pfx
-*.snk
+# React generated files
+.eslintcache
+.parcel-cache
 
-# Generated files
-Generated_Code/
-*.Designer.cs
-*.generated.cs
+# ===================
+# Logs
+# ===================
+# .NET logs
+*.log
+*.binlog
 
-# Keep important configs
+# React/Node logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+
+# ===================
+# Keep Important Config Files (Templates)
+# ===================
+# .NET config templates
 !appsettings.json
 !appsettings.Production.json
+!appsettings.template.json
+!appsettings.*.template.json
+
+# React config templates
 !.env.example
+!.env.template
+
+# ===================
+# .NET Specific (Additional)
+# ===================
+# Visual Studio cache files
+*.[Cc]ache
+!?*.[Cc]ache/
+
+# Visual Studio profiler
+*.psess
+*.vsp
+*.vspx
+*.sap
+
+# TFS
+$tf/
+
+# SQL Server files
+*.mdf
+*.ldf
+*.ndf
+
+# Fakes
+FakesAssemblies/
+
+# ===================
+# React Specific (Additional)
+# ===================
+# Service workers
+*.sw?
+
+# Webpack
+webpack-stats.json
+
+# Optional: If using npm/yarn workspaces
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/sdks
+!.yarn/versions
+
+# ===================
+# Project-Specific (Customize as needed)
+# ===================
+# ClientApp folder (if React is inside .NET project)
+**/ClientApp/dist/
+**/ClientApp/build/
+**/ClientApp/node_modules/
+
+# Docker
+docker-compose.override.yml
+
+# Azure Functions
+**/local.settings.json
