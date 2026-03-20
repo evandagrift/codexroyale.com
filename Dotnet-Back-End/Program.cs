@@ -19,7 +19,7 @@ namespace RoyaleTrackerAPI
             Host.CreateDefaultBuilder(args)
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
-                    webBuilder.UseStartup<Startup>().UseUrls(new[] { "http://localhost:44390" }); 
+                    webBuilder.UseStartup<Startup>();
                 });
     }
 }

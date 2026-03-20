@@ -7,32 +7,34 @@ using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using System.Net;
-
-using Swashbuckle.AspNetCore.SwaggerGen;
 using Microsoft.OpenApi.Models;
+using Swashbuckle.AspNetCore.SwaggerGen;
+using System;
+using System.Net;
 
 namespace RoyaleTrackerAPI
 {
     public class Startup
     {
-        public Startup(IConfiguration configuration)
+        public Startup(IConfiguration configuration, IWebHostEnvironment env)
         {
-         Configuration = configuration;
+            Configuration = configuration;
+            Environment = env;
         }
 
         public IConfiguration Configuration { get; }
+        public IWebHostEnvironment Environment { get; }
 
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.Configure<ForwardedHeadersOptions>(options =>
-            {
-                options.ForwardedHeaders =
-                    ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
-                options.KnownProxies.Add(IPAddress.Parse("127.0.10.1"));
-            });
+            //services.Configure<ForwardedHeadersOptions>(options =>
+            //{
+            //    options.ForwardedHeaders =
+            //        ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
+            //    options.KnownProxies.Add(IPAddress.Parse("127.0.10.1"));
+            //});
 
 
             services.AddControllers();
@@ -65,13 +67,11 @@ namespace RoyaleTrackerAPI
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "Codex Royale API", Version = "v1" });
             });
-                //services.AddDbContext<TRContext>(options => options.UseSqlServer(Configuration["ConnectionStrings:DBConnectionString"]), ServiceLifetime.Transient);
-
-                services.AddAuthorizationCore(options =>
-            {
-                options.AddPolicy("AdminOnly", policy => policy.RequireRole("Admin"));
-                options.AddPolicy("All", policy => policy.RequireRole("Admin", "User"));
-            });
+            services.AddAuthorizationCore(options =>
+        {
+            options.AddPolicy("AdminOnly", policy => policy.RequireRole("Admin"));
+            options.AddPolicy("All", policy => policy.RequireRole("Admin", "User"));
+        });
 
             services.AddSingleton<CustomAuthenticationManager>();
 
@@ -103,7 +103,6 @@ namespace RoyaleTrackerAPI
             app.UseForwardedHeaders();
 
             app.UseRouting();
-            //app.UseCors("hosted");
             app.UseCors("local");
 
             app.UseAuthorization();

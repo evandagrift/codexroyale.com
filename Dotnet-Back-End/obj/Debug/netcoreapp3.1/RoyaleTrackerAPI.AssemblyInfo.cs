@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("RoyaleTrackerAPI")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+5579a6ed94d041698c31ad8e7a8f67320b7fbcfe")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+cd1ef48069207a6542c288f94bfa8083bf902881")]
 [assembly: System.Reflection.AssemblyProductAttribute("RoyaleTrackerAPI")]
 [assembly: System.Reflection.AssemblyTitleAttribute("RoyaleTrackerAPI")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
