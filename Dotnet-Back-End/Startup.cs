@@ -26,7 +26,6 @@ namespace RoyaleTrackerAPI
         public IWebHostEnvironment Environment { get; }
 
 
-        // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
             //services.Configure<ForwardedHeadersOptions>(options =>
@@ -38,17 +37,6 @@ namespace RoyaleTrackerAPI
 
 
             services.AddControllers();
-
-            //services.AddCors(options =>
-            //{
-            //    options.AddPolicy("hosted",
-            //                      builder =>
-            //                      {
-            //                          builder.WithOrigins("https://codexroyale.com/")
-            //                          .AllowAnyHeader().AllowAnyMethod().AllowCredentials();
-            //                      });
-
-            //});
 
             services.AddCors(options =>
             {
@@ -67,25 +55,22 @@ namespace RoyaleTrackerAPI
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "Codex Royale API", Version = "v1" });
             });
+
+            services.AddSingleton<CustomAuthenticationManager>();
             services.AddAuthorizationCore(options =>
         {
             options.AddPolicy("AdminOnly", policy => policy.RequireRole("Admin"));
             options.AddPolicy("All", policy => policy.RequireRole("Admin", "User"));
         });
 
-            services.AddSingleton<CustomAuthenticationManager>();
-
-
             var emailConfig = Configuration.GetSection("EmailConfiguration").Get<AuthMessageSenderOptions>();
 
             services.AddSingleton<AuthMessageSenderOptions>(emailConfig);
             services.AddSingleton<EmailSender>();
             services.AddSingleton<Client>(new Client(Configuration["ConnectionStrings:BearerToken"]));
-            //allow connection between origins
 
         }
 
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
 
@@ -100,17 +85,19 @@ namespace RoyaleTrackerAPI
                 c.RoutePrefix = string.Empty;
             });
 
-            app.UseForwardedHeaders();
+            //app.UseForwardedHeaders();
 
+            //This needs to be in this order!
+            //===============================
             app.UseRouting();
             app.UseCors("local");
-
+            app.UseAuthentication();
             app.UseAuthorization();
-
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
             });
+            //===============================
         }
     }
 }

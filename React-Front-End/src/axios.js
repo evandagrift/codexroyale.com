@@ -1,5 +1,5 @@
 import Axios from "axios";
-const localURL = "http://localhost:52715/";
+const localURL = "https://localhost:52715/";
 const baseURL = "https://api.codexroyale.com/";
 let headers = {};
 if (localStorage.user){
