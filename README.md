@@ -1,6 +1,6 @@
  <h1 display="flex" align="center"> Codex Royale REST API </h1>
 
-<p display="flex" align="center"><img src="images/clash-logo.png"  alt="Clash Banner" width='60%' height="auto" /></p>
+<p display="flex" align="center"><img src="ReadMeImages/clash-logo.png"  alt="Clash Banner" width='60%' height="auto" /></p>
 
 
 
