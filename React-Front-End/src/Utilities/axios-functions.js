@@ -14,8 +14,10 @@ export async function LoginFunctionAsync(username, password) {
 }
 
 export async function GetBattlesAsync(paginationInfo) {
+  console.log("attempting to get all recent 1v1 battles")
   try {
     const response = await axios.get(`battles?pageIndex=${paginationInfo.pageIndex}&itemsPerPage=${paginationInfo.itemsPerPage}`);
+    console.log("successfully fetched recent 1v1 battles")
     return response;
   } catch(error){
     console.error("Error fetching battles:", error);

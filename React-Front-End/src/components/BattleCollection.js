@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { Component, memo } from "react";
 import Battle from "./Battle";
 import styles from "../cssModules/BattleCollection.module.css";
 
@@ -14,9 +14,9 @@ class BattleCollection extends Component {
     const { handleScroll, battles, playerTag } = this.props;
     let componentHeader = <h2>Recently Recorded Battles</h2>;
     let battlesDraw = undefined;
+    console.log("Rendering Battle Collection")
 
     if (battles && battles.length > 0) {
-      componentHeader = <h2>Recently Recorded Battles</h2>;
       battlesDraw = battles.map((b, i) => (
         <Battle key={`battle-${i}`} battle={b} />
       ));
@@ -24,8 +24,6 @@ class BattleCollection extends Component {
 
     return (
       <div className={styles.battleCollection} onScroll={handleScroll}>
-        {componentHeader}
-
         <div className={styles.battleCollection}>
           {battlesDraw}
         </div>
@@ -34,4 +32,4 @@ class BattleCollection extends Component {
   }
 }
 
-export default BattleCollection;
+export default memo(BattleCollection);
