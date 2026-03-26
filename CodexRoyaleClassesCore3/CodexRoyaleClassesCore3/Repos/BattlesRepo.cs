@@ -207,7 +207,9 @@ namespace CodexRoyaleClassesCore3.Repos
         }
         public async Task<PaginatedResponse<Battle>> GetRecentBattles(int pageIndex, int itemsPerPage)
         {   
+            //this will only fetch 1v1 battles
             List<Battle> battles = await _context.Battles
+                .Where(b => b.Team1DeckBId == 0)
                 .OrderByDescending(b => b.BattleTime)
                 .Skip((pageIndex - 1) * itemsPerPage)
                 .Take(itemsPerPage).ToListAsync();
