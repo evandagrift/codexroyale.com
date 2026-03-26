@@ -1,33 +1,38 @@
 import { Component } from "react";
 import Deck from "../components/Deck";
 import Time from "./Time";
-import { getPlayerDataAsync } from "../Utilities/axios-functions";
+import { getPlayerDataAsync, getTeamDataAsync } from "../Utilities/axios-functions";
 
 class Player extends Component {
   constructor(props) {
     super(props);
     this.state = {
       player: [],
-      playerTag: ""
+      playerTag: "",
+      teamId: ""
     };
   }
 
   async componentDidMount() {
-    const { playerTag } = this.props;
-
-    this.setState({ playerTag: playerTag });
+    const { playerTag, teamId } = this.props;
+    console.log(playerTag)
+    console.log(teamId)
 
     //call player at given Tag
-
-    try {
-      let responsePlayer = await getPlayerDataAsync(playerTag);
+    if (playerTag != undefined) {
+      try {
+        let responsePlayer = await getPlayerDataAsync(playerTag);
+        if (responsePlayer) { this.setState({ player: responsePlayer }); }
+      } catch { /* this.setState({ redirect: true }) */ }
+    }
+    else if (teamId != undefined) {
+      let responsePlayer = await getTeamDataAsync(teamId);
       if (responsePlayer) { this.setState({ player: responsePlayer }); }
-      // else this.setState({ redirect: true });
-    } catch { /* this.setState({ redirect: true }) */ }
+    }
   }
   async componentDidUpdate() {
 
-    const { playerTag } = this.props;
+    const { playerTag, teamId } = this.props;
 
     if (playerTag != this.state.playerTag) {
       this.setState({ playerTag: playerTag });
@@ -169,7 +174,7 @@ export default Player;
 /*
 if (tag != '') {
   try {
-    const responsePlayer = await axios.post("players/official/" + FormatTag(tag));
+    const responsePlayer = await axios.post("player/official/" + FormatTag(tag));
     setPlayer(responsePlayer.data);
 
     // let response = [];

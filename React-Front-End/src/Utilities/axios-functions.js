@@ -1,8 +1,6 @@
 import { axios } from "../axios";
 import { FormatTag } from "./scripts";
 
-//const configOLD = { headers: { Authorization: `bearer ${user['token']}`}};
-
 export async function LoginFunctionAsync(username, password) {
   try {
     const response = await axios.post("Users/login", {
@@ -60,7 +58,7 @@ export async function GetPlayerBattlesAsync(playerTag, paginationInfo) {
 export async function GetChestsAsync(playerTag) {
   try {
     const response = await axios.get(
-      "players/" + FormatTag(playerTag) + "/chests");
+      "player/" + FormatTag(playerTag) + "/chests");
     return response.data;
   } catch {
     return undefined;
@@ -68,8 +66,9 @@ export async function GetChestsAsync(playerTag) {
 }
 
 export async function GetTopDecks(playerTag) {
+  console.log("Getting Player's Top Decks by player tag")
   try {
-    const response = await axios.get("players/" + FormatTag(playerTag) + "/decks");
+    const response = await axios.get("player/" + FormatTag(playerTag) + "/decks");
     return response.data;
   } catch {
     return undefined;
@@ -103,7 +102,18 @@ export async function updateUserSettings(user, tag, password, newPassword) {
 
 export async function getPlayerDataAsync(tag) {
   try {
+    if(tag != undefined){
     const response = await axios.get("players/" + FormatTag(tag));
+    return response.data;
+    }
+  } catch {
+    return undefined;
+  }
+}
+
+export async function getTeamDataAsync(id) {
+  try {
+    const response = await axios.get("players/id/" + id);
     return response.data;
   } catch {
     return undefined;
@@ -119,14 +129,14 @@ export async function getAllCards() {
   }
 }
 
-export async function GetDeckAsync(tag) {
-  try {
-    const response = await axios.get("decks/" + 6224);
-    return response.data;
-  } catch {
-    return undefined;
-  }
-}
+// export async function GetDeckAsync(tag) {
+//   try {
+//     const response = await axios.get("decks/" + 6224);
+//     return response.data;
+//   } catch {
+//     return undefined;
+//   }
+// }
 
 /*
   async function getCard(id) {

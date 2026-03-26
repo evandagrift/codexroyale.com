@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import Deck from "../components/Deck";
-import { GetTopDecks } from "../Utilities/axios-functions";
+import { GetTopDecksByTag, GetTopDecksById } from "../Utilities/axios-functions";
 import styles from "../cssModules/TopDecks.module.css"
 import linkImg from "../assets/primary-copy.png"
 
@@ -9,6 +9,7 @@ class TopDecks extends Component {
     super(props);
     this.state = {
       playerTag: "",
+      playerId: "",
       topDecks: [],
       date: new Date(),
     };
@@ -19,9 +20,9 @@ class TopDecks extends Component {
     const { playerTag } = this.props;
     this.setState({playerTag:playerTag});
 
-    do {  
       //gets player's best decks from backend
-      var decks = await GetTopDecks(playerTag);
+      // var decks = await GetTopDecksByTag(playerTag);
+      var decks = undefined;
 
       //if successfully fetched the decks are set to the state variable
       if (decks) this.setState({ topDecks: decks });
@@ -33,7 +34,6 @@ class TopDecks extends Component {
         }
       }
       this.setState({ date: Date.now() });
-    } while (this.state.topDecks.length == 0);
   }
   async componentDidUpdate() {
     const { playerTag } = this.props;
@@ -45,7 +45,8 @@ class TopDecks extends Component {
 
       do {  
         //gets player's best decks from backend
-        var decks = await GetTopDecks(playerTag);
+        var decks = undefined;
+        // var decks = await GetTopDecks(playerTag);
 
         //if successfully fetched the decks are set to the state variable
         if (decks) this.setState({ topDecks: decks });

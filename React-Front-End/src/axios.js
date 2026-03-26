@@ -1,6 +1,6 @@
 import Axios from "axios";
 const localURL = "https://localhost:52715/";
-const baseURL = "https://api.codexroyale.com/";
+const hostedURL = "https://api.codexroyale.com/";
 let headers = {};
 if (localStorage.user){
    headers.Authorization = `bearer ${localStorage.user['token']}`;

@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Reflection.Metadata;
 using System.Threading.Tasks;
 using CodexRoyaleClassesCore3;
 using CodexRoyaleClassesCore3.Models;
@@ -34,7 +33,7 @@ namespace RoyaleTrackerAPI.Controllers
             //init the repo with DB context
             _playerSnapshotRepo = new PlayerSnapshotRepo(_client, _context);
             _chestsRepo = new ChestsRepo(_client, _context);
-            _logger = logger;
+            //_logger = logger;
         }
 
 
@@ -49,6 +48,20 @@ namespace RoyaleTrackerAPI.Controllers
             _logger.LogInformation($"returnPlayer:{returnPlayer.Name}");
 
             return Ok(JsonConvert.SerializeObject(returnPlayer, Formatting.Indented, new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore }));
+        }
+        //gets current player data with given tag
+        [AllowAnonymous]
+        [HttpGet("id/{teamId}")]
+        public async Task<IActionResult> GetPlayerByTeamID(int teamId)
+        {
+            PlayerSnapshot returnPlayer = await _playerSnapshotRepo.GetOfficialPlayerByTeamId(teamId);
+
+            //_logger.LogInformation($"returnPlayer:{returnPlayer.Name}");
+
+            return Ok(JsonConvert.SerializeObject(returnPlayer, Formatting.Indented, new JsonSerializerSettings
+            {
+                NullValueHandling = NullValueHandling.Ignore
+            }));
         }
 
         //gets the players upcoming chests that they will unlock
@@ -100,16 +113,16 @@ namespace RoyaleTrackerAPI.Controllers
 
         }
 
-
-        //getting player snapshot at given Id
-        [Authorize(Policy = "AdminOnly")]
-        [HttpGet("id/{id}")]
-        public string Get(int id)
-        {
-            //_logger.LogInformation($"{Request.HttpContext.Connection.RemoteIpAddress} getting playersnapshot with Id:{id}");
-            PlayerSnapshot player = _playerSnapshotRepo.GetPlayerById(id);
-            return JsonConvert.SerializeObject(player, Formatting.Indented, new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore });
-        }
+        //has been moved to the player snapshot controller
+        ////getting player snapshot at given Id
+        //[Authorize(Policy = "AdminOnly")]
+        //[HttpGet("id/{id}")]
+        //public string Get(int id)
+        //{
+        //    //_logger.LogInformation($"{Request.HttpContext.Connection.RemoteIpAddress} getting playersnapshot with Id:{id}");
+        //    PlayerSnapshot player = _playerSnapshotRepo.GetPlayerById(id);
+        //    return JsonConvert.SerializeObject(player, Formatting.Indented, new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore });
+        //}
 
 
         //Deleteing player snapshot with given Id

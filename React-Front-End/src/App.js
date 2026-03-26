@@ -22,20 +22,24 @@ function App() {
         <MyNavbar />
         <Routes>
 
-          {/* <Route path="/" exact component={TestPage}  /> */}
           <Route index element={<HomePage />} />
           <Route path="/" element={<HomePage />} />
-          {/* <Route path="/login" exact component={LoginPage}  /> */}
-          {/* <Route path="/register" exact component={RegisterPage}  /> */}
-          {/* <Route path="/settings" exact component={UserSettingsPage}  /> */}
-          <Route path="/clan" element={ClanPage} />
-          <Route path="/contact" element={ContactPage} />
-          <Route path="/clan/:clanTag" element={ClanPage} />
-          <Route path="/player" element={PlayerPage} />
-          <Route path="/player/:playerTag" element={PlayerPage} />
+          <Route path="/clan" element={<ClanPage />} />
+          <Route path="/clan/:clanTag" element={<ClanPage />} />
+
+          <Route path="/player" element={<PlayerPage />} />
+          <Route path="/player/:playerTag" element={<PlayerPage />} />
+          <Route path="/player/id/:teamId" element={<PlayerPage />} />
+
+          <Route path="/contact" element={<ContactPage/>} />
+
           {/* <Route path="/register/authenticate/:verificationCode"><EmailVerificationPage /></Route> */}
           {/* <Route path="/forgotpassword/:passwordResetCode"  component={ForgotPasswordPage}/> */}
           {/* <Route path="/forgotpassword" exact component={ForgotPasswordPage}/> */}
+          {/* <Route path="/login" exact component={LoginPage}  /> */}
+          {/* <Route path="/register" exact component={RegisterPage}  /> */}
+          {/* <Route path="/settings" exact component={UserSettingsPage}  /> */}
+          {/* <Route path="/" exact component={TestPage}  /> */}
         </Routes>
       </UserContext.Provider>
     </div>

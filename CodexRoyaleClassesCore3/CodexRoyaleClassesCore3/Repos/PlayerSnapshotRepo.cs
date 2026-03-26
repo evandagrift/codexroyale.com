@@ -112,86 +112,100 @@ namespace CodexRoyaleClassesCore3.Repos
         //gets player data from the official api via their player tag
         public async Task<PlayerSnapshot> GetOfficialPlayer(string tag)
         {
-            TeamsRepo temsRepo = new TeamsRepo(_context);
-            DecksRepo decksRepo = new DecksRepo(_client, _context);
-            CardsRepo cardsRepo = new CardsRepo(_client, _context);
-
-            ClansRepo clansRepo = new ClansRepo(_client, _context);
-
-            //try in case we get connection errors`
-            try
+            if (!string.IsNullOrEmpty(tag))
             {
+                TeamsRepo temsRepo = new TeamsRepo(_context);
+                DecksRepo decksRepo = new DecksRepo(_client, _context);
+                CardsRepo cardsRepo = new CardsRepo(_client, _context);
+                ClansRepo clansRepo = new ClansRepo(_client, _context);
 
-                string connectionString = "players/%23" + tag.Substring(1);
-
-                var result = await _client.officialAPI.GetAsync(connectionString);
-
-                if (result.IsSuccessStatusCode)
+                //try in case we get connection errors
+                try
                 {
-                    var content = await result.Content.ReadAsStringAsync();
-                    PlayerSnapshot player = JsonConvert.DeserializeObject<PlayerSnapshot>(content);
+                    Console.WriteLine("Attempting to get official player with Tag:" + tag);
+                    string connectionString = "players/%23" + tag.Substring(1);
 
+                    var result = await _client.officialAPI.GetAsync(connectionString);
 
-                    if (player.Name != "" && player.CurrentFavouriteCard != null)
+                    if (result.IsSuccessStatusCode)
                     {
-                        player.TeamId = 0;
+                        var content = await result.Content.ReadAsStringAsync();
+                        PlayerSnapshot player = JsonConvert.DeserializeObject<PlayerSnapshot>(content);
 
-                        //assigns current favorite card details
-                        player.CurrentFavouriteCardId = player.CurrentFavouriteCard.Id;
-                        player.CurrentFavouriteCard = cardsRepo.ConvertCardUrl(player.CurrentFavouriteCard);
-                        player.CardsDiscovered = player.Cards.Count;
-                        player.Cards.ForEach(c =>
-                        {
-                            c = cardsRepo.ConvertCardUrl(c);
-                        });
 
-                        if (player.Clan != null)
+                        if (player.Name != "" && player.CurrentFavouriteCard != null)
                         {
-                            player.ClanTag = player.Clan.Tag;
-                            player.LastSeen = await GetLastSeen(player.Tag, player.ClanTag);
+                            player.TeamId = 0;
+
+                            //assigns current favorite card details
+                            player.CurrentFavouriteCardId = player.CurrentFavouriteCard.Id;
+                            player.CurrentFavouriteCard = cardsRepo.ConvertCardUrl(player.CurrentFavouriteCard);
+                            player.CardsDiscovered = player.Cards.Count;
+                            player.Cards.ForEach(c =>
+                            {
+                                c = cardsRepo.ConvertCardUrl(c);
+                            });
+
+                            if (player.Clan != null)
+                            {
+                                player.ClanTag = player.Clan.Tag;
+                                player.LastSeen = await GetLastSeen(player.Tag, player.ClanTag);
+                            }
+
+
+                            player.Deck = decksRepo.GetDeckWithId(player.CurrentDeck);
+                            player.CurrentDeckId = player.Deck.Id;
+
+                            //removing this from the provided data so Front end doesn't use currentdeck instead of the dressed Deck with all details
+                            player.CurrentDeck = null;
+
+
+                            //sets the time of this update
+                            player.UpdateTime = DateTime.UtcNow.ToString("yyyyMMddTHHmmss");
+
+                            TrackedPlayer trackedPlayer = _context.TrackedPlayers.Where(t => t.Tag == player.Tag).FirstOrDefault();
+
+
+                            //adding battles is done in the auto update thread to handle concurrency errors
+                            //adds the player to have their data tracked
+                            if (trackedPlayer == null)
+                            {
+                                _context.TrackedPlayers.Add(new TrackedPlayer { Tag = player.Tag, Priority = "high" });
+                                _context.SaveChanges();
+                            }
+
+
+                            Console.WriteLine("Successfully fetched player with Tag:" + tag);
+                            return player;
                         }
-
-
-                        player.Deck = decksRepo.GetDeckWithId(player.CurrentDeck);
-                        player.CurrentDeckId = player.Deck.Id;
-
-                        //removing this from the provided data so Front end doesn't use currentdeck instead of the dressed Deck with all details
-                        player.CurrentDeck = null;
-
-
-                        //sets the time of this update
-                        player.UpdateTime = DateTime.UtcNow.ToString("yyyyMMddTHHmmss");
-
-                        TrackedPlayer trackedPlayer = _context.TrackedPlayers.Where(t => t.Tag == player.Tag).FirstOrDefault();
-
-
-                        //adding battles is done in the auto update thread to handle concurrency errors
-                        //adds the player to have their data tracked
-                        if (trackedPlayer == null)
-                        {
-                            _context.TrackedPlayers.Add(new TrackedPlayer { Tag = player.Tag, Priority = "high" });
-                            _context.SaveChanges();
-                        }
-
-
-                        return player;
                     }
-                    else { return null; }
+
                 }
-                else return null;
 
+            catch(Exception ex) {
 
+                    Console.WriteLine("Failed to fetch player data with Tag:" + tag);
+                    Console.WriteLine(ex);
+                    return null;
+                }
             }
-
-            catch { return null; }
+            Console.WriteLine("Getting current player stats failed due to no tag being provided");
+            return null;
 
         }
 
-        public async Task<List<Deck>>  GetPlayerTopDecksAsync(string tag)
+
+        public async Task<PlayerSnapshot> GetOfficialPlayerByTeamId(int teamId)
+        {
+            string playerTag = await GetPlayerTagByTeamID(teamId);
+            return await GetOfficialPlayer(playerTag);
+        }
+
+        public async Task<List<Deck>> GetPlayerTopDecksAsync(string tag)
         {
             int teamId = _context.Teams.Where(t => t.TwoVTwo == false && t.Tag == tag).FirstOrDefault().TeamId;
 
-             
+
             if (teamId > 0)
             {
                 List<Deck> playerDecks = new List<Deck>();
@@ -501,5 +515,6 @@ namespace CodexRoyaleClassesCore3.Repos
 
             }
         }
+
     }
 }

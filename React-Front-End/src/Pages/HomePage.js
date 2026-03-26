@@ -21,6 +21,7 @@ const HomePage = () => {
   });
 
   const fetchData = async () => {
+    console.log("testing here");
     if (loading) return;
     setLoading(true);
     try {

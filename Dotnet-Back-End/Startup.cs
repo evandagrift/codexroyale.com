@@ -1,6 +1,7 @@
 using CodexRoyaleClassesCore3;
 using CodexRoyaleClassesCore3.Models;
 using CodexRoyaleClassesCore3.Models.Email;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpOverrides;
@@ -56,7 +57,8 @@ namespace RoyaleTrackerAPI
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "Codex Royale API", Version = "v1" });
             });
 
-            services.AddSingleton<CustomAuthenticationManager>();
+            //services.AddAuthentication("Custom")
+            //    .AddScheme<AuthenticationSchemeOptions, CustomAuthenticationHandler>("Custom", null);
             services.AddAuthorizationCore(options =>
         {
             options.AddPolicy("AdminOnly", policy => policy.RequireRole("Admin"));
@@ -65,6 +67,7 @@ namespace RoyaleTrackerAPI
 
             var emailConfig = Configuration.GetSection("EmailConfiguration").Get<AuthMessageSenderOptions>();
 
+            services.AddSingleton<CustomAuthenticationManager>();
             services.AddSingleton<AuthMessageSenderOptions>(emailConfig);
             services.AddSingleton<EmailSender>();
             services.AddSingleton<Client>(new Client(Configuration["ConnectionStrings:BearerToken"]));

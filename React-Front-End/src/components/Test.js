@@ -23,10 +23,8 @@ class Test extends Component {
     try {
       let tempDeck = await GetDeckAsync();
       let tempCards = await getAllCards();
-        console.log(tempCards)
       this.setState({ deck: tempDeck });
       this.setState({ cards: tempCards });
-      console.log(tempCards);
     }
     catch { }
   }

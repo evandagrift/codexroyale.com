@@ -61,7 +61,7 @@ export async function GetClanAsync(tag){
 
 
 export async function RequestResetPasswordPostAsync(userEmail){
-  return axios.post('Users/ResetPassword/'+userEmail)
+  return axios.post('Users/ResetPassword/' + userEmail)
 .then((response) => response.data
 , (error) => { 
 });
@@ -82,8 +82,10 @@ export async function ResetPasswordPostAsync(password, passwordResetCode){
 
 
 export function GetDeckById(deckId){
-  const response = axios.get("Decks/"+deckId).then();
-  return response.data;
+  console.log("Fetching deck by Id")
+  // const response = axios.get("Decks/"+deckId).then();
+  // return response.data;
+  return undefined();
 }
 /*
 

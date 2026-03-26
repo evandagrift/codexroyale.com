@@ -2,46 +2,40 @@ import { useState, useContext, useEffect } from "react";
 import { useParams } from "react-router-dom";
 
 import { UserContext } from "../UserContext";
-import { axios } from "../axios";
-
-import Battle from "../components/Battle";
 import Player from "../components/Player";
 import ChestCollection from "../components/ChestCollection";
 import BattleCollection from "../components/BattleCollection";
-import Deck from "../components/Deck";
 import TopDecks from "../components/TopDecks";
 
 const PlayerPage = () => {
-  const { playerTag } = useParams();
-  const { user, setUser } = useContext(UserContext);
-
-  const [tag, setTag] = useState("");
-  // const [deck, setDeck] = useState("");
-  
+  const { playerTag, teamId } = useParams();
+  // const { user, setUser } = useContext(UserContext);
 
   //same as componentDidMount
-  useEffect(async() => {
-    if (playerTag != undefined) {
-      setTag(playerTag);
-    } else if (user && user.tag != "") {
-      setTag(user.tag);
-    } 
-  }, [playerTag]);
-
-
-
-  if(tag)
-  {
+  useEffect(() => {
+  }, [playerTag, teamId]);
+  
+  if (playerTag) {
     return (
       <div>
-      {<ChestCollection playerTag={tag} />}
-        {<Player playerTag={tag} />}
-        {<TopDecks playerTag={tag}/>}
-        {<BattleCollection playerTag={tag} />}
+        {/* {<ChestCollection playerTag={playerTag} />}
+        {<Player playerTag={playerTag} />}
+        {<TopDecks playerTag={playerTag} />}
+        {<BattleCollection playerTag={playerTag} />} */}
       </div>
     );
   }
-  else return(<h1>Loading...</h1>)
+  else if (teamId){
+    return (
+      <div>
+        {/* {<ChestCollection playerTag={teamId} />} */}
+        {<Player teamId={teamId} />}
+        {/* {<TopDecks teamId={teamId} />}
+        {<BattleCollection teamId={teamId} />} */}
+      </div>
+    );
+  }
+  else return (<h1>Loading...</h1>);
 
 };
 
