@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useState, useRef } from "react";
 import { UserContext } from "../UserContext";
 import BattleCollection from "../components/BattleCollection";
 import SearchBox from "../components/SearchBox";
@@ -11,7 +11,7 @@ const HomePage = () => {
 
   const [chests, setChests] = useState(undefined);
   const [loading, setLoading] = useState(false);
-  const [battles, setBattles] = useState([]);
+  const battles = useRef([]);
   const [paginationInfo, setPaginationInfo] = useState({
     pageIndex: 1,
     itemsPerPage: 10,
@@ -27,7 +27,7 @@ const HomePage = () => {
     try {
       const response = await GetBattlesAsync(paginationInfo);
       if (response && response.status === 200) {
-        setBattles((prevBattles) => [...prevBattles, ...response.data.Items]);
+        battles.current = ([...battles.current, ...response.data.Items]);
         setPaginationInfo((prevState) => ({
           ...prevState,
           totalPages: response.data.PaginationInfo.TotalPages,
@@ -92,7 +92,7 @@ const HomePage = () => {
         <SearchBox />
       </div>
       <div className={styles.battleCollection}>
-        <BattleCollection battles={battles} />
+        <BattleCollection battles={battles.current} />
         {loadingIcon}
       </div>
     </div>

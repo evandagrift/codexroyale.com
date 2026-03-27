@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { Component, memo } from "react";
 import Battle from "./Battle";
 import styles from "../cssModules/BattleCollection.module.css";
 
@@ -34,4 +34,4 @@ class BattleCollection extends Component {
   }
 }
 
-export default BattleCollection;
+export default memo(BattleCollection);

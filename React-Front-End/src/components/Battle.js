@@ -77,4 +77,4 @@ class Battle extends Component {
       </div>);
   }
 }
-export default Battle;
+export default memo(Battle);
