@@ -12,23 +12,18 @@ class Deck extends Component {
     const { deck } = this.props;
     if(deck)
     {
- return (
-        <div className={styles.deck}>
-          <div className={styles.row}>
-            <Card key={"$id" + deck.Card1Id} card={deck.Card1} />
-            <Card key={"$id" + deck.Card2Id} card={deck.Card2} />
-            <Card key={"$id" + deck.Card3Id} card={deck.Card3} />
-            <Card key={"$id" + deck.Card4Id} card={deck.Card4} />
-          </div>
-
-          <div className={styles.row}>
-            <Card key={"$id" + deck.Card5Id} card={deck.Card5} />
-            <Card key={"$id" + deck.Card6Id} card={deck.Card6} />
-            <Card key={"$id" + deck.Card7Id} card={deck.Card7} />
-            <Card key={"$id" + deck.Card8Id} card={deck.Card8} />
-          </div>
-        </div>
-      );
+  return (
+      <div className={styles.deck}>
+        <Card key={"$id" + deck.Card1Id} card={deck.Card1} />
+        <Card key={"$id" + deck.Card2Id} card={deck.Card2} />
+        <Card key={"$id" + deck.Card3Id} card={deck.Card3} />
+        <Card key={"$id" + deck.Card4Id} card={deck.Card4} />
+        <Card key={"$id" + deck.Card5Id} card={deck.Card5} />
+        <Card key={"$id" + deck.Card6Id} card={deck.Card6} />
+        <Card key={"$id" + deck.Card7Id} card={deck.Card7} />
+        <Card key={"$id" + deck.Card8Id} card={deck.Card8} />
+      </div>
+    );
     }
     else return (<div></div>);
   

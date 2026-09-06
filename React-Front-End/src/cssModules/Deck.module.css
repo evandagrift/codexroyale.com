@@ -1,9 +1,10 @@
-.deck{
-    display: inline-block;
+.deck {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 4px;
+}
 
+.deck > div {
+  padding: 0px;
+  margin: 0px;
 }
-.deck div{
-    padding: 0px;
-    margin: 0px;
-}
-/**className="text-center d-inline-flex m-0"**/

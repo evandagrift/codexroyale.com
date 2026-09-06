@@ -1,36 +1,199 @@
-.battle{
-    display: inline-flex;
-    padding: 8px;
-    border-bottom: 1px #3a3737 solid;
-    width: 100%;
-    max-width: 100vw;
-
-}
-.leftPanel{
-    flex-basis: 40%;
-    padding-right: 16px;
-}
-.leftPanel:hover
-{
-    background-color: #e6e6e6;
-    cursor: pointer;
+.battle {
+  display: flex;
+  flex-direction: column;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid #d1d5db;
+  background: #ffffff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  transition: box-shadow 0.2s ease, transform 0.2s ease;
+  width: 100%;
+  max-width: 100vw;
 }
 
-
-.centerPanel{
-    flex-basis: 20%;
-}
-.centerPanel h1{
-    margin-top: 50%;
-    margin-bottom: 20%;
+.battle:hover {
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.12);
+  transform: translateY(-1px);
 }
 
-.rightPanel{
-    flex-basis: 40%;
-    padding-left: 16px;
+.battle.win {
+  border-left: 4px solid #2563eb;
 }
-.rightPanel:hover
-{
-    background-color: #e6e6e6;
-    cursor: pointer;
+
+.battle.loss {
+  border-left: 4px solid #dc2626;
+}
+
+.battleHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  background: linear-gradient(180deg, #f8fafc 0%, #ffffff 100%);
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.resultBadge {
+  font-weight: 700;
+  font-size: 0.95rem;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: #e5e7eb;
+  color: #374151;
+}
+
+.win .resultBadge {
+  background: #dbeafe;
+  color: #1e40af;
+}
+
+.loss .resultBadge {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+.headerCenter {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+
+.gameMode {
+  font-size: 0.8rem;
+  color: #6b7280;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.crownScore {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #111827;
+}
+
+.crownBlue,
+.crownRed {
+  font-size: 1.1rem;
+}
+
+.teamContainer {
+  display: flex;
+  gap: 0;
+  background: #ffffff;
+}
+
+.teamPanel {
+  flex: 1;
+  padding: 14px 16px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.teamPanel:hover {
+  background-color: #f9fafb;
+}
+
+.teamHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.playerName {
+  font-weight: 700;
+  font-size: 1rem;
+  color: #111827;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 70%;
+}
+
+.trophyChange {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: #374151;
+}
+
+.trophyDelta {
+  font-size: 0.85rem;
+  font-weight: 600;
+  padding: 2px 6px;
+  border-radius: 6px;
+}
+
+.positive .trophyDelta {
+  color: #166534;
+  background: #dcfce7;
+}
+
+.negative .trophyDelta {
+  color: #991b1b;
+  background: #fee2e2;
+}
+
+.vsDivider {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  font-weight: 800;
+  color: #9ca3af;
+  font-size: 0.9rem;
+  letter-spacing: 0.05em;
+  border-left: 1px solid #e5e7eb;
+  border-right: 1px solid #e5e7eb;
+  background: #f9fafb;
+}
+
+.hpBar {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+  padding: 8px 10px;
+  border-radius: 8px;
+  background: #f3f4f6;
+  border: 1px solid #e5e7eb;
+}
+
+.hpItem {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  min-width: 48px;
+}
+
+.hpLabel {
+  font-size: 0.7rem;
+  color: #6b7280;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.hpValue {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: #111827;
+}
+
+.battleFooter {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  border-top: 1px solid #e5e7eb;
+  background: #f8fafc;
+  color: #6b7280;
+  font-size: 0.85rem;
 }
