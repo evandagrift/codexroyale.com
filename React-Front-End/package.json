@@ -10,13 +10,13 @@
     "@types/node": "^25.5.0",
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
-    "axios": "^1.13.6",
+    "axios": "^0.27.2",
     "bootstrap": "^5.3.8",
     "jquery": "^4.0.0",
     "react": "^19.2.4",
     "react-bootstrap": "^2.10.10",
     "react-dom": "^19.2.4",
-    "react-router-dom": "^7.13.1",
+    "react-router-dom": "^6.3.0",
     "react-scripts": "^5.0.1",
     "web-vitals": "^5.1.0"
   },
@@ -43,5 +43,10 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "@babel/core": "^7.22.0",
+    "@babel/preset-env": "^7.21.4",
+    "msw": "^1.0.0"
   }
 }

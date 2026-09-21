@@ -129,14 +129,32 @@ export async function getAllCards() {
   }
 }
 
-// export async function GetDeckAsync(tag) {
-//   try {
-//     const response = await axios.get("decks/" + 6224);
-//     return response.data;
-//   } catch {
-//     return undefined;
-//   }
-// }
+export async function GetDeckAsync(tag) {
+  try {
+    const response = await axios.get("decks/" + 6224);
+    return response.data;
+  } catch {
+    return undefined;
+  }
+}
+
+export async function GetTopDecksByTag(playerTag) {
+  try {
+    const response = await axios.get("player/" + FormatTag(playerTag) + "/decks");
+    return response.data;
+  } catch {
+    return undefined;
+  }
+}
+
+export async function GetTopDecksById(playerId) {
+  try {
+    const response = await axios.get("players/id/" + playerId + "/decks");
+    return response.data;
+  } catch {
+    return undefined;
+  }
+}
 
 /*
   async function getCard(id) {

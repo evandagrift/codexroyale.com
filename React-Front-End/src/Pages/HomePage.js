@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState, useRef } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { UserContext } from "../UserContext";
 import BattleCollection from "../components/BattleCollection";
 import SearchBox from "../components/SearchBox";
@@ -9,37 +9,35 @@ import { GetBattlesAsync } from "../Utilities/axios-functions";
 const HomePage = () => {
   const { user } = useContext(UserContext);
 
-  const [chests, setChests] = useState(undefined);
+  const [battles, setBattles] = useState([]);
   const [loading, setLoading] = useState(false);
-  const battles = useRef([]);
   const [paginationInfo, setPaginationInfo] = useState({
     pageIndex: 1,
     itemsPerPage: 10,
     totalPages: 1,
     hasPreviousPage: false,
-    hasNextPage: false
+    hasNextPage: false,
   });
 
   const fetchData = async () => {
-    console.log("testing here");
     if (loading) return;
     setLoading(true);
     try {
       const response = await GetBattlesAsync(paginationInfo);
       if (response && response.status === 200) {
-        battles.current = ([...battles.current, ...response.data.Items]);
+        setBattles((prev) => [...prev, ...response.data.Items]);
         setPaginationInfo((prevState) => ({
           ...prevState,
           totalPages: response.data.PaginationInfo.TotalPages,
           hasPreviousPage: response.data.PaginationInfo.HasPreviousPage,
-          hasNextPage: response.data.PaginationInfo.HasNextPage
+          hasNextPage: response.data.PaginationInfo.HasNextPage,
         }));
       }
     } catch (error) {
       console.error("Error fetching HomePage data:", error);
     } finally {
-    }
       setLoading(false);
+    }
   };
 
   useEffect(() => {
@@ -49,10 +47,14 @@ const HomePage = () => {
   useEffect(() => {
     const handleScroll = () => {
       const { scrollTop, clientHeight, scrollHeight } = document.documentElement;
-      if (scrollTop + clientHeight >= scrollHeight - 20 && !loading && paginationInfo.pageIndex < paginationInfo.totalPages) {
+      if (
+        scrollTop + clientHeight >= scrollHeight - 20 &&
+        !loading &&
+        paginationInfo.pageIndex < paginationInfo.totalPages
+      ) {
         setPaginationInfo((prevState) => ({
           ...prevState,
-          pageIndex: prevState.pageIndex + 1
+          pageIndex: prevState.pageIndex + 1,
         }));
       }
     };
@@ -63,38 +65,37 @@ const HomePage = () => {
     };
   }, [loading, paginationInfo.pageIndex, paginationInfo.totalPages]);
 
-  let upcomingChests = user ? (
-    <div className={styles.chestCollection}>
-      <ChestCollection playerTag={user.tag} />
-    </div>
-  ) : undefined;
-
-  let greeting = user ? (
-    <div className={styles.greeting}>
-      <h1>Welcome {user.username}</h1>
-    </div>
-  ) : undefined;
-
-  let loadingIcon = loading? (
-    <div className={styles.loadingIcon}>
-      <img src={require("../assets/icons8-loading.gif")} />
-    </div>) : undefined;
-
   return (
     <div className={styles.homePage}>
-      <img
-        className={styles.homeImgTemp}
-        src={require("../assets/KeyArt_Season_011.png")}
-        alt="Season 11" />
-      <div className={styles.overlayTemp}>
-        {greeting}
-        {upcomingChests}
-        <SearchBox />
-      </div>
-      <div className={styles.battleCollection}>
-        <BattleCollection battles={battles.current} />
-        {loadingIcon}
-      </div>
+      <section className={styles.heroSection}>
+        <div className={styles.heroBackground} />
+        <div className={styles.heroOverlay}>
+          {user && (
+            <div className={styles.greeting}>
+              <h1>Welcome {user.username}</h1>
+            </div>
+          )}
+
+          {user && (
+            <div className={styles.chestSection}>
+              <div className={styles.chestCollection}>
+                <ChestCollection playerTag={user.tag} />
+              </div>
+            </div>
+          )}
+
+          <SearchBox />
+        </div>
+      </section>
+
+      <section className={styles.battleSection}>
+        <BattleCollection battles={battles} />
+        {loading && (
+          <div className={styles.loadingIcon}>
+            <img src={require("../assets/icons8-loading.gif")} alt="Loading battles" />
+          </div>
+        )}
+      </section>
     </div>
   );
 };

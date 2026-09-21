@@ -1,37 +1,26 @@
-import React, { Component, memo } from "react";
+import React, { memo } from "react";
 import Battle from "./Battle";
 import styles from "../cssModules/BattleCollection.module.css";
 
-class BattleCollection extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
+const BattleCollection = ({ battles }) => {
+  const header = battles && battles.length > 0
+    ? "Recently Recorded Battles"
+    : "Recently Recorded Battles";
 
-    };
-  }
-
-  render() {
-    const { handleScroll, battles, playerTag } = this.props;
-    let componentHeader = <h2>Recently Recorded Battles</h2>;
-    let battlesDraw = undefined;
-
-    if (battles && battles.length > 0) {
-      componentHeader = <h2>Recently Recorded Battles</h2>;
-      battlesDraw = battles.map((b, i) => (
-        <Battle key={`battle-${i}`} battle={b} />
-      ));
-    }
-
-    return (
-      <div className={styles.battleCollection} onScroll={handleScroll}>
-        {componentHeader}
-
-        <div className={styles.battleCollection}>
-          {battlesDraw}
+  return (
+    <div className={styles.battleCollection}>
+      <h2 className={styles.battleHeader}>{header}</h2>
+      {battles && battles.length > 0 ? (
+        <div className={styles.battleList}>
+          {battles.map((b, i) => (
+            <Battle key={`battle-${i}`} battle={b} />
+          ))}
         </div>
-      </div>
-    );
-  }
-}
+      ) : (
+        <div className={styles.emptyState}>No battles available yet.</div>
+      )}
+    </div>
+  );
+};
 
 export default memo(BattleCollection);

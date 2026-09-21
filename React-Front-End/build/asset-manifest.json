@@ -1,0 +1,16 @@
+{
+  "files": {
+    "main.css": "/static/css/main.2dfb4c16.css",
+    "main.js": "/static/js/main.ba46dbbb.js",
+    "static/media/KeyArt_Season_011.png": "/static/media/KeyArt_Season_011.d4fa5d54a3aa10a26f13.png",
+    "static/media/primary-copy.png": "/static/media/primary-copy.30fa506aa62bdfc1922e.png",
+    "static/media/logo.svg": "/static/media/logo.6ce24c58023cc2f8fd88fe9d219db6c6.svg",
+    "index.html": "/index.html",
+    "main.2dfb4c16.css.map": "/static/css/main.2dfb4c16.css.map",
+    "main.ba46dbbb.js.map": "/static/js/main.ba46dbbb.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.2dfb4c16.css",
+    "static/js/main.ba46dbbb.js"
+  ]
+}
