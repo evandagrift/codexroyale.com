@@ -1,14 +1,17 @@
 .battle {
   display: flex;
   flex-direction: column;
-  border-radius: 12px;
-  overflow: hidden;
-  border: 1px solid #d1d5db;
-  background: #ffffff;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
-  transition: box-shadow 0.2s ease, transform 0.2s ease;
+
   width: 100%;
   max-width: 100vw;
+
+  border: 1px solid #d1d5db;
+  border-radius: 12px;
+  background: #ffffff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  overflow: hidden;
+
+  transition: box-shadow 0.2s ease, transform 0.2s ease;
 }
 
 .battle:hover {
@@ -42,12 +45,12 @@
   color: #374151;
 }
 
-.win .resultBadge {
+.win {
   background: #dbeafe;
   color: #1e40af;
 }
 
-.loss .resultBadge {
+.loss {
   background: #fee2e2;
   color: #991b1b;
 }

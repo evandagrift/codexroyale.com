@@ -20,96 +20,103 @@ class Battle extends Component {
 
     const isTeam1Win = battle.Team1Win;
     const crownDisplay = `${battle.Team1Crowns} - ${battle.Team2Crowns}`;
-    const gameMode = battle.GameMode?.Name || "Ranked";
+    // const gameMode = battle.GameMode?.Name || "Ranked";
 
     return (
-      <div className={`${styles.battle} ${isTeam1Win ? styles.win : styles.loss}`}>
-        <div className={styles.battleHeader}>
-          <div className={styles.resultBadge}>
-            {isTeam1Win ? "Victory" : "Defeat"}
-          </div>
-          <div className={styles.headerCenter}>
-            <div className={styles.gameMode}>{gameMode}</div>
-            <div className={styles.crownScore}>
-              <span className={styles.crownBlue}>👑</span>
-              {crownDisplay}
-              <span className={styles.crownRed}>👑</span>
+      <div style={{ paddingBottom: '.5vw' }}>
+        <div className={`${styles.battle}`}>
+          <div className={styles.battleHeader}>
+            <div className={`${styles.resultBadge} ${isTeam1Win ? styles.win : styles.loss}`}>
+              {isTeam1Win ? "Victory" : "Defeat"}
             </div>
-          </div>
-        </div>
-
-        <div className={styles.teamContainer}>
-          <div className={styles.teamPanel} onClick={clickPlayer1}>
-            <div className={styles.teamHeader}>
-              <div className={styles.playerName}>{battle.Team1Name}</div>
-              <div className={`${styles.trophyChange} ${isTeam1Win ? styles.positive : styles.negative}`}>
-                {battle.Team1StartingTrophies}
-                <span className={styles.trophyDelta}>
-                  {battle.Team1TrophyChange >= 0 ? "+" : ""}{battle.Team1TrophyChange}
-                </span>
+            <div className={styles.headerCenter}>
+              {/* <div className={styles.gameMode}>{gameMode}</div> */}
+              {/* NOTE: Check how these are being displayed. Make sure that crown color matches victory or loss and not play 1 vs player 2 */}
+              <div className={styles.crownScore}>
+                <span className={styles.crownBlue}>👑</span>
+                {crownDisplay}
+                <span className={styles.crownRed}>👑</span>
               </div>
             </div>
-            <Deck deck={battle.Team1DeckA} />
-            <div className={styles.hpBar}>
-              <div className={styles.hpItem}>
-                <span className={styles.hpLabel}>King</span>
-                <div className={styles.hpValue}>
-                  {battle.Team1KingTowerHp === -1 ? "Full" : battle.Team1KingTowerHp}
-                </div>
-              </div>
-              <div className={styles.hpItem}>
-                <span className={styles.hpLabel}>L</span>
-                <div className={styles.hpValue}>
-                  {battle.Team1PrincessTowerHpA === -1 ? "Full" : battle.Team1PrincessTowerHpA}
-                </div>
-              </div>
-              <div className={styles.hpItem}>
-                <span className={styles.hpLabel}>R</span>
-                <div className={styles.hpValue}>
-                  {battle.Team1PrincessTowerHpB === -1 ? "Full" : battle.Team1PrincessTowerHpB}
-                </div>
-              </div>
+            <div className={`${styles.resultBadge} ${!isTeam1Win ? styles.win : styles.loss}`}>
+              {!isTeam1Win ? "Victory" : "Defeat"}
             </div>
           </div>
 
-          <div className={styles.vsDivider}>VS</div>
-
-          <div className={styles.teamPanel} onClick={clickPlayer2}>
-            <div className={styles.teamHeader}>
-              <div className={styles.playerName}>{battle.Team2Name}</div>
-              <div className={`${styles.trophyChange} ${!isTeam1Win ? styles.positive : styles.negative}`}>
-                {battle.Team2StartingTrophies}
-                <span className={styles.trophyDelta}>
-                  {battle.Team2TrophyChange >= 0 ? "+" : ""}{battle.Team2TrophyChange}
-                </span>
+          <div className={styles.teamContainer}>
+            <div className={styles.teamPanel} onClick={clickPlayer1}>
+              <div className={styles.teamHeader}>
+                <div className={styles.playerName}>{battle.Team1Name}</div>
+                {/* <div className={`${styles.trophyChange} ${isTeam1Win ? styles.positive : styles.negative}`}>
+                  {battle.Team1StartingTrophies}
+                  <span className={styles.trophyDelta}>
+                    {battle.Team1TrophyChange >= 0 ? "+" : ""}{battle.Team1TrophyChange}
+                  </span>
+                </div> */}
+              </div>
+              <Deck deck={battle.Team1DeckA} />
+              {/* Note: What is this? hpBar etc? */}
+              <div className={styles.hpBar}>
+                <div className={styles.hpItem}>
+                  <span className={styles.hpLabel}>King</span>
+                  <div className={styles.hpValue}>
+                    {battle.Team1KingTowerHp === -1 ? "Full" : battle.Team1KingTowerHp}
+                  </div>
+                </div>
+                <div className={styles.hpItem}>
+                  <span className={styles.hpLabel}>L</span>
+                  <div className={styles.hpValue}>
+                    {battle.Team1PrincessTowerHpA === -1 ? "Full" : battle.Team1PrincessTowerHpA}
+                  </div>
+                </div>
+                <div className={styles.hpItem}>
+                  <span className={styles.hpLabel}>R</span>
+                  <div className={styles.hpValue}>
+                    {battle.Team1PrincessTowerHpB === -1 ? "Full" : battle.Team1PrincessTowerHpB}
+                  </div>
+                </div>
               </div>
             </div>
-            <Deck deck={battle.Team2DeckA} />
-            <div className={styles.hpBar}>
-              <div className={styles.hpItem}>
-                <span className={styles.hpLabel}>King</span>
-                <div className={styles.hpValue}>
-                  {battle.Team2KingTowerHp === -1 ? "Full" : battle.Team2KingTowerHp}
-                </div>
+
+            <div className={styles.vsDivider}>VS</div>
+
+            <div className={styles.teamPanel} onClick={clickPlayer2}>
+              <div className={styles.teamHeader}>
+                <div className={styles.playerName}>{battle.Team2Name}</div>
+                {/* <div className={`${styles.trophyChange} ${!isTeam1Win ? styles.positive : styles.negative}`}>
+                  {battle.Team2StartingTrophies}
+                  <span className={styles.trophyDelta}>
+                    {battle.Team2TrophyChange >= 0 ? "+" : ""}{battle.Team2TrophyChange}
+                  </span>
+                </div> */}
               </div>
-              <div className={styles.hpItem}>
-                <span className={styles.hpLabel}>L</span>
-                <div className={styles.hpValue}>
-                  {battle.Team2PrincessTowerHpA === -1 ? "Full" : battle.Team2PrincessTowerHpA}
+              <Deck deck={battle.Team2DeckA} />
+              <div className={styles.hpBar}>
+                <div className={styles.hpItem}>
+                  <span className={styles.hpLabel}>King</span>
+                  <div className={styles.hpValue}>
+                    {battle.Team2KingTowerHp === -1 ? "Full" : battle.Team2KingTowerHp}
+                  </div>
                 </div>
-              </div>
-              <div className={styles.hpItem}>
-                <span className={styles.hpLabel}>R</span>
-                <div className={styles.hpValue}>
-                  {battle.Team2PrincessTowerHpB === -1 ? "Full" : battle.Team2PrincessTowerHpB}
+                <div className={styles.hpItem}>
+                  <span className={styles.hpLabel}>L</span>
+                  <div className={styles.hpValue}>
+                    {battle.Team2PrincessTowerHpA === -1 ? "Full" : battle.Team2PrincessTowerHpA}
+                  </div>
+                </div>
+                <div className={styles.hpItem}>
+                  <span className={styles.hpLabel}>R</span>
+                  <div className={styles.hpValue}>
+                    {battle.Team2PrincessTowerHpB === -1 ? "Full" : battle.Team2PrincessTowerHpB}
+                  </div>
                 </div>
               </div>
             </div>
           </div>
-        </div>
 
-        <div className={styles.battleFooter}>
-          <Time time={battle.BattleTime} />
+          <div className={styles.battleFooter}>
+            <Time time={battle.BattleTime} />
+          </div>
         </div>
       </div>
     );

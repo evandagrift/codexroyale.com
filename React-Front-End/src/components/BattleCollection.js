@@ -12,11 +12,10 @@ class BattleCollection extends Component {
 
   render() {
     const { handleScroll, battles, playerTag } = this.props;
-    let componentHeader = <h2>Recently Recorded Battles</h2>;
+    let componentHeader = <h2 style={{margin:'0', padding: '0'}}>Recently Recorded Battles</h2>;
     let battlesDraw = undefined;
 
     if (battles && battles.length > 0) {
-      componentHeader = <h2>Recently Recorded Battles</h2>;
       battlesDraw = battles.map((b, i) => (
         <Battle key={`battle-${i}`} battle={b} />
       ));
@@ -25,7 +24,6 @@ class BattleCollection extends Component {
     return (
       <div className={styles.battleCollection} onScroll={handleScroll}>
         {componentHeader}
-
         <div className={styles.battleCollection}>
           {battlesDraw}
         </div>
